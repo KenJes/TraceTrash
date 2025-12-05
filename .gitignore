@@ -32,9 +32,22 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+
+# Firebase
+# google-services.json (temporalmente comentado para EAS build)
+GoogleService-Info.plist
+fcm-key.json
 
 # typescript
 *.tsbuildinfo
+
+# Documentation (optional - descomentar si no quieres subirlos)
+# CAMBIOS_*.md
+# SISTEMA_*.md
+# SOLUCION_*.md
+# OPTIMIZACION_*.md
+# PRE_LAUNCH_*.md
 
 app-example
 
