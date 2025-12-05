@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "684690769958",
+    "project_id": "trace-cf294",
+    "storage_bucket": "trace-cf294.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684690769958:android:ceb534e28bd4dd635cfee7",
+        "android_client_info": {
+          "package_name": "com.tracetrash.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1xjM22Y2grHAR3M98EDwQv5W3a0SDiOo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
