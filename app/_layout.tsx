@@ -1,5 +1,6 @@
 import { AuthProvider, useAuthContext } from '@/components/auth-context';
 import { ThemeProvider, useThemeContext } from '@/components/theme-context';
+import { usePushNotifications } from '@/hooks/use-push-notifications';
 import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { Slot, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -14,6 +15,9 @@ function LayoutHelpers() {
   const { theme } = useThemeContext();
   const { isLoggedIn, user } = useAuthContext();
   const router = useRouter();
+
+  // Registrar notificaciones push automáticamente
+  usePushNotifications();
 
   useEffect(() => {
     const t = setTimeout(() => {
