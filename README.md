@@ -138,7 +138,7 @@ TraceTrash/
 
 ## 👨‍💻 Autor
 
-**TraceTrash Team**
+**Axoloit**
 
 ---
 
