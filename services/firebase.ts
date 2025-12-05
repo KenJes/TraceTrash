@@ -8,6 +8,7 @@ import {
 import {
     addDoc,
     collection,
+    deleteDoc,
     doc,
     getDoc,
     getDocs,
@@ -18,6 +19,7 @@ import {
     updateDoc,
     where
 } from 'firebase/firestore';
+import { agruparDireccionesSimilares, optimizarRutas } from './route-optimizer';
 // import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'; // Comentado
 
 export interface UserData {
@@ -54,6 +56,12 @@ export interface RutaData {
   usuariosCount: number;  // Cantidad de usuarios en la ruta
   createdAt: string;
   color?: string;  // Color para visualización en mapa
+  // Campos de optimización
+  eficiencia?: number;  // Score 0-100
+  distanciaEstimada?: number;  // En km
+  tiempoEstimado?: number;  // En minutos
+  ahorroCombustible?: number;  // En %
+  prioridad?: 'alta' | 'media' | 'baja';
 }
 
 export interface UbicacionData {
@@ -632,87 +640,125 @@ export const firebaseService = {
     }
   },
 
-  // Asignar rutas automáticamente por calle y colonia
-  asignarRutasAutomaticamente: async (): Promise<{ 
+  // Asignar rutas automáticamente por calle y colonia (CON OPTIMIZACIÓN)
+  asignarRutasAutomaticamente: async (criterio: 'rapida' | 'eficiente' | 'mas_usuarios' | 'ahorro_combustible' = 'eficiente'): Promise<{ 
     success: boolean; 
     rutasCreadas: number; 
     usuariosAsignados: number;
     message: string 
   }> => {
     try {
-      console.log('🚛 Iniciando asignación automática de rutas...');
+      console.log(`🚛 Iniciando asignación automática de rutas (${criterio})...`);
       
       // Obtener todos los usuarios residentes
       const usuarios = await firebaseService.getAllUsers();
-      const residentes = usuarios.filter(u => u.rol === 'residente');
+      const residentes = usuarios.filter(u => u.rol === 'usuario' || u.rol === 'residente');
 
-      // Agrupar por calle y colonia
-      const gruposPorRuta = new Map<string, UserData[]>();
-      
-      residentes.forEach(residente => {
-        const clave = `${residente.calle.trim().toLowerCase()}|${residente.colonia.trim().toLowerCase()}`;
-        if (!gruposPorRuta.has(clave)) {
-          gruposPorRuta.set(clave, []);
-        }
-        gruposPorRuta.get(clave)!.push(residente);
-      });
+      if (residentes.length === 0) {
+        return {
+          success: false,
+          rutasCreadas: 0,
+          usuariosAsignados: 0,
+          message: 'No hay usuarios residentes para asignar'
+        };
+      }
 
-      console.log(`📍 Encontrados ${gruposPorRuta.size} grupos de rutas`);
+      // Convertir usuarios a formato de direcciones
+      const direcciones = residentes.map(r => ({
+        calle: r.calle,
+        numero: r.numero,
+        colonia: r.colonia,
+        latitude: r.latitude,
+        longitude: r.longitude,
+      }));
+
+      // Agrupar direcciones similares
+      const grupos = agruparDireccionesSimilares(direcciones, 0.8);
+      console.log(`📍 Encontrados ${grupos.size} grupos de rutas similares`);
 
       let rutasCreadas = 0;
       let usuariosAsignados = 0;
 
-      // Crear/actualizar rutas para cada grupo
-      for (const [clave, usuarios] of gruposPorRuta.entries()) {
-        const [calle, colonia] = clave.split('|');
-        
+      // Optimizar y crear rutas
+      const rutasOptimizadas = optimizarRutas(direcciones, criterio);
+
+      for (const rutaOpt of rutasOptimizadas) {
         // Verificar si ya existe una ruta para esta calle/colonia
         const qRutas = query(
           collection(db, 'rutas'),
-          where('calle', '==', calle),
-          where('colonia', '==', colonia)
+          where('calle', '==', rutaOpt.calle),
+          where('colonia', '==', rutaOpt.colonia)
         );
         const rutasExistentes = await getDocs(qRutas);
 
         let rutaId: string;
 
         if (rutasExistentes.empty) {
-          // Crear nueva ruta
-          const nombreRuta = `Ruta ${colonia.charAt(0).toUpperCase() + colonia.slice(1)} - ${calle.charAt(0).toUpperCase() + calle.slice(1)}`;
-          const resultado = await firebaseService.crearRuta(nombreRuta, calle, colonia);
+          // Crear nueva ruta optimizada
+          const resultado = await firebaseService.crearRuta(
+            rutaOpt.nombre,
+            rutaOpt.calle,
+            rutaOpt.colonia
+          );
           
           if (!resultado.success || !resultado.rutaId) {
-            console.error(`Error al crear ruta para ${clave}`);
+            console.error(`Error al crear ruta para ${rutaOpt.nombre}`);
             continue;
           }
           
           rutaId = resultado.rutaId;
+          
+          // Agregar métricas de optimización
+          await updateDoc(doc(db, 'rutas', rutaId), {
+            eficiencia: rutaOpt.eficiencia,
+            distanciaEstimada: rutaOpt.distanciaEstimada,
+            tiempoEstimado: rutaOpt.tiempoEstimado,
+            ahorroCombustible: rutaOpt.ahorroCombustible,
+            prioridad: rutaOpt.prioridad,
+          });
+          
           rutasCreadas++;
         } else {
           rutaId = rutasExistentes.docs[0].id;
+          
+          // Actualizar métricas de ruta existente
+          await updateDoc(doc(db, 'rutas', rutaId), {
+            eficiencia: rutaOpt.eficiencia,
+            distanciaEstimada: rutaOpt.distanciaEstimada,
+            tiempoEstimado: rutaOpt.tiempoEstimado,
+            ahorroCombustible: rutaOpt.ahorroCombustible,
+            prioridad: rutaOpt.prioridad,
+          });
         }
 
-        // Asignar ruta a todos los usuarios de este grupo
-        for (const usuario of usuarios) {
+        // Asignar usuarios a la ruta
+        const usuariosRuta = residentes.filter(u => {
+          const calleNorm = u.calle.toLowerCase().trim();
+          const rutaCalleNorm = rutaOpt.calle.toLowerCase().trim();
+          const coloniaMatch = u.colonia.toLowerCase() === rutaOpt.colonia.toLowerCase();
+          return (calleNorm.includes(rutaCalleNorm) || rutaCalleNorm.includes(calleNorm)) && coloniaMatch;
+        });
+
+        for (const usuario of usuariosRuta) {
           await updateDoc(doc(db, 'users', usuario.uid), {
             rutaId: rutaId,
           });
           usuariosAsignados++;
         }
 
-        // Actualizar contador de usuarios en la ruta
+        // Actualizar contador
         await updateDoc(doc(db, 'rutas', rutaId), {
-          usuariosCount: usuarios.length,
+          usuariosCount: usuariosRuta.length,
         });
 
-        console.log(`✅ Ruta ${rutaId}: ${usuarios.length} usuarios asignados`);
+        console.log(`✅ ${rutaOpt.nombre}: ${usuariosRuta.length} usuarios (Eficiencia: ${rutaOpt.eficiencia}%)`);
       }
 
       return {
         success: true,
         rutasCreadas,
         usuariosAsignados,
-        message: `${rutasCreadas} rutas creadas, ${usuariosAsignados} usuarios asignados`
+        message: `${rutasCreadas} rutas optimizadas creadas, ${usuariosAsignados} usuarios asignados (${criterio})`
       };
     } catch (error: any) {
       console.error('Error en asignación automática:', error);
@@ -800,6 +846,23 @@ export const firebaseService = {
   },
 
   // ============ TRACKING DE UBICACIÓN ============
+
+  // Actualizar estado de ruta (dispara notificaciones via Cloud Functions)
+  actualizarEstadoRuta: async (
+    rutaId: string,
+    estado: 'activa' | 'pausada' | 'finalizada' | 'inactiva'
+  ): Promise<void> => {
+    try {
+      await updateDoc(doc(db, 'rutas', rutaId), {
+        estado,
+        updatedAt: serverTimestamp(),
+      });
+      console.log(`✅ Estado de ruta ${rutaId} actualizado a: ${estado}`);
+    } catch (error: any) {
+      console.error('Error al actualizar estado de ruta:', error);
+      throw new Error(error.message || 'Error al actualizar estado de ruta');
+    }
+  },
 
   // Guardar ubicación del conductor
   guardarUbicacion: async (ubicacionData: Omit<UbicacionData, 'id'>): Promise<void> => {
@@ -931,10 +994,167 @@ export const firebaseService = {
     try {
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, updates as any);
-      console.log('✅ Usuario actualizado con pushToken');
+      console.log('✅ Usuario actualizado');
     } catch (error: any) {
       console.error('Error al actualizar usuario:', error);
       throw error;
+    }
+  },
+
+  // Eliminar ruta
+  eliminarRuta: async (rutaId: string): Promise<{ success: boolean; message: string }> => {
+    try {
+      // Verificar si hay usuarios asignados
+      const qUsuarios = query(
+        collection(db, 'users'),
+        where('rutaId', '==', rutaId)
+      );
+      const usuariosAsignados = await getDocs(qUsuarios);
+
+      if (!usuariosAsignados.empty) {
+        // Desasignar usuarios
+        for (const userDoc of usuariosAsignados.docs) {
+          await updateDoc(doc(db, 'users', userDoc.id), {
+            rutaId: null,
+          });
+        }
+      }
+
+      // Eliminar la ruta
+      await deleteDoc(doc(db, 'rutas', rutaId));
+
+      return {
+        success: true,
+        message: `Ruta eliminada y ${usuariosAsignados.size} usuarios desasignados`
+      };
+    } catch (error: any) {
+      console.error('Error al eliminar ruta:', error);
+      return {
+        success: false,
+        message: error.message || 'Error al eliminar la ruta'
+      };
+    }
+  },
+
+  // Editar ruta
+  editarRuta: async (
+    rutaId: string,
+    updates: Partial<RutaData>
+  ): Promise<{ success: boolean; message: string }> => {
+    try {
+      const rutaRef = doc(db, 'rutas', rutaId);
+      await updateDoc(rutaRef, updates as any);
+
+      return {
+        success: true,
+        message: 'Ruta actualizada correctamente'
+      };
+    } catch (error: any) {
+      console.error('Error al editar ruta:', error);
+      return {
+        success: false,
+        message: error.message || 'Error al editar la ruta'
+      };
+    }
+  },
+
+  // Eliminar conductor
+  eliminarConductor: async (conductorId: string): Promise<{ success: boolean; message: string }> => {
+    try {
+      // Desasignar de rutas
+      const qRutas = query(
+        collection(db, 'rutas'),
+        where('conductorAsignado', '==', conductorId)
+      );
+      const rutasAsignadas = await getDocs(qRutas);
+
+      for (const rutaDoc of rutasAsignadas.docs) {
+        await updateDoc(doc(db, 'rutas', rutaDoc.id), {
+          conductorAsignado: null,
+          conductorNombre: null,
+          unidad: null,
+          horario: null,
+        });
+      }
+
+      // Eliminar usuario de Firestore
+      await deleteDoc(doc(db, 'users', conductorId));
+
+      // Nota: No eliminamos de Firebase Auth para evitar problemas de seguridad
+      // El admin debe hacerlo manualmente desde Firebase Console si es necesario
+
+      return {
+        success: true,
+        message: `Conductor eliminado y desasignado de ${rutasAsignadas.size} ruta(s)`
+      };
+    } catch (error: any) {
+      console.error('Error al eliminar conductor:', error);
+      return {
+        success: false,
+        message: error.message || 'Error al eliminar conductor'
+      };
+    }
+  },
+
+  // Editar conductor
+  editarConductor: async (
+    conductorId: string,
+    updates: Partial<UserData>
+  ): Promise<{ success: boolean; message: string }> => {
+    try {
+      const conductorRef = doc(db, 'users', conductorId);
+      await updateDoc(conductorRef, updates as any);
+
+      // Si se cambió el nombre o unidad, actualizar en todas las rutas asignadas
+      if (updates.nombre || updates.unidad) {
+        const qRutas = query(
+          collection(db, 'rutas'),
+          where('conductorAsignado', '==', conductorId)
+        );
+        const rutasAsignadas = await getDocs(qRutas);
+
+        for (const rutaDoc of rutasAsignadas.docs) {
+          const updateRuta: any = {};
+          if (updates.nombre) updateRuta.conductorNombre = updates.nombre;
+          if (updates.unidad) updateRuta.unidad = updates.unidad;
+          
+          if (Object.keys(updateRuta).length > 0) {
+            await updateDoc(doc(db, 'rutas', rutaDoc.id), updateRuta);
+          }
+        }
+      }
+
+      return {
+        success: true,
+        message: 'Conductor actualizado correctamente'
+      };
+    } catch (error: any) {
+      console.error('Error al editar conductor:', error);
+      return {
+        success: false,
+        message: error.message || 'Error al editar conductor'
+      };
+    }
+  },
+
+  // Toggle estado activo del conductor (AHORA SÍ FUNCIONA)
+  toggleConductorActivo: async (conductorId: string, nuevoEstado: boolean): Promise<{ success: boolean; message: string }> => {
+    try {
+      const conductorRef = doc(db, 'users', conductorId);
+      await updateDoc(conductorRef, {
+        activo: nuevoEstado,
+      });
+
+      return {
+        success: true,
+        message: `Conductor ${nuevoEstado ? 'activado' : 'desactivado'} correctamente`
+      };
+    } catch (error: any) {
+      console.error('Error al cambiar estado del conductor:', error);
+      return {
+        success: false,
+        message: error.message || 'Error al cambiar estado'
+      };
     }
   },
 };

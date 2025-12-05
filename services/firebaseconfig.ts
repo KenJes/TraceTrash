@@ -1,6 +1,7 @@
 // firebaseConfig.ts
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 // import { getStorage } from 'firebase/storage'; // Comentado: requiere plan Blaze
 
@@ -32,8 +33,10 @@ console.log('✅ Firebase Config:', {
 
 const app = initializeApp(firebaseConfig);
 
-// Default auth instance (works on web & native). We'll try to enable
-// React Native AsyncStorage persistence if the package is available at runtime.
-export const auth = getAuth(app);
+// Inicializar Auth con persistencia de AsyncStorage para React Native
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
+
 export const db = getFirestore(app);
 // export const storage = getStorage(app); // Comentado: requiere plan Blaze

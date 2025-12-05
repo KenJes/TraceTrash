@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
-import * as Device from 'expo-device';
-import { registerForPushNotificationsAsync } from '@/services/notifications';
-import { firebaseService } from '@/services/firebase';
 import { useAuthContext } from '@/components/auth-context';
+import { firebaseService } from '@/services/firebase';
+import { registerForPushNotificationsAsync } from '@/services/notification-service';
+import * as Device from 'expo-device';
+import { useEffect } from 'react';
 
 /**
  * Hook personalizado para registrar notificaciones push automáticamente

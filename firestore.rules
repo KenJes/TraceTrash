@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Función helper para verificar autenticación
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Función helper para verificar si es admin
+    function isAdmin() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+    }
+    
+    // Función helper para verificar si es conductor
+    function isConductor() {
+      return isSignedIn() && 
+             get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'conductor';
+    }
+    
+    // Usuarios - Solo el usuario o admin puede leer/escribir
+    match /usuarios/{userId} {
+      allow read: if isSignedIn();
+      allow create: if true; // Permitir registro
+      allow update: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+    
+    // Rutas - Admin puede todo, otros solo lectura
+    match /rutas/{rutaId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+    
+    // Ubicaciones - Conductor puede escribir, todos pueden leer
+    match /ubicaciones/{ubicacionId} {
+      allow read: if isSignedIn();
+      allow create: if isConductor();
+      allow update: if isConductor();
+      allow delete: if isAdmin();
+    }
+    
+    // Incidencias - Usuarios autenticados pueden crear, admin puede gestionar
+    match /incidencias/{incidenciaId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isAdmin() || (isSignedIn() && resource.data.usuarioId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+    
+    // Historial - Solo lectura para autenticados, escritura para conductores y admin
+    match /historial/{historialId} {
+      allow read: if isSignedIn();
+      allow write: if isConductor() || isAdmin();
+    }
+    
+    // Notificaciones enviadas - Solo Cloud Functions pueden escribir
+    match /notificaciones_enviadas/{notifId} {
+      allow read: if isAdmin();
+      allow write: if false; // Solo Cloud Functions
+    }
+    
+    // Alertas de conexión - Solo admin puede leer
+    match /alertas_conexion/{alertaId} {
+      allow read: if isAdmin();
+      allow write: if false; // Solo Cloud Functions
+    }
+  }
+}

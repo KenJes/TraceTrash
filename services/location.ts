@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
-import { firebaseService, UserData } from './firebase';
-import { notifyTruckNearby } from './notifications';
+import { firebaseService } from './firebase';
+import { notifyTruckNearby } from './notification-service';
 
 class LocationService {
   private watchId: Location.LocationSubscription | null = null;
@@ -68,12 +68,16 @@ class LocationService {
         if (distancia < 100 && !this.notifiedUsers.has(usuario.uid)) {
           console.log(`🔔 Notificando a ${usuario.nombre} - ${Math.round(distancia)}m`);
           
-          // Enviar notificación
-          await notifyTruckNearby(
-            conductorNombre,
-            Math.round(distancia),
-            unidad
-          );
+          // Enviar notificación si tiene pushToken
+          if (usuario.pushToken) {
+            await notifyTruckNearby(
+              usuario.uid,
+              usuario.pushToken,
+              conductorNombre,
+              Math.round(distancia),
+              unidad
+            );
+          }
 
           // Marcar como notificado
           this.notifiedUsers.add(usuario.uid);

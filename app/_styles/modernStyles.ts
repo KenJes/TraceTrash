@@ -422,3 +422,5 @@ export const getModernStyles = (isDark: boolean) => {
     },
   });
 };
+
+export default getModernStyles;

@@ -1,8 +1,8 @@
 import { useAuthContext } from '@/components/auth-context';
+import { TruckMapView } from '@/components/map-view';
 import { useThemeContext } from '@/components/theme-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { TruckMapView } from '@/components/map-view';
 import { firebaseService, RutaData, UbicacionData } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';

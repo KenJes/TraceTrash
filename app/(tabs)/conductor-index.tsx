@@ -4,6 +4,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { firebaseService, RutaData } from '@/services/firebase';
 import { locationService } from '@/services/location';
+import { notifyRutaFinalizada, notifyRutaIniciada } from '@/services/notification-service';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -70,9 +71,25 @@ export default function ConductorIndexScreen() {
             text: 'Finalizar',
             style: 'destructive',
             onPress: async () => {
-              await locationService.stopTracking();
-              setEnRuta(false);
-              Alert.alert('Ruta Finalizada', 'Has dejado de compartir tu ubicación');
+              try {
+                await locationService.stopTracking();
+                
+                // Enviar notificación de ruta finalizada
+                await notifyRutaFinalizada(
+                  ruta.id!,
+                  user.nombre,
+                  user.unidad || ''
+                );
+                
+                // Actualizar estado de ruta a finalizada
+                await firebaseService.actualizarEstadoRuta(ruta.id!, 'finalizada');
+                
+                setEnRuta(false);
+                Alert.alert('Ruta Finalizada', 'Has dejado de compartir tu ubicación');
+              } catch (error) {
+                console.error('Error al finalizar ruta:', error);
+                Alert.alert('Error', 'No se pudo finalizar la ruta');
+              }
             },
           },
         ]
@@ -87,8 +104,24 @@ export default function ConductorIndexScreen() {
       );
 
       if (success) {
-        setEnRuta(true);
-        Alert.alert('Ruta Iniciada', 'Ahora estás compartiendo tu ubicación en tiempo real');
+        try {
+          // Enviar notificación de ruta iniciada
+          await notifyRutaIniciada(
+            ruta.id!,
+            user.nombre,
+            user.unidad || ''
+          );
+          
+          // Actualizar estado de ruta a activa
+          await firebaseService.actualizarEstadoRuta(ruta.id!, 'activa');
+          
+          setEnRuta(true);
+          Alert.alert('Ruta Iniciada', 'Ahora estás compartiendo tu ubicación en tiempo real');
+        } catch (error) {
+          console.error('Error al actualizar estado de ruta:', error);
+          // Aún así marcar como en ruta localmente
+          setEnRuta(true);
+        }
       } else {
         Alert.alert(
           'Error',
