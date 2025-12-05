@@ -1,50 +1,145 @@
-# Welcome to your Expo app 👋
+# 🚛 TraceTrash - Sistema de Gestión de Residuos
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+<div align="center">
 
-## Get started
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS-green.svg)
 
-1. Install dependencies
+**Aplicación móvil de rastreo en tiempo real para recolección de residuos**
 
-   ```bash
-   npm install
-   ```
+[Características](#-características) • [Instalación](#-instalación) • [Despliegue](#-despliegue)
 
-2. Start the app
+</div>
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## 📱 Sobre TraceTrash
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Solución integral para la gestión de recolección de residuos que conecta administradores, conductores y residentes en tiempo real mediante GPS tracking y notificaciones push.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### ✨ Características Principales
 
-## Get a fresh project
+#### Para Residentes
+- 📍 Ver ubicación del camión en tiempo real
+- 🔔 Notificaciones cuando el camión está cerca (< 100m)
+- 📸 Reportar incidencias con fotos
+- 📅 Ver horarios de recolección
 
-When you're ready, run:
+#### Para Conductores
+- 🚛 Iniciar/Pausar/Finalizar rutas
+- 📍 Compartir ubicación cada 30 segundos
+- 👥 Ver usuarios asignados
+- 📊 Historial de rutas
+
+#### Para Administradores
+- 📊 Panel de control con métricas
+- 🗺️ Mapa con todos los camiones activos
+- 👨‍💼 Gestión de usuarios y rutas
+- 📝 Revisar reportes
+- 🛣️ Asignación automática de rutas
+
+---
+
+## 🛠️ Stack Tecnológico
+
+- React Native + Expo Router 6
+- Firebase (Auth, Firestore, FCM)
+- TypeScript 5.9
+- React Native Maps
+- expo-location + expo-notifications
+
+---
+
+## 🚀 Instalación Rápida
 
 ```bash
-npm run reset-project
+# Clonar
+git clone https://github.com/TU_USUARIO/TraceTrash.git
+cd TraceTrash
+
+# Instalar dependencias
+npm install
+
+# Configurar Firebase (.env)
+cp .env.example .env
+# Edita .env con tus credenciales
+
+# Iniciar
+npm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 📱 Generar APK
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+# Instalar EAS CLI
+npm install -g eas-cli
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Login
+eas login
 
-## Join the community
+# Build
+eas build --profile preview --platform android
+```
 
-Join our community of developers creating universal apps.
+**Descargar**: https://expo.dev/accounts/TU_CUENTA/projects/tracetrash/builds
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+
+## 🔔 Sistema de Notificaciones
+
+| Evento | Destinatario | Mensaje |
+|--------|-------------|---------|
+| Conductor inicia ruta | Usuarios de la ruta | "¡El camión está en camino!" |
+| Camión < 100m | Usuario específico | "¡El camión está cerca!" |
+| Conductor pausa | Admin + Usuarios | "Ruta pausada" |
+| Conductor finaliza | Admin + Usuarios | "Ruta completada" |
+| Sin conexión > 2 min | Admin | "Problema de conexión" |
+
+---
+
+## 📂 Estructura
+
+```
+TraceTrash/
+├── app/                      # Screens
+│   ├── (admin)/             # Admin panel
+│   ├── (tabs)/              # User/Conductor
+│   └── login.tsx
+├── services/
+│   ├── firebase.ts          # Firebase logic
+│   ├── location.ts          # GPS tracking
+│   └── notifications.ts     # Push notifications
+├── components/
+├── app.json
+└── eas.json
+```
+
+---
+
+## 🧪 Testing
+
+1. **Admin**: Asigna ruta a conductor
+2. **Conductor**: Inicia ruta → Notifica usuarios
+3. **Usuario**: Ve ubicación del camión
+4. **Proximidad**: Camión < 100m → Notificación
+5. **Finalizar**: Notifica a todos
+
+---
+
+## 📖 Documentación
+
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Guía completa de despliegue
+- [Expo Docs](https://docs.expo.dev/)
+- [Firebase Docs](https://firebase.google.com/docs)
+
+---
+
+## 👨‍💻 Autor
+
+**TraceTrash Team**
+
+---
+
+**¿Listo para revolucionar la recolección de residuos? 🚛♻️**

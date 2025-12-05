@@ -5,25 +5,45 @@
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+
+// Paleta minimalista: grises neutros + verde como acento único
+const palette = {
+  green: '#2D7A3E',      // Verde minimalista primario (más profundo)
+  gray100: '#F8F9FA',    // Fondo claro muy sutil
+  gray200: '#F0F1F3',    // Gris claro
+  gray300: '#E8EAED',    // Gris medio-claro
+  gray600: '#5F6368',    // Gris oscuro (texto secundario)
+  gray800: '#202124',    // Gris oscuro profundo (texto principal)
+  gray900: '#0F1419',    // Negro suave
+  white: '#FFFFFF',      // Blanco
+  error: '#D33B27',      // Rojo profesional
+};
+
+const tintColorLight = palette.green;
+const tintColorDark = palette.white;
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text: palette.gray800,
+    background: palette.gray100,
+    tint: palette.green,
+    icon: palette.gray600,
+    tabIconDefault: palette.gray600,
+    tabIconSelected: palette.green,
+    accent: palette.green,
+    error: palette.error,
+    card: palette.white,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: palette.gray100,
+    background: palette.gray900,
+    tint: palette.green,
+    icon: palette.gray300,
+    tabIconDefault: palette.gray600,
+    tabIconSelected: palette.green,
+    accent: palette.green,
+    error: palette.error,
+    card: '#1C1F24',
   },
 };
 
