@@ -1,5 +1,6 @@
 import * as Location from 'expo-location';
-import { firebaseService } from './firebase';
+import { firebaseService, UserData } from './firebase';
+import { notifyTruckNearby } from './notifications';
 
 class LocationService {
   private watchId: Location.LocationSubscription | null = null;
@@ -7,6 +8,86 @@ class LocationService {
   private isPaused: boolean = false;
   private currentConductorId: string | null = null;
   private currentRutaId: string | null = null;
+  private notifiedUsers: Set<string> = new Set(); // Control de usuarios ya notificados
+
+  /**
+   * Calcula la distancia entre dos puntos usando la fórmula de Haversine
+   * @returns Distancia en metros
+   */
+  private calculateDistance(
+    lat1: number,
+    lon1: number,
+    lat2: number,
+    lon2: number
+  ): number {
+    const R = 6371e3; // Radio de la Tierra en metros
+    const φ1 = (lat1 * Math.PI) / 180;
+    const φ2 = (lat2 * Math.PI) / 180;
+    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+    const a =
+      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // Distancia en metros
+  }
+
+  /**
+   * Verifica proximidad con usuarios de la ruta y envía notificaciones
+   */
+  private async checkProximityAndNotify(
+    conductorLat: number,
+    conductorLon: number,
+    rutaId: string,
+    conductorNombre: string,
+    unidad: string
+  ): Promise<void> {
+    try {
+      // Obtener usuarios de la ruta con pushToken
+      const usuarios = await firebaseService.getUsuariosRuta(rutaId);
+
+      for (const usuario of usuarios) {
+        // Si el usuario no tiene coordenadas, saltar
+        if (!usuario.latitude || !usuario.longitude) {
+          continue;
+        }
+
+        // Calcular distancia
+        const distancia = this.calculateDistance(
+          conductorLat,
+          conductorLon,
+          usuario.latitude,
+          usuario.longitude
+        );
+
+        console.log(`📏 Distancia a ${usuario.nombre}: ${Math.round(distancia)}m`);
+
+        // Si está a menos de 100m y no ha sido notificado
+        if (distancia < 100 && !this.notifiedUsers.has(usuario.uid)) {
+          console.log(`🔔 Notificando a ${usuario.nombre} - ${Math.round(distancia)}m`);
+          
+          // Enviar notificación
+          await notifyTruckNearby(
+            conductorNombre,
+            Math.round(distancia),
+            unidad
+          );
+
+          // Marcar como notificado
+          this.notifiedUsers.add(usuario.uid);
+        }
+
+        // Si se aleja más de 200m, permitir notificar de nuevo
+        if (distancia > 200 && this.notifiedUsers.has(usuario.uid)) {
+          this.notifiedUsers.delete(usuario.uid);
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error en verificación de proximidad:', error);
+    }
+  }
 
   /**
    * Solicita permisos de ubicación al usuario
@@ -86,6 +167,7 @@ class LocationService {
             const { latitude, longitude, speed, heading } = location.coords;
             console.log(`📍 Ubicación: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
 
+            // Guardar ubicación en Firestore
             await firebaseService.guardarUbicacion({
               conductorId,
               conductorNombre,
@@ -96,6 +178,15 @@ class LocationService {
               velocidad: speed ? Math.round(speed * 3.6) : 0, // m/s a km/h
               heading: heading || undefined,
             });
+
+            // Verificar proximidad con usuarios y notificar
+            await this.checkProximityAndNotify(
+              latitude,
+              longitude,
+              rutaId,
+              conductorNombre,
+              unidad
+            );
           } catch (error) {
             console.error('❌ Error al guardar ubicación:', error);
           }
@@ -152,6 +243,7 @@ class LocationService {
       this.isPaused = false;
       this.currentConductorId = null;
       this.currentRutaId = null;
+      this.notifiedUsers.clear(); // Limpiar usuarios notificados
       
       console.log('🛑 Tracking detenido completamente');
     } catch (error) {

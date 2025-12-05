@@ -35,6 +35,10 @@ export interface UserData {
   unidad?: string;  // Número de unidad para conductores
   rutaId?: string;  // ID de la ruta asignada
   horarioRuta?: string;  // Horario de la ruta (para conductores)
+  pushToken?: string;  // Token de notificaciones push
+  lastTokenUpdate?: string;  // Última actualización del token
+  latitude?: number;  // Ubicación del usuario (opcional)
+  longitude?: number;  // Ubicación del usuario (opcional)
 }
 
 export interface RutaData {
@@ -887,6 +891,50 @@ export const firebaseService = {
     } catch (error: any) {
       console.error('Error al obtener historial de ubicaciones:', error);
       return [];
+    }
+  },
+
+  // Obtener usuarios de una ruta específica (residentes con pushToken)
+  getUsuariosRuta: async (rutaId: string): Promise<UserData[]> => {
+    try {
+      const q = query(
+        collection(db, 'users'),
+        where('rutaId', '==', rutaId),
+        where('rol', '==', 'usuario')
+      );
+
+      const querySnapshot = await getDocs(q);
+      const usuarios: UserData[] = [];
+
+      querySnapshot.forEach((doc) => {
+        const userData = {
+          uid: doc.id,
+          ...doc.data(),
+        } as UserData;
+        
+        // Solo incluir usuarios con pushToken activo
+        if (userData.pushToken) {
+          usuarios.push(userData);
+        }
+      });
+
+      console.log(`📱 Usuarios en ruta ${rutaId}: ${usuarios.length}`);
+      return usuarios;
+    } catch (error: any) {
+      console.error('Error al obtener usuarios de la ruta:', error);
+      return [];
+    }
+  },
+
+  // Actualizar usuario con pushToken
+  updateUser: async (userId: string, updates: Partial<UserData>): Promise<void> => {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await updateDoc(userRef, updates as any);
+      console.log('✅ Usuario actualizado con pushToken');
+    } catch (error: any) {
+      console.error('Error al actualizar usuario:', error);
+      throw error;
     }
   },
 };
