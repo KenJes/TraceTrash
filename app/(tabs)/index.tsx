@@ -2,6 +2,7 @@ import { useAuthContext } from '@/components/auth-context';
 import { useThemeContext } from '@/components/theme-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { TruckMapView } from '@/components/map-view';
 import { firebaseService, RutaData, UbicacionData } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
@@ -135,61 +136,54 @@ export default function IndexScreen() {
               </View>
             </View>
 
-            {/* Información del camión */}
-            {ubicacionCamion ? (
+            {/* Mapa del camión */}
+            {ubicacionCamion && (
               <View style={styles.card}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-                  <View style={[styles.iconBadge, { backgroundColor: '#4CAF50', marginRight: 12 }]}>
-                    <Ionicons name="car" size={20} color="#FFF" />
+                  <View style={[styles.iconBadge, { backgroundColor: '#2196F3', marginRight: 12 }]}>
+                    <Ionicons name="map" size={20} color="#FFF" />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <ThemedText style={styles.sectionTitle}>Camión en Ruta</ThemedText>
+                    <ThemedText style={styles.sectionTitle}>Ubicación en Tiempo Real</ThemedText>
                     <ThemedText style={{ fontSize: 13, opacity: 0.7 }}>
-                      Ubicación en tiempo real
+                      Rastrea el camión en el mapa
                     </ThemedText>
                   </View>
-                  <View style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 5,
-                    backgroundColor: '#4CAF50'
-                  }} />
                 </View>
 
-                <View style={{
-                  padding: 16,
-                  backgroundColor: isDarkMode ? '#1a1a1a' : '#f9f9f9',
-                  borderRadius: 12,
-                  borderLeftWidth: 4,
-                  borderLeftColor: '#4CAF50'
-                }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-                    <ThemedText style={{ fontSize: 13, opacity: 0.7 }}>Latitud:</ThemedText>
-                    <ThemedText style={{ fontSize: 13, fontWeight: '600' }}>
-                      {ubicacionCamion.latitude.toFixed(6)}
-                    </ThemedText>
-                  </View>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-                    <ThemedText style={{ fontSize: 13, opacity: 0.7 }}>Longitud:</ThemedText>
-                    <ThemedText style={{ fontSize: 13, fontWeight: '600' }}>
-                      {ubicacionCamion.longitude.toFixed(6)}
-                    </ThemedText>
-                  </View>
-                  {ubicacionCamion.velocidad && (
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <ThemedText style={{ fontSize: 13, opacity: 0.7 }}>Velocidad:</ThemedText>
-                      <ThemedText style={{ fontSize: 13, fontWeight: '600' }}>
+                <TruckMapView
+                  ubicacionCamion={ubicacionCamion}
+                  height={250}
+                />
+
+                {ubicacionCamion.velocidad !== undefined && (
+                  <View style={{
+                    marginTop: 12,
+                    padding: 12,
+                    backgroundColor: isDarkMode ? '#1a1a1a' : '#f9f9f9',
+                    borderRadius: 8,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between'
+                  }}>
+                    <View>
+                      <ThemedText style={{ fontSize: 12, opacity: 0.7 }}>Velocidad</ThemedText>
+                      <ThemedText style={{ fontSize: 16, fontWeight: '600', marginTop: 2 }}>
                         {ubicacionCamion.velocidad} km/h
                       </ThemedText>
                     </View>
-                  )}
-                </View>
-
-                <ThemedText style={{ fontSize: 12, opacity: 0.5, marginTop: 12, textAlign: 'center' }}>
-                  💡 Usa la app móvil para ver el mapa interactivo
-                </ThemedText>
+                    <View>
+                      <ThemedText style={{ fontSize: 12, opacity: 0.7 }}>Unidad</ThemedText>
+                      <ThemedText style={{ fontSize: 16, fontWeight: '600', marginTop: 2 }}>
+                        {ubicacionCamion.unidad}
+                      </ThemedText>
+                    </View>
+                  </View>
+                )}
               </View>
-            ) : (
+            )}
+
+            {/* Mensaje cuando no hay camión en ruta */}
+            {!ubicacionCamion && (
               <View style={styles.card}>
                 <View style={{ alignItems: 'center', paddingVertical: 20 }}>
                   <Ionicons name="location-outline" size={48} color={isDarkMode ? '#666' : '#999'} />
