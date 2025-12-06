@@ -1,8 +1,7 @@
 import { UbicacionData } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from 'react-native-maps';
+import { ActivityIndicator, Platform, StyleSheet, Text, View } from 'react-native';
 
 interface TruckMapViewProps {
   ubicacionCamion: UbicacionData | null;
@@ -22,7 +21,7 @@ export function TruckMapView({
   isLoading = false,
   height = 300,
 }: TruckMapViewProps) {
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
   useEffect(() => {
@@ -50,6 +49,22 @@ export function TruckMapView({
 
   if (!ubicacionCamion) {
     return null;
+  }
+
+  // En web, mostrar mensaje informativo
+  if (Platform.OS === 'web') {
+    return (
+      <View style={[styles.container, { height, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f5f5' }]}>
+        <Ionicons name="map-outline" size={48} color="#999" style={{ marginBottom: 16 }} />
+        <Text style={{ fontSize: 16, fontWeight: '600', color: '#666', marginBottom: 8 }}>Mapa no disponible en web</Text>
+        <Text style={{ fontSize: 14, color: '#999', textAlign: 'center', paddingHorizontal: 20 }}>
+          La visualización de mapas requiere la app móvil
+        </Text>
+        <Text style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
+          Camión: {ubicacionCamion.conductorNombre} - Unidad {ubicacionCamion.unidad}
+        </Text>
+      </View>
+    );
   }
 
   return (

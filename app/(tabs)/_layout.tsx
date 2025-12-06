@@ -30,7 +30,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <Ionicons name="home" size={28} color={color} />
           ),
-          href: isConductor ? undefined : '/(tabs)',
+          href: isConductor ? null : '/(tabs)',
         }}
       />
       
@@ -38,7 +38,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="conductor-index"
         options={{
-          title: 'Inicio',
+          title: 'Panel Conductor',
           tabBarIcon: ({ color }) => (
             <Ionicons name="car" size={28} color={color} />
           ),
