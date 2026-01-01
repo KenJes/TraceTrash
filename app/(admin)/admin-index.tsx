@@ -1,3 +1,4 @@
+import { AdminMapView } from '@/components/admin-map-view';
 import { useThemeContext } from '@/components/theme-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -5,8 +6,7 @@ import { firebaseService, UbicacionData } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Platform, RefreshControl, ScrollView, View } from 'react-native';
-import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
+import { ActivityIndicator, RefreshControl, ScrollView, View } from 'react-native';
 import { getModernStyles } from '../_styles/modernStyles';
 
 interface DashboardStats {
@@ -161,53 +161,7 @@ export default function AdminIndexScreen() {
           </View>
 
           {ubicaciones.length > 0 ? (
-            Platform.OS === 'web' ? (
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-                <Ionicons name="map-outline" size={48} color="#4CAF50" style={{ marginBottom: 16 }} />
-                <ThemedText style={{ fontSize: 16, fontWeight: '600', marginBottom: 8, textAlign: 'center' }}>
-                  Mapa no disponible en web
-                </ThemedText>
-                <ThemedText style={{ fontSize: 14, opacity: 0.7, textAlign: 'center' }}>
-                  {ubicaciones.length} unidad{ubicaciones.length !== 1 ? 'es' : ''} activa{ubicaciones.length !== 1 ? 's' : ''}
-                </ThemedText>
-                <ThemedText style={{ fontSize: 12, opacity: 0.5, marginTop: 12, textAlign: 'center' }}>
-                  Usa la aplicación móvil para ver el mapa en tiempo real
-                </ThemedText>
-              </View>
-            ) : (
-              <MapView
-                style={{ flex: 1 }}
-                provider={PROVIDER_DEFAULT}
-                initialRegion={{
-                  latitude: ubicaciones[0].latitude,
-                  longitude: ubicaciones[0].longitude,
-                  latitudeDelta: 0.05,
-                  longitudeDelta: 0.05,
-                }}
-              >
-                {ubicaciones.map((ubicacion, index) => (
-                  <Marker
-                    key={index}
-                    coordinate={{
-                      latitude: ubicacion.latitude,
-                      longitude: ubicacion.longitude,
-                    }}
-                  title={`Unidad ${ubicacion.unidad}`}
-                  description={ubicacion.conductorNombre}
-                >
-                  <View style={{
-                    backgroundColor: '#4CAF50',
-                    padding: 8,
-                    borderRadius: 20,
-                    borderWidth: 2,
-                    borderColor: '#FFF',
-                  }}>
-                    <Ionicons name="car" size={20} color="#FFF" />
-                  </View>
-                </Marker>
-              ))}
-              </MapView>
-            )
+            <AdminMapView ubicaciones={ubicaciones} isDarkMode={isDarkMode} />
           ) : (
             <View style={{ 
               flex: 1, 

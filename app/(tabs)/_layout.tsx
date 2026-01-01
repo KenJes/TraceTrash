@@ -9,7 +9,8 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useAuthContext();
-  const isConductor = user?.rol === 'conductor' || false;
+  const isConductor = user?.rol === 'conductor';
+  const isAdmin = user?.rol === 'admin';
 
   return (
     <Tabs
@@ -46,6 +47,16 @@ export default function TabLayout() {
         }}
       />
       
+      <Tabs.Screen
+        name="conductores"
+        options={{
+          title: 'Conductores',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="people" size={28} color={color} />
+          ),
+          href: isAdmin ? '/(tabs)/conductores' : null,
+        }}
+      />
       <Tabs.Screen
         name="reportar"
         options={{

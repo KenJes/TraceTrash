@@ -1,7 +1,8 @@
 import { useThemeContext } from '@/components/theme-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { firebaseService, RutaData, UserData } from '@/services/firebase';
+import { firebaseService, RutaData } from '@/services/firebase';
+import { optimizeRoute } from '@/services/route-optimizer';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -14,27 +15,31 @@ export default function AdminRutasScreen() {
   const styles = getModernStyles(isDarkMode);
 
   const [rutas, setRutas] = useState<RutaData[]>([]);
-  const [conductores, setConductores] = useState<UserData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [modalAsignar, setModalAsignar] = useState(false);
-  const [rutaSeleccionada, setRutaSeleccionada] = useState<RutaData | null>(null);
-  const [conductorSeleccionado, setConductorSeleccionado] = useState('');
-  const [horario, setHorario] = useState('');
   const [asignandoAutomatico, setAsignandoAutomatico] = useState(false);
+  
+  // Modals
+  const [modalNuevaRuta, setModalNuevaRuta] = useState(false);
+  const [modalEditarRuta, setModalEditarRuta] = useState(false);
+  const [rutaSeleccionada, setRutaSeleccionada] = useState<RutaData | null>(null);
 
-  const cargarDatos = async () => {
+  // Form states
+  const [nombre, setNombre] = useState('');
+  const [calle, setCalle] = useState('');
+  const [colonia, setColonia] = useState('');
+  const [direccionesTexto, setDireccionesTexto] = useState('');
+  const [color, setColor] = useState('#2196F3');
+
+  const coloresDisponibles = ['#2196F3', '#4CAF50', '#FF9800', '#9C27B0', '#F44336', '#00BCD4'];
+
+  const cargarRutas = async () => {
     try {
-      const [rutasData, usuariosData] = await Promise.all([
-        firebaseService.getAllRutas(),
-        firebaseService.getAllUsers(),
-      ]);
-
+      const rutasData = await firebaseService.getAllRutas();
       setRutas(rutasData);
-      setConductores(usuariosData.filter(u => u.rol === 'conductor' && u.activo));
     } catch (error: any) {
-      console.error('Error al cargar datos:', error);
-      Alert.alert('Error', 'No se pudieron cargar los datos');
+      console.error('Error al cargar rutas:', error);
+      Alert.alert('Error', 'No se pudieron cargar las rutas');
     } finally {
       setIsLoading(false);
       setRefreshing(false);
@@ -44,23 +49,23 @@ export default function AdminRutasScreen() {
   useFocusEffect(
     useCallback(() => {
       setIsLoading(true);
-      cargarDatos();
+      cargarRutas();
     }, [])
   );
 
   const onRefresh = () => {
     setRefreshing(true);
-    cargarDatos();
+    cargarRutas();
   };
 
   const handleAsignarAutomaticamente = async () => {
     Alert.alert(
-      'Asignación Automática',
-      '¿Deseas asignar rutas automáticamente basándote en calle y colonia de los usuarios?',
+      'Crear Rutas Automáticamente',
+      '¿Deseas crear rutas automáticamente basándote en calle y colonia de los usuarios?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: 'Asignar',
+          text: 'Crear Rutas',
           onPress: async () => {
             setAsignandoAutomatico(true);
             const resultado = await firebaseService.asignarRutasAutomaticamente();
@@ -68,7 +73,7 @@ export default function AdminRutasScreen() {
 
             if (resultado.success) {
               Alert.alert('Éxito', resultado.message);
-              cargarDatos();
+              cargarRutas();
             } else {
               Alert.alert('Error', resultado.message);
             }
@@ -78,34 +83,135 @@ export default function AdminRutasScreen() {
     );
   };
 
-  const abrirModalAsignar = (ruta: RutaData) => {
-    setRutaSeleccionada(ruta);
-    setConductorSeleccionado(ruta.conductorAsignado || '');
-    setHorario(ruta.horario || '');
-    setModalAsignar(true);
+  const abrirModalNueva = () => {
+    setNombre('');
+    setCalle('');
+    setColonia('');
+    setDireccionesTexto('');
+    setColor('#2196F3');
+    setModalNuevaRuta(true);
   };
 
-  const handleAsignarConductor = async () => {
-    if (!conductorSeleccionado || !horario) {
-      Alert.alert('Error', 'Selecciona un conductor y horario');
+  const abrirModalEditar = (ruta: RutaData) => {
+    setRutaSeleccionada(ruta);
+    setNombre(ruta.nombre);
+    setCalle(ruta.calle || '');
+    setColonia(ruta.colonia || '');
+    setDireccionesTexto(ruta.direcciones?.join('\n') || '');
+    setColor(ruta.color || '#2196F3');
+    setModalEditarRuta(true);
+  };
+
+  const handleCrearRuta = async () => {
+    if (!nombre || !calle || !colonia) {
+      Alert.alert('Error', 'Completa todos los campos obligatorios');
       return;
     }
 
-    if (!rutaSeleccionada?.id) return;
+    const direcciones = direccionesTexto
+      .split('\n')
+      .map(d => d.trim())
+      .filter(d => d.length > 0);
 
-    const resultado = await firebaseService.asignarConductorARuta(
-      rutaSeleccionada.id,
-      conductorSeleccionado,
-      horario
-    );
-
-    if (resultado.success) {
-      Alert.alert('Éxito', resultado.message);
-      setModalAsignar(false);
-      cargarDatos();
-    } else {
-      Alert.alert('Error', resultado.message);
+    try {
+      await firebaseService.createRuta({
+        nombre,
+        calle,
+        colonia,
+        direcciones: direcciones.length > 0 ? direcciones : [calle + ', ' + colonia],
+        color,
+        estado: 'inactiva',
+      });
+      
+      Alert.alert('Éxito', 'Ruta creada correctamente');
+      setModalNuevaRuta(false);
+      cargarRutas();
+    } catch (error: any) {
+      Alert.alert('Error', 'No se pudo crear la ruta');
     }
+  };
+
+  const handleActualizarRuta = async () => {
+    if (!rutaSeleccionada || !nombre || !calle || !colonia) {
+      Alert.alert('Error', 'Completa todos los campos obligatorios');
+      return;
+    }
+
+    const direcciones = direccionesTexto
+      .split('\n')
+      .map(d => d.trim())
+      .filter(d => d.length > 0);
+
+    try {
+      await firebaseService.updateRuta(rutaSeleccionada.id!, {
+        nombre,
+        calle,
+        colonia,
+        direcciones: direcciones.length > 0 ? direcciones : [calle + ', ' + colonia],
+        color,
+      });
+      
+      Alert.alert('Éxito', 'Ruta actualizada correctamente');
+      setModalEditarRuta(false);
+      cargarRutas();
+    } catch (error: any) {
+      Alert.alert('Error', 'No se pudo actualizar la ruta');
+    }
+  };
+
+  const handleEliminarRuta = (ruta: RutaData) => {
+    Alert.alert(
+      'Eliminar Ruta',
+      `¿Estás seguro de eliminar la ruta "${ruta.nombre}"?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await firebaseService.deleteRuta(ruta.id!);
+              Alert.alert('Éxito', 'Ruta eliminada');
+              cargarRutas();
+            } catch (error: any) {
+              Alert.alert('Error', 'No se pudo eliminar la ruta');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleOptimizarRuta = async (ruta: RutaData) => {
+    if (!ruta.direcciones || ruta.direcciones.length < 2) {
+      Alert.alert('Error', 'La ruta debe tener al menos 2 direcciones');
+      return;
+    }
+
+    Alert.alert(
+      'Optimizar Ruta',
+      `¿Deseas optimizar la ruta "${ruta.nombre}" para reducir distancias?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Optimizar',
+          onPress: async () => {
+            try {
+              const rutaOptimizada = await optimizeRoute(ruta.direcciones!);
+              
+              await firebaseService.updateRuta(ruta.id!, {
+                direcciones: rutaOptimizada,
+              });
+              
+              Alert.alert('Éxito', 'Ruta optimizada correctamente');
+              cargarRutas();
+            } catch (error: any) {
+              Alert.alert('Error', 'No se pudo optimizar la ruta');
+            }
+          },
+        },
+      ]
+    );
   };
 
   if (isLoading) {
@@ -133,9 +239,15 @@ export default function AdminRutasScreen() {
               {rutas.length} ruta{rutas.length !== 1 ? 's' : ''} registrada{rutas.length !== 1 ? 's' : ''}
             </ThemedText>
           </View>
+          <TouchableOpacity
+            style={[styles.button, { paddingHorizontal: 16, paddingVertical: 10 }]}
+            onPress={abrirModalNueva}
+          >
+            <Ionicons name="add" size={20} color="#FFF" />
+          </TouchableOpacity>
         </View>
 
-        {/* Botón asignación automática */}
+        {/* Botón crear rutas automáticamente */}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: '#2196F3', marginBottom: 16 }]}
           onPress={handleAsignarAutomaticamente}
@@ -147,7 +259,7 @@ export default function AdminRutasScreen() {
             <>
               <Ionicons name="git-network" size={20} color="#FFF" />
               <ThemedText style={[styles.buttonText, { marginLeft: 8 }]}>
-                Asignar Rutas Automáticamente
+                Crear Rutas Automáticamente
               </ThemedText>
             </>
           )}
@@ -165,12 +277,12 @@ export default function AdminRutasScreen() {
 
           <View style={[styles.card, styles.gridItem]}>
             <View style={[styles.iconBadge, { backgroundColor: '#4CAF50' }]}>
-              <Ionicons name="checkmark-circle" size={24} color="#FFF" />
+              <Ionicons name="people" size={24} color="#FFF" />
             </View>
             <ThemedText style={styles.metricValue}>
-              {rutas.filter(r => r.conductorAsignado).length}
+              {rutas.reduce((sum, r) => sum + (r.usuariosCount || 0), 0)}
             </ThemedText>
-            <ThemedText style={styles.metricLabel}>Con Conductor</ThemedText>
+            <ThemedText style={styles.metricLabel}>Total Usuarios</ThemedText>
           </View>
         </View>
 
@@ -181,24 +293,26 @@ export default function AdminRutasScreen() {
 
         {rutas.length === 0 ? (
           <View style={styles.card}>
+            <Ionicons name="map-outline" size={48} color="#999" style={{ alignSelf: 'center', marginBottom: 8 }} />
             <ThemedText style={{ textAlign: 'center', opacity: 0.7 }}>
               No hay rutas registradas
             </ThemedText>
             <ThemedText style={{ textAlign: 'center', opacity: 0.5, fontSize: 12, marginTop: 8 }}>
-              Usa la asignación automática para crear rutas
+              Usa la creación automática o crea una manualmente
             </ThemedText>
           </View>
         ) : (
           rutas.map((ruta) => (
             <View key={ruta.id} style={[styles.card, { marginBottom: 12 }]}>
+              {/* Header de la ruta */}
               <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12 }}>
                 <View
                   style={{
                     width: 4,
-                    height: '100%',
                     backgroundColor: ruta.color || '#2196F3',
                     borderRadius: 2,
                     marginRight: 12,
+                    alignSelf: 'stretch',
                   }}
                 />
                 <View style={{ flex: 1 }}>
@@ -209,155 +323,280 @@ export default function AdminRutasScreen() {
                     📍 {ruta.calle}, {ruta.colonia}
                   </ThemedText>
 
-                  {/* Info del conductor */}
-                  {ruta.conductorAsignado ? (
+                  {/* Información de la ruta */}
+                  <View style={{ flexDirection: 'row', gap: 16, marginBottom: 8 }}>
+                    <View>
+                      <ThemedText style={{ fontSize: 11, opacity: 0.5, marginBottom: 2 }}>DIRECCIONES</ThemedText>
+                      <ThemedText style={{ fontSize: 14 }}>
+                        {ruta.direcciones?.length || 0}
+                      </ThemedText>
+                    </View>
+                    <View>
+                      <ThemedText style={{ fontSize: 11, opacity: 0.5, marginBottom: 2 }}>USUARIOS</ThemedText>
+                      <ThemedText style={{ fontSize: 14 }}>
+                        {ruta.usuariosCount || 0}
+                      </ThemedText>
+                    </View>
+                    <View>
+                      <ThemedText style={{ fontSize: 11, opacity: 0.5, marginBottom: 2 }}>ESTADO</ThemedText>
+                      <ThemedText style={{ fontSize: 14 }}>
+                        {ruta.estado || 'inactiva'}
+                      </ThemedText>
+                    </View>
+                  </View>
+
+                  {/* Conductor asignado */}
+                  {ruta.conductorNombre && (
                     <View
                       style={{
                         backgroundColor: isDarkMode ? 'rgba(76,175,80,0.2)' : 'rgba(76,175,80,0.1)',
-                        padding: 12,
+                        padding: 8,
                         borderRadius: 8,
                         marginBottom: 8,
                       }}
                     >
-                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                        <Ionicons name="person" size={16} color="#4CAF50" />
-                        <ThemedText style={{ fontSize: 13, fontWeight: '600', marginLeft: 6 }}>
-                          {ruta.conductorNombre}
-                        </ThemedText>
-                      </View>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-                        <Ionicons name="car" size={16} color="#4CAF50" />
-                        <ThemedText style={{ fontSize: 12, opacity: 0.7, marginLeft: 6 }}>
-                          Unidad {ruta.unidad}
-                        </ThemedText>
-                      </View>
                       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Ionicons name="time" size={16} color="#4CAF50" />
-                        <ThemedText style={{ fontSize: 12, opacity: 0.7, marginLeft: 6 }}>
-                          {ruta.horario}
+                        <Ionicons name="person" size={14} color="#4CAF50" />
+                        <ThemedText style={{ fontSize: 12, marginLeft: 6 }}>
+                          Conductor: {ruta.conductorNombre}
                         </ThemedText>
                       </View>
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        backgroundColor: isDarkMode ? 'rgba(255,152,0,0.2)' : 'rgba(255,152,0,0.1)',
-                        padding: 12,
-                        borderRadius: 8,
-                        marginBottom: 8,
-                      }}
-                    >
-                      <ThemedText style={{ fontSize: 13, opacity: 0.7 }}>
-                        Sin conductor asignado
-                      </ThemedText>
                     </View>
                   )}
-
-                  {/* Info de usuarios */}
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Ionicons name="people" size={16} color={isDarkMode ? '#AAA' : '#666'} />
-                    <ThemedText style={{ fontSize: 12, opacity: 0.7, marginLeft: 6 }}>
-                      {ruta.usuariosCount || 0} usuario{ruta.usuariosCount !== 1 ? 's' : ''}
-                    </ThemedText>
-                  </View>
                 </View>
               </View>
 
-              {/* Botón asignar conductor */}
-              <TouchableOpacity
-                style={[styles.button, { backgroundColor: '#2196F3' }]}
-                onPress={() => abrirModalAsignar(ruta)}
-              >
-                <Ionicons name="person-add" size={16} color="#FFF" />
-                <ThemedText style={[styles.buttonText, { fontSize: 13, marginLeft: 6 }]}>
-                  {ruta.conductorAsignado ? 'Cambiar Conductor' : 'Asignar Conductor'}
-                </ThemedText>
-              </TouchableOpacity>
+              {/* Botones de acción */}
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    backgroundColor: isDarkMode ? '#2196F3' : '#2196F3',
+                    paddingVertical: 10,
+                    borderRadius: 8,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  onPress={() => handleOptimizarRuta(ruta)}
+                >
+                  <Ionicons name="git-compare" size={16} color="#FFF" />
+                  <ThemedText style={{ color: '#FFF', fontSize: 13, marginLeft: 6, fontWeight: '600' }}>
+                    Optimizar
+                  </ThemedText>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: isDarkMode ? '#333' : '#E0E0E0',
+                    paddingHorizontal: 12,
+                    paddingVertical: 10,
+                    borderRadius: 8,
+                  }}
+                  onPress={() => abrirModalEditar(ruta)}
+                >
+                  <Ionicons name="create-outline" size={16} color={isDarkMode ? '#FFF' : '#000'} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: isDarkMode ? 'rgba(244,67,54,0.2)' : 'rgba(244,67,54,0.1)',
+                    paddingHorizontal: 12,
+                    paddingVertical: 10,
+                    borderRadius: 8,
+                  }}
+                  onPress={() => handleEliminarRuta(ruta)}
+                >
+                  <Ionicons name="trash-outline" size={16} color="#F44336" />
+                </TouchableOpacity>
+              </View>
             </View>
           ))
         )}
       </ScrollView>
 
-      {/* Modal de asignación de conductor */}
-      <Modal
-        visible={modalAsignar}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setModalAsignar(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { maxHeight: '80%' }]}>
+      {/* Modal: Nueva Ruta */}
+      <Modal visible={modalNuevaRuta} animationType="slide" transparent>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
+          <View style={{
+            backgroundColor: isDarkMode ? '#1A1A1A' : '#FFF',
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+            padding: 20,
+            maxHeight: '85%',
+          }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <ThemedText style={[styles.sectionTitle, { margin: 0 }]}>Asignar Conductor</ThemedText>
-              <TouchableOpacity onPress={() => setModalAsignar(false)}>
-                <Ionicons name="close" size={24} color={isDarkMode ? '#FFF' : '#000'} />
+              <ThemedText style={{ fontSize: 20, fontWeight: 'bold' }}>
+                Nueva Ruta
+              </ThemedText>
+              <TouchableOpacity onPress={() => setModalNuevaRuta(false)}>
+                <Ionicons name="close" size={28} color={isDarkMode ? '#FFF' : '#000'} />
               </TouchableOpacity>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <ThemedText style={{ fontSize: 14, fontWeight: '600', marginBottom: 8 }}>
-                Ruta: {rutaSeleccionada?.nombre}
-              </ThemedText>
-              <ThemedText style={{ fontSize: 12, opacity: 0.7, marginBottom: 16 }}>
-                {rutaSeleccionada?.calle}, {rutaSeleccionada?.colonia}
-              </ThemedText>
+            <ScrollView>
+              <View style={[styles.card, { backgroundColor: isDarkMode ? '#2A2A2A' : '#F5F5F5' }]}>
+                <ThemedText style={styles.label}>Nombre de la Ruta *</ThemedText>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ej: Ruta Centro, Ruta Norte"
+                  placeholderTextColor={isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'}
+                  value={nombre}
+                  onChangeText={setNombre}
+                />
 
-              <ThemedText style={styles.label}>Conductor</ThemedText>
-              <View style={{ marginBottom: 16 }}>
-                {conductores.map((conductor) => (
-                  <TouchableOpacity
-                    key={conductor.uid}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      padding: 12,
-                      backgroundColor:
-                        conductorSeleccionado === conductor.uid
-                          ? isDarkMode
-                            ? 'rgba(33,150,243,0.3)'
-                            : 'rgba(33,150,243,0.1)'
-                          : isDarkMode
-                          ? '#2a2a2a'
-                          : '#f5f5f5',
-                      borderRadius: 8,
-                      marginBottom: 8,
-                      borderWidth: conductorSeleccionado === conductor.uid ? 2 : 0,
-                      borderColor: '#2196F3',
-                    }}
-                    onPress={() => setConductorSeleccionado(conductor.uid)}
-                  >
-                    <View style={[styles.iconBadge, { backgroundColor: '#4CAF50', marginRight: 12, width: 36, height: 36 }]}>
-                      <Ionicons name="person" size={18} color="#FFF" />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <ThemedText style={{ fontSize: 14, fontWeight: '600' }}>
-                        {conductor.nombre}
-                      </ThemedText>
-                      <ThemedText style={{ fontSize: 12, opacity: 0.7 }}>
-                        Unidad {conductor.unidad}
-                      </ThemedText>
-                    </View>
-                    {conductorSeleccionado === conductor.uid && (
-                      <Ionicons name="checkmark-circle" size={24} color="#2196F3" />
-                    )}
-                  </TouchableOpacity>
-                ))}
+                <ThemedText style={styles.label}>Calle Principal *</ThemedText>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ej: Av. Principal"
+                  placeholderTextColor={isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'}
+                  value={calle}
+                  onChangeText={setCalle}
+                />
+
+                <ThemedText style={styles.label}>Colonia *</ThemedText>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Ej: Centro"
+                  placeholderTextColor={isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'}
+                  value={colonia}
+                  onChangeText={setColonia}
+                />
+
+                <ThemedText style={styles.label}>Direcciones (una por línea)</ThemedText>
+                <TextInput
+                  style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
+                  placeholder="Calle 1&#10;Calle 2&#10;Calle 3"
+                  placeholderTextColor={isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'}
+                  value={direccionesTexto}
+                  onChangeText={setDireccionesTexto}
+                  multiline
+                />
+
+                <ThemedText style={styles.label}>Color</ThemedText>
+                <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
+                  {coloresDisponibles.map((c) => (
+                    <TouchableOpacity
+                      key={c}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 20,
+                        backgroundColor: c,
+                        borderWidth: color === c ? 3 : 0,
+                        borderColor: '#FFF',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.2,
+                        shadowRadius: 3,
+                        elevation: 3,
+                      }}
+                      onPress={() => setColor(c)}
+                    />
+                  ))}
+                </View>
               </View>
 
-              <ThemedText style={styles.label}>Horario</ThemedText>
-              <TextInput
-                style={styles.input}
-                placeholder="Ej: 08:00 - 12:00"
-                placeholderTextColor={isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'}
-                value={horario}
-                onChangeText={setHorario}
-              />
+              <TouchableOpacity
+                style={[styles.button, { marginTop: 16, backgroundColor: '#2196F3' }]}
+                onPress={handleCrearRuta}
+              >
+                <Ionicons name="checkmark-circle" size={20} color="#FFF" />
+                <ThemedText style={[styles.buttonText, { marginLeft: 8 }]}>Crear Ruta</ThemedText>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal: Editar Ruta */}
+      <Modal visible={modalEditarRuta} animationType="slide" transparent>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
+          <View style={{
+            backgroundColor: isDarkMode ? '#1A1A1A' : '#FFF',
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+            padding: 20,
+            maxHeight: '85%',
+          }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <ThemedText style={{ fontSize: 20, fontWeight: 'bold' }}>
+                Editar Ruta
+              </ThemedText>
+              <TouchableOpacity onPress={() => setModalEditarRuta(false)}>
+                <Ionicons name="close" size={28} color={isDarkMode ? '#FFF' : '#000'} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView>
+              <View style={[styles.card, { backgroundColor: isDarkMode ? '#2A2A2A' : '#F5F5F5' }]}>
+                <ThemedText style={styles.label}>Nombre de la Ruta</ThemedText>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Nombre de la ruta"
+                  placeholderTextColor={isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'}
+                  value={nombre}
+                  onChangeText={setNombre}
+                />
+
+                <ThemedText style={styles.label}>Calle Principal</ThemedText>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Calle principal"
+                  placeholderTextColor={isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'}
+                  value={calle}
+                  onChangeText={setCalle}
+                />
+
+                <ThemedText style={styles.label}>Colonia</ThemedText>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Colonia"
+                  placeholderTextColor={isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'}
+                  value={colonia}
+                  onChangeText={setColonia}
+                />
+
+                <ThemedText style={styles.label}>Direcciones (una por línea)</ThemedText>
+                <TextInput
+                  style={[styles.input, { height: 100, textAlignVertical: 'top' }]}
+                  placeholder="Una dirección por línea"
+                  placeholderTextColor={isDarkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.4)'}
+                  value={direccionesTexto}
+                  onChangeText={setDireccionesTexto}
+                  multiline
+                />
+
+                <ThemedText style={styles.label}>Color</ThemedText>
+                <View style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
+                  {coloresDisponibles.map((c) => (
+                    <TouchableOpacity
+                      key={c}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 20,
+                        backgroundColor: c,
+                        borderWidth: color === c ? 3 : 0,
+                        borderColor: '#FFF',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.2,
+                        shadowRadius: 3,
+                        elevation: 3,
+                      }}
+                      onPress={() => setColor(c)}
+                    />
+                  ))}
+                </View>
+              </View>
 
               <TouchableOpacity
                 style={[styles.button, { marginTop: 16 }]}
-                onPress={handleAsignarConductor}
+                onPress={handleActualizarRuta}
               >
-                <ThemedText style={styles.buttonText}>Asignar Conductor</ThemedText>
+                <Ionicons name="save" size={20} color="#FFF" />
+                <ThemedText style={[styles.buttonText, { marginLeft: 8 }]}>Guardar Cambios</ThemedText>
               </TouchableOpacity>
             </ScrollView>
           </View>

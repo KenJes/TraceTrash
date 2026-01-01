@@ -231,7 +231,8 @@ export default function ReportarScreen() {
 				descripcion: descripcion.trim(),
 				ubicacion: ubicacion || 'No especificada',
 				imagenes: [], // Sin imágenes por ahora
-				usuarioId: user.email,
+				usuarioId: user.uid,  // UID de Firebase Auth
+				usuarioEmail: user.email,  // Email del usuario
 				usuarioNombre: user.nombre,
 				usuarioRol: user.rol || 'residente',
 				estado: 'pendiente',

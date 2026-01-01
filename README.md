@@ -1,442 +1,217 @@
 # 🚛 TraceTrash - Sistema de Rastreo de Recolección de Basura
 
+[![Expo](https://img.shields.io/badge/Expo-~54.0-blue.svg)](https://expo.dev/)
+[![React Native](https://img.shields.io/badge/React_Native-0.81-61DAFB.svg)](https://reactnative.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-12.6-orange.svg)](https://firebase.google.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
+
 ## 📋 Descripción
 
-TraceTrash es una aplicación móvil desarrollada con **React Native + Expo** que permite a los usuarios rastrear en tiempo real la ubicación de los camiones recolectores de basura, recibir notificaciones cuando el camión está cerca, y reportar incidencias. El sistema incluye paneles administrativos para gestionar rutas, conductores, reportes y métricas operativas.
+Aplicación móvil y web para rastreo en tiempo real de camiones recolectores de basura, gestión de rutas, conductores, y reportes de incidencias. Construida con React Native + Expo y Firebase.
 
-## 🎯 Características Principales
+## 🎯 Características
 
-### Para Usuarios (Residentes)
-- ✅ **Rastreo en tiempo real** del camión de basura en su ruta
-- ✅ **Notificaciones push** cuando el camión está cerca (<100m)
-- ✅ **Reporte de incidencias** con descripción y ubicación GPS
-- ✅ **Historial de reportes** con estado y prioridad
-- ✅ **Mapa interactivo** con ubicación del camión
+### 👥 Usuarios (Residentes)
+- 🗺️ Rastreo en tiempo real del camión
+- 🔔 Notificaciones push cuando el camión está cerca
+- 📝 Reportar incidencias
+- 📊 Historial de reportes
 
-### Para Conductores
-- ✅ **GPS tracking automático** de su ruta
-- ✅ **Inicio/Pausa/Finalización** de ruta con un botón
-- ✅ **Notificaciones automáticas** a usuarios cuando inicia/finaliza
-- ✅ **Vista de su ruta asignada** con direcciones
+### 🚛 Conductores
+- 📍 GPS tracking automático
+- ▶️ Control de ruta (iniciar/pausar/finalizar)
+- 🔔 Notificaciones automáticas a usuarios
 
-### Para Administradores
-- ✅ **Dashboard con métricas** (reportes, conductores activos, usuarios)
-- ✅ **Mapa en tiempo real** de todos los camiones activos (OpenStreetMaps)
-- ✅ **Gestión de conductores** (crear, asignar rutas, activar/desactivar)
-- ✅ **Gestión de rutas** con optimización automática de direcciones
-- ✅ **Gestión de reportes** (cambiar estado, prioridad)
-- ✅ **Métricas operativas** (gráficas, estadísticas)
+### 👨‍💼 Administradores
+- 📈 Dashboard con métricas
+- 🗺️ Mapa con todos los camiones (OpenStreetMap)
+- 👥 Gestión de conductores y rutas
+- 📊 Gestión de reportes y métricas
 
-## 🏗️ Arquitectura Técnica
+## 🏗️ Stack Tecnológico
 
-### Stack Tecnológico
 - **Frontend:** React Native + Expo Router 6 + TypeScript
-- **Backend:** Firebase (Firestore, Auth) - **Plan Spark (Gratuito)**
-- **Notificaciones:** Expo Push Notification API (gratuito)
-- **Mapas:** React Native Maps + OpenStreetMaps
-- **GPS:** Expo Location API
-- **Build:** EAS Build (para generar APK/IPA)
+- **Backend:** Firebase (Firestore + Auth) - Plan Gratuito
+- **Mapas:** React Native Maps + OpenStreetMap + Leaflet (web)
+- **Notificaciones:** Expo Push Notifications
+- **Build:** EAS Build
 
-### Estructura del Proyecto
+## 🚀 Inicio Rápido
+
+### Prerrequisitos
+```bash
+Node.js 20+
+npm o yarn
+Expo CLI
+```
+
+### Instalación
+
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/KenJes/TraceTrash.git
+cd Trace
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus credenciales de Firebase
+
+# 4. Iniciar desarrollo
+npm start
+```
+
+### Comandos Disponibles
+
+```bash
+npm start          # Iniciar dev server
+npm run android    # Correr en Android
+npm run ios        # Correr en iOS
+npm run web        # Correr en navegador
+```
+
+## 📂 Estructura del Proyecto
 
 ```
 TraceTrash/
-├── app/                          # Pantallas (Expo Router)
-│   ├── _layout.tsx              # Layout principal con navegación
-│   ├── login.tsx                # Pantalla de login
-│   ├── register.tsx             # Registro de usuarios
-│   ├── detalle-reporte.tsx      # Detalle de un reporte
-│   ├── (tabs)/                  # Tabs para usuarios/conductores
-│   │   ├── index.tsx            # Mapa de rastreo (usuarios)
-│   │   ├── conductor-index.tsx  # Panel del conductor
-│   │   ├── reportar.tsx         # Formulario de reportes
-│   │   ├── reportes.tsx         # Historial de reportes
-│   │   └── ajustes.tsx          # Configuración
-│   └── (admin)/                 # Tabs para administradores
-│       ├── admin-index.tsx      # Dashboard con mapa
-│       ├── admin-conductores.tsx # Gestión de conductores
-│       ├── admin-rutas.tsx      # Gestión de rutas
-│       ├── admin-reportes.tsx   # Gestión de reportes
-│       └── admin-metricas.tsx   # Métricas y gráficas
-│
-├── services/                     # Servicios centralizados
-│   ├── firebase.ts              # CRUD Firestore (usuarios, rutas, reportes)
-│   ├── firebaseconfig.ts        # Configuración de Firebase
-│   ├── location.ts              # Tracking GPS + notificaciones de proximidad
-│   ├── notification-service.ts  # Notificaciones push (cliente)
-│   └── route-optimizer.ts       # Optimización de rutas
-│
-├── components/                   # Componentes reutilizables
-│   ├── auth-context.tsx         # Context de autenticación
-│   ├── theme-context.tsx        # Context de tema (dark/light)
-│   ├── map-view.tsx             # Componente de mapa
-│   └── ui/                      # Componentes UI
-│
-├── hooks/                        # Custom hooks
-│   ├── use-push-notifications.ts # Registro automático de notificaciones
-│   └── use-color-scheme.ts      # Hook de tema
-│
-├── constants/                    # Constantes globales
-│   └── theme.ts                 # Colores y estilos
-│
-└── assets/                       # Imágenes y recursos estáticos
+├── app/                      # Pantallas (Expo Router)
+│   ├── (tabs)/              # Usuario/Conductor
+│   ├── (admin)/             # Administrador
+│   ├── login.tsx
+│   └── register.tsx
+├── services/                 # Servicios
+│   ├── firebase.ts          # CRUD Firestore
+│   ├── location.ts          # GPS tracking
+│   └── notification-service.* # Notificaciones
+├── components/               # Componentes reutilizables
+├── hooks/                    # Custom hooks
+└── constants/                # Constantes globales
 ```
 
-### Base de Datos (Firestore)
+## 🔥 Firebase Setup
 
-#### Colecciones:
+### 1. Crear Proyecto Firebase
+1. Ve a [Firebase Console](https://console.firebase.google.com/)
+2. Crea un proyecto nuevo
+3. Activa **Firestore Database** (modo producción)
+4. Activa **Authentication** → Email/Password
 
-**`usuarios`**
-```typescript
-{
-  uid: string,
-  nombre: string,
-  email: string,
-  rol: 'residente' | 'conductor' | 'admin',
-  direccion?: string,
-  telefono?: string,
-  rutaId?: string,        // Ruta asignada
-  unidad?: string,        // Unidad del camión (conductores)
-  pushToken?: string,     // Token de notificaciones
-  activo: boolean,        // Si el conductor está activo
-  createdAt: Timestamp
-}
-```
+### 2. Configurar Reglas de Firestore
 
-**`rutas`**
-```typescript
-{
-  id: string,
-  nombre: string,
-  direcciones: string[],   // Array de direcciones
-  conductorId?: string,    // Conductor asignado
-  estado: 'activa' | 'pausada' | 'finalizada' | 'inactiva',
-  createdAt: Timestamp
-}
-```
+Copia las reglas de [`firestore.rules`](./firestore.rules) a tu proyecto Firebase:
 
-**`ubicaciones`**
-```typescript
-{
-  conductorId: string,
-  conductorNombre: string,
-  rutaId: string,
-  latitude: number,
-  longitude: number,
-  heading?: number,        // Dirección del camión
-  unidad: string,
-  timestamp: Timestamp
-}
-```
-
-**`incidencias`**
-```typescript
-{
-  id: string,
-  usuarioId: string,
-  usuarioNombre: string,
-  tipo: 'falta_recoleccion' | 'acumulacion' | 'dano_contenedor' | 'otro',
-  descripcion: string,
-  direccion: string,
-  latitude: number,
-  longitude: number,
-  prioridad: 'baja' | 'media' | 'alta',
-  estado: 'pendiente' | 'en_proceso' | 'resuelto',
-  createdAt: Timestamp,
-  updatedAt: Timestamp
-}
-```
-
-## 🚀 Instalación y Configuración
-
-### Prerrequisitos
-- Node.js 18+ instalado
-- Cuenta de Expo (gratuita): https://expo.dev/
-- Proyecto de Firebase creado (plan Spark gratuito)
-- Android Studio (para emulador) o dispositivo físico
-
-### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/KenJes/TraceTrash.git
-cd TraceTrash
+firebase deploy --only firestore:rules
 ```
 
-### 2. Instalar dependencias
-```bash
-npm install
-```
+### 3. Índices de Firestore
 
-### 3. Configurar Firebase
+Si ves errores de índices, copia el enlace del error en tu navegador y Firebase creará el índice automáticamente.
 
-#### a) Crear proyecto en Firebase Console
-1. Ve a https://console.firebase.google.com/
-2. Crea un nuevo proyecto (usar plan Spark - gratuito)
-3. Habilita **Authentication** → Método de Email/Password
-4. Habilita **Firestore Database** → Modo de prueba
+## 📱 Build para Producción
 
-#### b) Obtener credenciales
-1. En Firebase Console → ⚙️ Configuración del proyecto
-2. Agrega una app Web (icono </> )
-3. Copia las credenciales (apiKey, authDomain, etc.)
+Ver guía completa en [DEPLOY.md](./DEPLOY.md)
 
-#### c) Configurar en el proyecto
-Edita `services/firebaseconfig.ts` con tus credenciales:
-
-```typescript
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "tu-proyecto.firebaseapp.com",
-  projectId: "tu-proyecto-id",
-  storageBucket: "tu-proyecto.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abc123"
-};
-```
-
-#### d) Configurar Google Services (Android)
-1. Descarga `google-services.json` desde Firebase Console
-2. Colócalo en la raíz del proyecto: `TraceTrash/google-services.json`
-
-### 4. Configurar EAS (para builds)
+### Android APK (Rápido)
 
 ```bash
 npm install -g eas-cli
 eas login
-eas build:configure
+eas build --platform android
 ```
 
-Esto creará `eas.json` con la configuración de builds.
-
-### 5. Iniciar en desarrollo
-
-**⚠️ IMPORTANTE: Notificaciones Push en SDK 53+**
-
-Las notificaciones push ya no funcionan en **Expo Go** desde el SDK 53. Tienes dos opciones:
-
-#### Opción A: Desarrollo sin notificaciones (Expo Go)
-```bash
-npx expo start
-
-# Luego:
-# - Presiona 'a' para Android
-# - Escanea QR con Expo Go
-# ⚠️ Las notificaciones NO funcionarán, pero todo lo demás sí
-```
-
-#### Opción B: Build de desarrollo con notificaciones (Recomendado)
-```bash
-# 1. Crear build de desarrollo
-eas build --profile development --platform android
-
-# 2. Instalar APK en tu dispositivo físico
-# 3. Iniciar con:
-npx expo start --dev-client
-
-# ✅ Las notificaciones SÍ funcionarán
-```
-
-Para más info: https://docs.expo.dev/develop/development-builds/introduction/
-
-### 6. Crear usuario administrador inicial
-
-Ejecuta el script para crear el primer admin:
+### Web Deploy (Rápido)
 
 ```bash
-npx ts-node scripts/registrarAdmin.ts
+npx expo export --platform web
+vercel  # o netlify deploy
 ```
 
-Credenciales del admin creado:
-- **Email:** admin@tracetrash.com
-- **Contraseña:** Admin123!
+## 🔐 Seguridad
 
-## 📱 Generar APK para Android
+- ✅ Variables de entorno para credenciales
+- ✅ Reglas de Firestore estrictas
+- ✅ Autenticación Firebase requerida
+- ✅ No hay API keys hardcodeadas
 
-### Build de Desarrollo (APK)
-```bash
-eas build --profile development --platform android
-```
+## 📊 Colecciones Firebase
 
-### Build de Producción (AAB para Google Play)
-```bash
-eas build --profile production --platform android
-```
-
-El APK se descarga desde https://expo.dev/accounts/[tu-cuenta]/projects/tracetrash/builds
-
-## 🔔 Sistema de Notificaciones
-
-### Arquitectura (Sin Cloud Functions)
-
-El sistema usa **notificaciones del lado del cliente** para evitar el plan Blaze de Firebase:
-
-1. **Registro de tokens:**
-   - Hook `use-push-notifications.ts` se ejecuta al login
-   - Obtiene token de Expo Push API
-   - Guarda `pushToken` en Firestore (colección `usuarios`)
-
-2. **Envío de notificaciones:**
-   - `notification-service.ts` llama directamente a Expo Push API
-   - No requiere Cloud Functions (ahorro de costos)
-   - Se ejecuta desde el dispositivo del conductor
-
-3. **Tipos de notificaciones:**
-   - **Ruta iniciada:** Cuando conductor presiona "Iniciar Ruta"
-   - **Camión cerca:** Cuando camión está a <100m del usuario
-   - **Ruta finalizada:** Cuando conductor termina el servicio
-
-### Flujo de notificaciones:
-
-```
-Conductor inicia ruta
-    ↓
-conductor-index.tsx → notifyRutaIniciada()
-    ↓
-notification-service.ts → consulta Firestore (usuarios con rutaId)
-    ↓
-Expo Push API → envía notificaciones
-    ↓
-Usuarios reciben: "🚛 Camión en camino"
-```
-
-## 🗺️ Sistema de Tracking GPS
-
-### Funcionamiento:
-
-1. **Conductor inicia ruta** → `location.ts` activa GPS
-2. **Cada 10 segundos** → guarda ubicación en Firestore (`ubicaciones`)
-3. **Usuarios ven mapa** → lee ubicaciones en tiempo real
-4. **Proximidad** → calcula distancia, si <100m → notifica
-
-### Configuración de precisión:
-
+### `users`
 ```typescript
-// services/location.ts
 {
-  accuracy: Location.Accuracy.High,       // GPS de alta precisión
-  timeInterval: 10000,                    // 10 segundos
-  distanceInterval: 20,                   // O 20 metros de movimiento
+  uid: string
+  nombre: string
+  email: string
+  rol: 'residente' | 'conductor' | 'admin'
+  direccion?: string
+  rutaId?: string
+  pushToken?: string
 }
 ```
 
-## 🔐 Roles y Permisos
-
-### Residente (`rol: 'residente'`)
-- Ver mapa de camión
-- Recibir notificaciones
-- Reportar incidencias
-- Ver historial de reportes propios
-
-### Conductor (`rol: 'conductor'`)
-- Iniciar/pausar/finalizar ruta
-- Compartir ubicación GPS
-- Ver ruta asignada
-- Enviar notificaciones automáticas
-
-### Administrador (`rol: 'admin'`)
-- Dashboard completo
-- Gestionar conductores
-- Gestionar rutas
-- Gestionar reportes
-- Ver métricas operativas
-- Mapa de todos los camiones
-
-## 📊 Métricas y Reportes
-
-### Dashboard Admin incluye:
-- Total de reportes
-- Reportes pendientes
-- Reportes urgentes
-- Total de usuarios
-- Conductores activos
-- Mapa en tiempo real de camiones
-
-### Gráficas disponibles:
-- Reportes por estado (pendiente, en proceso, resuelto)
-- Reportes por tipo (falta recolección, acumulación, etc.)
-- Reportes por prioridad (baja, media, alta)
-- Tendencia de reportes en el tiempo
-
-## 🛠️ Comandos Útiles
-
-```bash
-# Desarrollo
-npx expo start                    # Iniciar servidor dev
-npx expo start --clear            # Limpiar cache
-
-# Builds
-eas build --platform android      # Build Android
-eas build --platform ios          # Build iOS
-eas build --profile production    # Build de producción
-
-# Linting
-npm run lint                      # Verificar código
-
-# Actualizar dependencias
-npx expo install --fix            # Actualizar a versiones compatibles
+### `rutas`
+```typescript
+{
+  id: string
+  nombre: string
+  direcciones: string[]
+  color: string
+  conductorAsignado?: string
+}
 ```
 
-## 🐛 Solución de Problemas
-
-### Error: "expo-notifications was removed from Expo Go"
-**Causa:** Desde SDK 53, las notificaciones requieren un build de desarrollo.
-
-**Solución:**
-```bash
-# Opción 1: Usar sin notificaciones en Expo Go (para testing rápido)
-npx expo start
-# Las notificaciones no funcionarán pero el resto de la app sí
-
-# Opción 2: Crear build de desarrollo (RECOMENDADO)
-eas build --profile development --platform android
-# Instalar el APK generado
-npx expo start --dev-client
+### `incidencias`
+```typescript
+{
+  id: string
+  tipoIncidencia: string
+  descripcion: string
+  ubicacion: string
+  usuarioId: string
+  estado: 'pendiente' | 'en_proceso' | 'resuelta'
+  createdAt: timestamp
+}
 ```
 
-### Error: "No push token"
-**Solución:** Las notificaciones solo funcionan:
-- En dispositivos físicos (no emuladores)
-- Con un build de desarrollo (no Expo Go en SDK 53+)
+## 🐛 Troubleshooting
 
-### Error: "Firebase not initialized"
-**Solución:** Verifica que `google-services.json` esté en la raíz del proyecto.
+### "Missing or insufficient permissions"
+→ Actualiza las reglas de Firestore desde `firestore.rules`
 
-### Error: "Location permission denied"
-**Solución:** Ve a Ajustes del dispositivo → Permisos → Ubicación → Permitir siempre.
+### "The query requires an index"
+→ Copia el enlace del error y ábrelo en el navegador para crear el índice
 
-### El mapa no carga
-**Solución:** En web no funciona react-native-maps. Usa dispositivo móvil o emulador.
+### "localStorage is not a function"
+→ Ya resuelto con archivos `.web.ts` y `.native.ts` separados
 
-### No recibe notificaciones
-**Solución:**
-1. Verifica que el usuario tenga `pushToken` en Firestore
-2. Revisa que el `projectId` en `app.json` sea correcto
-3. Asegúrate de tener `google-services.json` configurado
+## 📝 Roadmap
 
-## 💰 Costos y Limitaciones
-
-### Plan Spark de Firebase (Gratuito):
-- ✅ **Firestore:** 50K lecturas/día, 20K escrituras/día
-- ✅ **Authentication:** Ilimitado
-- ✅ **Hosting:** 10 GB almacenamiento
-- ❌ **Storage:** Deshabilitado (requiere plan Blaze)
-- ❌ **Cloud Functions:** Deshabilitado (requiere plan Blaze)
-
-### Expo Push Notifications:
-- ✅ **Gratis:** Sin límite de notificaciones
-- ✅ **API directa:** No requiere backend
-
-### Nota importante:
-Este proyecto fue optimizado para funcionar **100% en el plan gratuito** de Firebase. Las funcionalidades que requerían plan Blaze (Storage, Cloud Functions) fueron reemplazadas por alternativas gratuitas.
-
-## 📞 Soporte
-
-Para reportar bugs o sugerencias:
-- GitHub Issues: https://github.com/KenJes/TraceTrash/issues
+- [ ] Subida de imágenes en reportes (requiere Storage)
+- [ ] Gráficas avanzadas con estadísticas
+- [ ] Exportación de reportes a PDF
+- [ ] Integración con Google Maps (alternativa)
+- [ ] App iOS
 
 ## 📄 Licencia
 
-Este proyecto es privado y propietario. Todos los derechos reservados.
+MIT License - Ver [LICENSE](LICENSE) para más detalles
+
+## 👨‍💻 Autor
+
+**Kenneth Alcalá**
+- GitHub: [@KenJes](https://github.com/KenJes)
+- Email: kenneth.alcala@gmail.com
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea tu rama (`git checkout -b feature/AmazingFeature`)
+3. Commit cambios (`git commit -m 'Add: AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
 ---
 
-**Desarrollado con ❤️ usando React Native + Expo + Firebase**
+⭐ Si te gusta el proyecto, dale una estrella en GitHub!

@@ -42,6 +42,10 @@ fcm-key.json
 # typescript
 *.tsbuildinfo
 
+# Old/Backup files
+*.old.*
+README.old.md
+
 # Documentation (optional - descomentar si no quieres subirlos)
 # CAMBIOS_*.md
 # SISTEMA_*.md

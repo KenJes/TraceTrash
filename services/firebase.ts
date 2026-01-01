@@ -1,4 +1,4 @@
-import { auth, db } from '@/services/firebaseconfig'; // storage comentado
+import { auth, db } from '@/services/firebaseconfig';
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
@@ -20,7 +20,6 @@ import {
     where
 } from 'firebase/firestore';
 import { agruparDireccionesSimilares, optimizarRutas } from './route-optimizer';
-// import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'; // Comentado
 
 export interface UserData {
   email: string;
@@ -83,7 +82,8 @@ export interface IncidenciaData {
   descripcion: string;
   ubicacion: string | null;
   imagenes: string[];
-  usuarioId: string;
+  usuarioId: string;  // UID de Firebase Auth
+  usuarioEmail?: string;  // Email del usuario
   usuarioNombre: string;
   usuarioRol: string;
   estado: 'pendiente' | 'en_proceso' | 'resuelta';
@@ -425,25 +425,42 @@ export const firebaseService = {
     }
   },
 
-  // Obtener incidencias de un usuario
-  getUserIncidencias: async (usuarioId: string): Promise<IncidenciaData[]> => {
+  // Obtener incidencias de un usuario (por UID o email)
+  getUserIncidencias: async (usuarioIdOrEmail: string): Promise<IncidenciaData[]> => {
     try {
-      console.log('📖 Obteniendo incidencias del usuario:', usuarioId);
+      console.log('📖 Obteniendo incidencias del usuario:', usuarioIdOrEmail);
       
-      const q = query(
+      // Query simple sin orderBy para evitar necesidad de índice compuesto
+      let q = query(
         collection(db, 'incidencias'),
-        where('usuarioId', '==', usuarioId),
-        orderBy('createdAt', 'desc')
+        where('usuarioId', '==', usuarioIdOrEmail)
       );
 
-      const querySnapshot = await getDocs(q);
-      const incidencias: IncidenciaData[] = [];
+      let querySnapshot = await getDocs(q);
+      
+      // Si no encontró por UID, intentar por email
+      if (querySnapshot.empty) {
+        console.log('📖 No se encontraron por UID, intentando por email...');
+        q = query(
+          collection(db, 'incidencias'),
+          where('usuarioEmail', '==', usuarioIdOrEmail)
+        );
+        querySnapshot = await getDocs(q);
+      }
 
+      const incidencias: IncidenciaData[] = [];
       querySnapshot.forEach((doc) => {
         incidencias.push({
           id: doc.id,
           ...doc.data(),
         } as IncidenciaData);
+      });
+
+      // Ordenar manualmente por fecha (más reciente primero)
+      incidencias.sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || new Date(0);
+        const dateB = b.createdAt?.toDate?.() || new Date(0);
+        return dateB.getTime() - dateA.getTime();
       });
 
       console.log('✅ Incidencias encontradas:', incidencias.length);
@@ -459,12 +476,8 @@ export const firebaseService = {
     try {
       console.log('📖 Obteniendo todas las incidencias');
       
-      const q = query(
-        collection(db, 'incidencias'),
-        orderBy('createdAt', 'desc')
-      );
-
-      const querySnapshot = await getDocs(q);
+      // Query simple sin orderBy
+      const querySnapshot = await getDocs(collection(db, 'incidencias'));
       const incidencias: IncidenciaData[] = [];
 
       querySnapshot.forEach((doc) => {
@@ -472,6 +485,13 @@ export const firebaseService = {
           id: doc.id,
           ...doc.data(),
         } as IncidenciaData);
+      });
+
+      // Ordenar manualmente por fecha (más reciente primero)
+      incidencias.sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || new Date(0);
+        const dateB = b.createdAt?.toDate?.() || new Date(0);
+        return dateB.getTime() - dateA.getTime();
       });
 
       console.log('✅ Total de incidencias:', incidencias.length);
@@ -842,6 +862,35 @@ export const firebaseService = {
     } catch (error: any) {
       console.error('Error al obtener ruta:', error);
       return null;
+    }
+  },
+
+  // Eliminar ruta
+  deleteRuta: async (rutaId: string): Promise<void> => {
+    try {
+      await deleteDoc(doc(db, 'rutas', rutaId));
+      
+      // Limpiar asignación de conductores
+      const conductoresQuery = query(
+        collection(db, 'users'),
+        where('rutaId', '==', rutaId)
+      );
+      const conductoresSnapshot = await getDocs(conductoresQuery);
+      
+      const updates: Promise<void>[] = [];
+      conductoresSnapshot.forEach((conductorDoc) => {
+        updates.push(
+          updateDoc(doc(db, 'users', conductorDoc.id), {
+            rutaId: null,
+            horarioRuta: null,
+          })
+        );
+      });
+      
+      await Promise.all(updates);
+    } catch (error: any) {
+      console.error('Error al eliminar ruta:', error);
+      throw new Error(error.message || 'Error al eliminar ruta');
     }
   },
 

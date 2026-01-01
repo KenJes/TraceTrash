@@ -28,7 +28,8 @@ export default function ReportesScreen() {
 		if (!user) return;
 		
 		try {
-			const data = await firebaseService.getUserIncidencias(user.email);
+			// Usar UID para cargar incidencias
+			const data = await firebaseService.getUserIncidencias(user.uid);
 			setIncidencias(data);
 		} catch (error: any) {
 			console.error('Error al cargar incidencias:', error);
@@ -174,35 +175,34 @@ export default function ReportesScreen() {
 					<View style={styles.grid}>
 						{incidencias.map((incidencia) => (
 							<TouchableOpacity 
-								key={incidencia.id} 
-								onPress={() => verDetalle(incidencia)}
-								style={[
-									styles.card,
-									styles.gridItem,
-									{ padding: 12 }
-								]}
-							>
-								{/* COMENTADO: Mostrar imagen (requiere Storage) */}
-								<View style={{
-									width: '100%',
-									height: 120,
-									borderRadius: 12,
-									marginBottom: 12,
-									backgroundColor: isDarkMode ? '#333' : '#f0f0f0',
-									justifyContent: 'center',
-									alignItems: 'center',
-								}}>
-									<Ionicons 
-										name="document-text-outline" 
-										size={40} 
-										color={isDarkMode ? '#666' : '#ccc'} 
-									/>
-									<ThemedText style={{ fontSize: 12, marginTop: 8, opacity: 0.6 }}>
-										Sin imagen
-									</ThemedText>
-								</View>
-
-								<View style={{
+						key={incidencia.id} 
+						onPress={() => verDetalle(incidencia)}
+						style={[
+							styles.card,
+							styles.gridItem,
+							{ padding: 12 }
+						]}
+					>
+						{/* COMENTADO: Mostrar imagen (requiere Storage)
+						<View style={{
+							width: '100%',
+							height: 120,
+							borderRadius: 12,
+							marginBottom: 12,
+							backgroundColor: isDarkMode ? '#333' : '#f0f0f0',
+							justifyContent: 'center',
+							alignItems: 'center',
+						}}>
+							<Ionicons 
+								name="document-text-outline" 
+								size={40} 
+								color={isDarkMode ? '#666' : '#ccc'} 
+							/>
+							<ThemedText style={{ fontSize: 12, marginTop: 8, opacity: 0.6 }}>
+								Sin imagen
+							</ThemedText>
+						</View>
+						*/}								<View style={{
 									backgroundColor: getEstadoColor(incidencia.estado),
 									paddingHorizontal: 8,
 									paddingVertical: 4,
