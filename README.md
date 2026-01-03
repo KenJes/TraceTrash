@@ -1,42 +1,39 @@
-# 🚛 TraceTrash - Sistema de Rastreo de Recolección de Basura
+# TraceTrash
 
-[![Expo](https://img.shields.io/badge/Expo-~54.0-blue.svg)](https://expo.dev/)
-[![React Native](https://img.shields.io/badge/React_Native-0.81-61DAFB.svg)](https://reactnative.dev/)
-[![Firebase](https://img.shields.io/badge/Firebase-12.6-orange.svg)](https://firebase.google.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
+Sistema de rastreo en tiempo real de recolección de basura con gestión de rutas, conductores y reportes de incidencias.
 
-## 📋 Descripción
+## Descripción
 
-Aplicación móvil y web para rastreo en tiempo real de camiones recolectores de basura, gestión de rutas, conductores, y reportes de incidencias. Construida con React Native + Expo y Firebase.
+Aplicación multiplataforma (Android, iOS, Web) que permite rastrear camiones recolectores en tiempo real, gestionar rutas y conductores, y reportar incidencias. Incluye tres roles de usuario: residentes, conductores y administradores.
 
-## 🎯 Características
+## Características
 
-### 👥 Usuarios (Residentes)
-- 🗺️ Rastreo en tiempo real del camión
-- 🔔 Notificaciones push cuando el camión está cerca
-- 📝 Reportar incidencias
-- 📊 Historial de reportes
+**Residentes**
+- Rastreo en tiempo real del camión asignado
+- Notificaciones push de proximidad
+- Reporte de incidencias con ubicación
+- Historial de reportes personales
 
-### 🚛 Conductores
-- 📍 GPS tracking automático
-- ▶️ Control de ruta (iniciar/pausar/finalizar)
-- 🔔 Notificaciones automáticas a usuarios
+**Conductores**
+- GPS tracking automático durante servicio
+- Control de ruta (iniciar/pausar/finalizar)
+- Notificación automática a usuarios en ruta
 
-### 👨‍💼 Administradores
-- 📈 Dashboard con métricas
-- 🗺️ Mapa con todos los camiones (OpenStreetMap)
-- 👥 Gestión de conductores y rutas
-- 📊 Gestión de reportes y métricas
+**Administradores**
+- Dashboard con métricas en tiempo real
+- Mapa con ubicación de todos los camiones
+- Gestión completa de conductores y rutas
+- Administración de reportes e incidencias
 
-## 🏗️ Stack Tecnológico
+## Stack Tecnológico
 
-- **Frontend:** React Native + Expo Router 6 + TypeScript
-- **Backend:** Firebase (Firestore + Auth) - Plan Gratuito
-- **Mapas:** React Native Maps + OpenStreetMap + Leaflet (web)
-- **Notificaciones:** Expo Push Notifications
-- **Build:** EAS Build
+- Frontend: React Native 0.81 + Expo SDK 54 + Expo Router 6 + TypeScript 5.3
+- Backend: Firebase (Firestore + Authentication)
+- Mapas: react-native-maps (móvil), react-leaflet + OpenStreetMap (web)
+- Notificaciones: Expo Push Notifications API
+- Build: EAS Build
 
-## 🚀 Inicio Rápido
+## Instalación
 
 ### Prerrequisitos
 ```bash
@@ -45,100 +42,77 @@ npm o yarn
 Expo CLI
 ```
 
-### Instalación
+Requisitos previos:
+- Node.js 20 o superior
+- npm o yarn
+- Expo CLI
 
 ```bash
-# 1. Clonar repositorio
 git clone https://github.com/KenJes/TraceTrash.git
 cd Trace
-
-# 2. Instalar dependencias
 npm install
-
-# 3. Configurar variables de entorno
-cp .env.example .env
-# Editar .env con tus credenciales de Firebase
-
-# 4. Iniciar desarrollo
 npm start
 ```
 
-### Comandos Disponibles
+## Comandos
 
 ```bash
-npm start          # Iniciar dev server
-npm run android    # Correr en Android
-npm run ios        # Correr en iOS
-npm run web        # Correr en navegador
+npm start          # Iniciar servidor de desarrollo
+npm run android    # Ejecutar en Android
+npm run ios        # Ejecutar en iOS
+npm run web        # Ejecutar en navegador web
 ```
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
-TraceTrash/
-├── app/                      # Pantallas (Expo Router)
-│   ├── (tabs)/              # Usuario/Conductor
-│   ├── (admin)/             # Administrador
-│   ├── login.tsx
-│   └── register.tsx
-├── services/                 # Servicios
-│   ├── firebase.ts          # CRUD Firestore
-│   ├── location.ts          # GPS tracking
-│   └── notification-service.* # Notificaciones
-├── components/               # Componentes reutilizables
-├── hooks/                    # Custom hooks
-└── constants/                # Constantes globales
+app/                        Pantallas y navegación (Expo Router)
+  (tabs)/                   Pantallas de usuario y conductor
+  (admin)/                  Pantallas de administrador
+  login.tsx, register.tsx   Autenticación
+
+services/                   Lógica de negocio
+  firebase.ts               Operaciones CRUD con Firestore
+  location.ts               Servicio de geolocalización
+  notification-service.*    Notificaciones push (separado por plataforma)
+
+components/                 Componentes reutilizables
+hooks/                      Custom hooks de React
+constants/                  Constantes y configuración global
 ```
 
-## 🔥 Firebase Setup
+## Configuración Firebase
 
-### 1. Crear Proyecto Firebase
-1. Ve a [Firebase Console](https://console.firebase.google.com/)
-2. Crea un proyecto nuevo
-3. Activa **Firestore Database** (modo producción)
-4. Activa **Authentication** → Email/Password
+1. Crear proyecto en Firebase Console
+2. Activar Firestore Database en modo producción
+3. Activar Authentication con Email/Password
+4. Copiar credenciales al archivo de configuración
 
-### 2. Configurar Reglas de Firestore
-
-Copia las reglas de [`firestore.rules`](./firestore.rules) a tu proyecto Firebase:
+Reglas de seguridad Firestore:
 
 ```bash
 firebase deploy --only firestore:rules
 ```
 
-### 3. Índices de Firestore
+Índices compuestos se crean automáticamente al hacer clic en el enlace del error de Firebase.
 
-Si ves errores de índices, copia el enlace del error en tu navegador y Firebase creará el índice automáticamente.
+## Build para Producción
 
-## 📱 Build para Producción
+Guía detallada disponible en [DEPLOY.md](./DEPLOY.md)
 
-Ver guía completa en [DEPLOY.md](./DEPLOY.md)
-
-### Android APK (Rápido)
-
+Android APK:
 ```bash
-npm install -g eas-cli
-eas login
 eas build --platform android
 ```
 
-### Web Deploy (Rápido)
-
+Web:
 ```bash
 npx expo export --platform web
-vercel  # o netlify deploy
 ```
 
-## 🔐 Seguridad
+## Estructura de Datos Firebase
 
-- ✅ Variables de entorno para credenciales
-- ✅ Reglas de Firestore estrictas
-- ✅ Autenticación Firebase requerida
-- ✅ No hay API keys hardcodeadas
-
-## 📊 Colecciones Firebase
-
-### `users`
+**Colección users**
 ```typescript
 {
   uid: string
@@ -151,7 +125,7 @@ vercel  # o netlify deploy
 }
 ```
 
-### `rutas`
+**Colección rutas**
 ```typescript
 {
   id: string
@@ -162,7 +136,7 @@ vercel  # o netlify deploy
 }
 ```
 
-### `incidencias`
+**Colección incidencias**
 ```typescript
 {
   id: string
@@ -175,43 +149,30 @@ vercel  # o netlify deploy
 }
 ```
 
-## 🐛 Troubleshooting
+## Seguridad
 
-### "Missing or insufficient permissions"
-→ Actualiza las reglas de Firestore desde `firestore.rules`
+- Autenticación Firebase obligatoria
+- Reglas de Firestore en firestore.rules
+- Control de permisos por rol a nivel de aplicación
+- Sin credenciales hardcodeadas en código
 
-### "The query requires an index"
-→ Copia el enlace del error y ábrelo en el navegador para crear el índice
+## Solución de Problemas
 
-### "localStorage is not a function"
-→ Ya resuelto con archivos `.web.ts` y `.native.ts` separados
+**Error: Missing or insufficient permissions**
+Actualizar reglas de Firestore desde firestore.rules
 
-## 📝 Roadmap
+**Error: Requires index**
+Hacer clic en el enlace del error para crear el índice automáticamente
 
-- [ ] Subida de imágenes en reportes (requiere Storage)
-- [ ] Gráficas avanzadas con estadísticas
-- [ ] Exportación de reportes a PDF
-- [ ] Integración con Google Maps (alternativa)
-- [ ] App iOS
+**Web: window is not defined**
+Componentes que usan window/localStorage están separados por plataforma (.tsx para web, .native.tsx para móvil)
 
-## 📄 Licencia
+## Licencia
 
-MIT License - Ver [LICENSE](LICENSE) para más detalles
+MIT License
 
-## 👨‍💻 Autor
+## Autor
 
-**Kenneth Alcalá**
-- GitHub: [@KenJes](https://github.com/KenJes)
-- Email: kenneth.alcala@gmail.com
+Kenneth Alcalá
+GitHub: @KenJes
 
-## 🤝 Contribuir
-
-1. Fork el proyecto
-2. Crea tu rama (`git checkout -b feature/AmazingFeature`)
-3. Commit cambios (`git commit -m 'Add: AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
----
-
-⭐ Si te gusta el proyecto, dale una estrella en GitHub!
