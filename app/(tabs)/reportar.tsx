@@ -228,18 +228,20 @@ export default function ReportarScreen() {
 				imagenes: [],
 				usuarioId: user.uid!,
 				usuarioEmail: user.email,
+				usuarioNombre: user.nombre,
+				usuarioRol: user.rol || 'residente',
+				estado: 'pendiente',
+			});
+
+			console.log('Incidencia enviada con éxito');
 			setLoadingMessage('Reporte enviado exitosamente');
 			
-			// Esperar un momento para que el usuario vea el mensaje de éxito
 			setTimeout(() => {
-				// Limpiar formulario
 				setDescripcion('');
 				setUbicacion(null);
 				setTipoIncidencia(isConductor ? 'falla_motor' : 'camion_no_paso');
 				setIsLoading(false);
 				setLoadingMessage('');
-				
-				// Redirigir a la página de reportes
 				router.push('/(tabs)/reportes');
 			}, 1500);
 
