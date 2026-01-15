@@ -156,6 +156,10 @@ npx expo export --platform web
 - Control de permisos por rol a nivel de aplicación
 - Sin credenciales hardcodeadas en código
 
+## Desarrollo
+
+Ver [CODING_STANDARDS.md](./CODING_STANDARDS.md) para estándares de código y mejores prácticas.
+
 ## Solución de Problemas
 
 **Error: Missing or insufficient permissions**
