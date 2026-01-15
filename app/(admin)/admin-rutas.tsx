@@ -6,7 +6,7 @@ import { optimizeRoute } from '@/services/route-optimizer';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, Modal, RefreshControl, ScrollView, TextInput, TouchableOpacity, View, Platform } from 'react-native';
+import { ActivityIndicator, Alert, Modal, Platform, RefreshControl, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 import { getModernStyles } from '../_styles/modernStyles';
 
 export default function AdminRutasScreen() {

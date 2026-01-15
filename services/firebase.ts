@@ -1076,16 +1076,46 @@ export const firebaseService = {
   // Actualizar usuario con pushToken
   updateUser: async (userId: string, updates: Partial<UserData>): Promise<void> => {
     try {
+      console.log('updateUser: Actualizando usuario:', userId);
       const userRef = doc(db, 'users', userId);
       await updateDoc(userRef, updates as any);
-      console.log('✅ Usuario actualizado');
+      console.log('updateUser: Usuario actualizado exitosamente');
     } catch (error: any) {
-      console.error('Error al actualizar usuario:', error);
+      console.error('updateUser: Error al actualizar usuario:', error);
       throw error;
     }
   },
 
-  // Eliminar ruta
+  deleteUser: async (userId: string): Promise<void> => {
+    try {
+      console.log('deleteUser: Iniciando eliminación de usuario:', userId);
+      
+      const qRutas = query(
+        collection(db, 'rutas'),
+        where('conductorAsignado', '==', userId)
+      );
+      const rutasAsignadas = await getDocs(qRutas);
+      console.log('deleteUser: Rutas asignadas encontradas:', rutasAsignadas.size);
+
+      for (const rutaDoc of rutasAsignadas.docs) {
+        console.log('deleteUser: Desasignando de ruta:', rutaDoc.id);
+        await updateDoc(doc(db, 'rutas', rutaDoc.id), {
+          conductorAsignado: null,
+          conductorNombre: null,
+          unidad: null,
+          horario: null,
+        });
+      }
+
+      console.log('deleteUser: Eliminando documento de usuario...');
+      await deleteDoc(doc(db, 'users', userId));
+      console.log('deleteUser: Usuario eliminado exitosamente');
+    } catch (error: any) {
+      console.error('deleteUser: Error al eliminar usuario:', error);
+      throw new Error(error.message || 'Error al eliminar usuario');
+    }
+  },
+
   eliminarRuta: async (rutaId: string): Promise<{ success: boolean; message: string }> => {
     try {
       // Verificar si hay usuarios asignados

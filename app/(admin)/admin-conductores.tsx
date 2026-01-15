@@ -5,7 +5,7 @@ import { firebaseService, RutaData, UserData } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, Modal, RefreshControl, ScrollView, Switch, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Modal, RefreshControl, ScrollView, Switch, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 import { getModernStyles } from '../_styles/modernStyles';
 
 export default function AdminConductoresScreen() {
@@ -125,39 +125,80 @@ export default function AdminConductoresScreen() {
     }
 
     try {
+      console.log('Actualizando conductor:', conductorSeleccionado.uid, { nombre, unidad });
       await firebaseService.updateUser(conductorSeleccionado.uid, { 
         nombre,
         unidad: unidad || undefined 
       });
-      Alert.alert('Éxito', 'Conductor actualizado');
+      console.log('Conductor actualizado exitosamente');
+      
+      if (Platform.OS === 'web') {
+        window.alert('Conductor actualizado exitosamente');
+      } else {
+        Alert.alert('Éxito', 'Conductor actualizado');
+      }
+      
       setModalEditarConductor(false);
       cargarDatos();
     } catch (error: any) {
-      Alert.alert('Error', 'No se pudo actualizar el conductor');
+      console.error('Error al actualizar conductor:', error);
+      
+      if (Platform.OS === 'web') {
+        window.alert(`Error: ${error.message || 'No se pudo actualizar el conductor'}`);
+      } else {
+        Alert.alert('Error', error.message || 'No se pudo actualizar el conductor');
+      }
     }
   };
 
-  const handleEliminarConductor = (conductor: UserData) => {
-    Alert.alert(
-      'Eliminar Conductor',
-      `¿Estás seguro de eliminar a ${conductor.nombre}?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await firebaseService.deleteUser(conductor.uid);
-              Alert.alert('Éxito', 'Conductor eliminado');
-              cargarDatos();
-            } catch (error: any) {
-              Alert.alert('Error', 'No se pudo eliminar el conductor');
-            }
-          },
-        },
-      ]
-    );
+  const handleEliminarConductor = async (conductor: UserData) => {
+    console.log('handleEliminarConductor llamado con:', conductor);
+    console.log('UID del conductor:', conductor.uid);
+    
+    if (!conductor.uid) {
+      Alert.alert('Error', 'El conductor no tiene UID válido');
+      return;
+    }
+    
+    const confirmar = Platform.OS === 'web' 
+      ? window.confirm(`¿Estás seguro de eliminar a ${conductor.nombre}?`)
+      : await new Promise<boolean>((resolve) => {
+          Alert.alert(
+            'Eliminar Conductor',
+            `¿Estás seguro de eliminar a ${conductor.nombre}?`,
+            [
+              { text: 'Cancelar', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Eliminar', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        });
+
+    if (!confirmar) {
+      console.log('Eliminación cancelada por el usuario');
+      return;
+    }
+
+    try {
+      console.log('Eliminando conductor con UID:', conductor.uid);
+      await firebaseService.deleteUser(conductor.uid);
+      console.log('Conductor eliminado exitosamente');
+      
+      if (Platform.OS === 'web') {
+        window.alert('Conductor eliminado exitosamente');
+      } else {
+        Alert.alert('Éxito', 'Conductor eliminado');
+      }
+      
+      cargarDatos();
+    } catch (error: any) {
+      console.error('Error al eliminar conductor:', error);
+      
+      if (Platform.OS === 'web') {
+        window.alert(`Error: ${error.message || 'No se pudo eliminar el conductor'}`);
+      } else {
+        Alert.alert('Error', error.message || 'No se pudo eliminar el conductor');
+      }
+    }
   };
 
   const toggleActivo = async (conductor: UserData) => {
