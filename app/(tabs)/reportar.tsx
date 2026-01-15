@@ -4,15 +4,12 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { firebaseService } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
-// import { Picker } from '@react-native-picker/picker'; // Comentado: problemas en Android
-// import * as ImagePicker from 'expo-image-picker'; // Comentado: requiere Firebase Storage (Blaze) o AWS
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Modal, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 import { getModernStyles } from '../_styles/modernStyles';
 
-// Formulario para reportar incidencias (residentes y conductores)
 export default function ReportarScreen() {
 	const { theme } = useThemeContext();
 	const { user } = useAuthContext();
@@ -24,7 +21,6 @@ export default function ReportarScreen() {
 	const [tipoIncidencia, setTipoIncidencia] = useState<string>(isConductor ? 'falla_motor' : 'camion_no_paso');
 	const [descripcion, setDescripcion] = useState('');
 	const [ubicacion, setUbicacion] = useState<string | null>(null);
-	// const [imagenes, setImagenes] = useState<string[]>([]); // Comentado: requiere Storage
 	const [isLoading, setIsLoading] = useState(false);
 	const [loadingMessage, setLoadingMessage] = useState('');
 	const [ubicacionManual, setUbicacionManual] = useState('');
@@ -210,13 +206,12 @@ export default function ReportarScreen() {
 	*/
 
 	const handleEnviar = async () => {
-		// Validación
 		if (!descripcion.trim()) {
 			Alert.alert('Campo requerido', 'Por favor describe la incidencia');
 			return;
 		}
 
-		if (!user) {
+		if (!user || !user.uid) {
 			Alert.alert('Error', 'Debes iniciar sesión para reportar una incidencia');
 			return;
 		}
@@ -230,15 +225,9 @@ export default function ReportarScreen() {
 				tipoIncidencia,
 				descripcion: descripcion.trim(),
 				ubicacion: ubicacion || 'No especificada',
-				imagenes: [], // Sin imágenes por ahora
-				usuarioId: user.uid,  // UID de Firebase Auth
-				usuarioEmail: user.email,  // Email del usuario
-				usuarioNombre: user.nombre,
-				usuarioRol: user.rol || 'residente',
-				estado: 'pendiente',
-			});
-
-			console.log('Incidencia enviada con éxito');
+				imagenes: [],
+				usuarioId: user.uid!,
+				usuarioEmail: user.email,
 			setLoadingMessage('Reporte enviado exitosamente');
 			
 			// Esperar un momento para que el usuario vea el mensaje de éxito
