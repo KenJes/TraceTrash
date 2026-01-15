@@ -6,7 +6,7 @@ import { optimizeRoute } from '@/services/route-optimizer';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, Modal, RefreshControl, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Modal, RefreshControl, ScrollView, TextInput, TouchableOpacity, View, Platform } from 'react-native';
 import { getModernStyles } from '../_styles/modernStyles';
 
 export default function AdminRutasScreen() {
@@ -164,7 +164,7 @@ export default function AdminRutasScreen() {
     }
   };
 
-  const handleEliminarRuta = (ruta: RutaData) => {
+  const handleEliminarRuta = async (ruta: RutaData) => {
     console.log('handleEliminarRuta llamado con:', ruta);
     console.log('ID de la ruta:', ruta.id);
     
@@ -173,29 +173,45 @@ export default function AdminRutasScreen() {
       return;
     }
     
-    Alert.alert(
-      'Eliminar Ruta',
-      `¿Estás seguro de eliminar la ruta "${ruta.nombre}"?`,
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              console.log('Eliminando ruta con ID:', ruta.id);
-              await firebaseService.deleteRuta(ruta.id!);
-              console.log('Ruta eliminada exitosamente');
-              Alert.alert('Éxito', 'Ruta eliminada');
-              cargarRutas();
-            } catch (error: any) {
-              console.error('Error al eliminar ruta:', error);
-              Alert.alert('Error', error.message || 'No se pudo eliminar la ruta');
-            }
-          },
-        },
-      ]
-    );
+    const confirmar = Platform.OS === 'web' 
+      ? window.confirm(`¿Estás seguro de eliminar la ruta "${ruta.nombre}"?`)
+      : await new Promise<boolean>((resolve) => {
+          Alert.alert(
+            'Eliminar Ruta',
+            `¿Estás seguro de eliminar la ruta "${ruta.nombre}"?`,
+            [
+              { text: 'Cancelar', style: 'cancel', onPress: () => resolve(false) },
+              { text: 'Eliminar', style: 'destructive', onPress: () => resolve(true) },
+            ]
+          );
+        });
+
+    if (!confirmar) {
+      console.log('Eliminación cancelada por el usuario');
+      return;
+    }
+
+    try {
+      console.log('Eliminando ruta con ID:', ruta.id);
+      await firebaseService.deleteRuta(ruta.id!);
+      console.log('Ruta eliminada exitosamente');
+      
+      if (Platform.OS === 'web') {
+        window.alert('Ruta eliminada exitosamente');
+      } else {
+        Alert.alert('Éxito', 'Ruta eliminada');
+      }
+      
+      cargarRutas();
+    } catch (error: any) {
+      console.error('Error al eliminar ruta:', error);
+      
+      if (Platform.OS === 'web') {
+        window.alert(`Error: ${error.message || 'No se pudo eliminar la ruta'}`);
+      } else {
+        Alert.alert('Error', error.message || 'No se pudo eliminar la ruta');
+      }
+    }
   };
 
   const handleOptimizarRuta = async (ruta: RutaData) => {
