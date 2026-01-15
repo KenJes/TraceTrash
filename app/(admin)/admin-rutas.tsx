@@ -114,22 +114,22 @@ export default function AdminRutasScreen() {
       .filter(d => d.length > 0);
 
     try {
+      console.log('Creando ruta:', { nombre, calle, colonia, color });
       await firebaseService.createRuta({
         nombre,
         calle,
         colonia,
         direcciones: direcciones.length > 0 ? direcciones : [calle + ', ' + colonia],
         color,
-        activa: false,
-        usuariosCount: 0,
-        createdAt: new Date().toISOString(),
       });
       
+      console.log('Ruta creada exitosamente');
       Alert.alert('Éxito', 'Ruta creada correctamente');
       setModalNuevaRuta(false);
       cargarRutas();
     } catch (error: any) {
-      Alert.alert('Error', 'No se pudo crear la ruta');
+      console.error('Error al crear ruta:', error);
+      Alert.alert('Error', error.message || 'No se pudo crear la ruta');
     }
   };
 
@@ -145,6 +145,7 @@ export default function AdminRutasScreen() {
       .filter(d => d.length > 0);
 
     try {
+      console.log('Actualizando ruta:', rutaSeleccionada.id, { nombre, calle, colonia, color });
       await firebaseService.updateRuta(rutaSeleccionada.id!, {
         nombre,
         calle,
@@ -153,11 +154,13 @@ export default function AdminRutasScreen() {
         color,
       });
       
+      console.log('Ruta actualizada exitosamente');
       Alert.alert('Éxito', 'Ruta actualizada correctamente');
       setModalEditarRuta(false);
       cargarRutas();
     } catch (error: any) {
-      Alert.alert('Error', 'No se pudo actualizar la ruta');
+      console.error('Error al actualizar ruta:', error);
+      Alert.alert('Error', error.message || 'No se pudo actualizar la ruta');
     }
   };
 
@@ -172,11 +175,14 @@ export default function AdminRutasScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
+              console.log('Eliminando ruta:', ruta.id);
               await firebaseService.deleteRuta(ruta.id!);
+              console.log('Ruta eliminada exitosamente');
               Alert.alert('Éxito', 'Ruta eliminada');
               cargarRutas();
             } catch (error: any) {
-              Alert.alert('Error', 'No se pudo eliminar la ruta');
+              console.error('Error al eliminar ruta:', error);
+              Alert.alert('Error', error.message || 'No se pudo eliminar la ruta');
             }
           },
         },

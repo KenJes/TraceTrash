@@ -52,9 +52,9 @@ export interface RutaData {
   conductorNombre?: string;
   unidad?: string;
   horario?: string;
-  activa: boolean;
-  usuariosCount: number;
-  createdAt: string;
+  activa?: boolean;
+  usuariosCount?: number;
+  createdAt?: string;
   color?: string;
   eficiencia?: number;
   distanciaEstimada?: number;
