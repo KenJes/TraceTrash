@@ -1,8 +1,8 @@
+import { RutaData, UbicacionData } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Dimensions, View } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { RutaData, UbicacionData } from '@/services/firebase';
 
 interface ConductorMapViewProps {
   ubicacionActual: UbicacionData;

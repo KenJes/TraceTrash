@@ -1082,27 +1082,83 @@ export const firebaseService = {
     try {
       console.log('📍 Suscribiendo a ubicación del conductor:', conductorId);
       
+      // Query simple sin orderBy para evitar necesidad de índice
       const q = query(
         collection(db, 'ubicaciones'),
-        where('conductorId', '==', conductorId),
-        orderBy('timestamp', 'desc')
+        where('conductorId', '==', conductorId)
       );
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
         if (!snapshot.empty) {
-          const ubicacion = {
-            id: snapshot.docs[0].id,
-            ...snapshot.docs[0].data(),
-          } as UbicacionData;
+          // Ordenar manualmente por timestamp
+          const ubicaciones = snapshot.docs
+            .map(doc => ({
+              id: doc.id,
+              ...doc.data(),
+            } as UbicacionData))
+            .sort((a, b) => {
+              const timeA = a.timestamp?.toMillis?.() || 0;
+              const timeB = b.timestamp?.toMillis?.() || 0;
+              return timeB - timeA;
+            });
           
-          console.log('📍 Ubicación actualizada:', ubicacion);
-          callback(ubicacion);
+          if (ubicaciones.length > 0) {
+            console.log('📍 Ubicación actualizada:', ubicaciones[0]);
+            callback(ubicaciones[0]);
+          }
         }
+      }, (error) => {
+        console.error('Error en snapshot de ubicación:', error);
       });
 
       return unsubscribe;
     } catch (error: any) {
       console.error('Error al suscribirse a ubicación:', error);
+      return () => {};
+    }
+  },
+
+  // Suscribirse a ubicaciones de una ruta (para residentes y admin)
+  subscribeToUbicacionesRuta: (
+    rutaId: string,
+    callback: (ubicaciones: UbicacionData[]) => void
+  ): (() => void) => {
+    try {
+      console.log('📍 Suscribiendo a ubicaciones de ruta:', rutaId);
+      
+      const q = query(
+        collection(db, 'ubicaciones'),
+        where('rutaId', '==', rutaId)
+      );
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const ubicaciones: UbicacionData[] = [];
+        const ahora = Date.now();
+        
+        snapshot.docs.forEach(doc => {
+          const ubicacion = {
+            id: doc.id,
+            ...doc.data(),
+          } as UbicacionData;
+          
+          // Solo incluir ubicaciones recientes (últimos 5 minutos)
+          const timestamp = ubicacion.timestamp?.toMillis?.() || 0;
+          const diff = ahora - timestamp;
+          
+          if (diff < 5 * 60 * 1000) {
+            ubicaciones.push(ubicacion);
+          }
+        });
+        
+        console.log('📍 Ubicaciones activas en ruta:', ubicaciones.length);
+        callback(ubicaciones);
+      }, (error) => {
+        console.error('Error en snapshot de ubicaciones de ruta:', error);
+      });
+
+      return unsubscribe;
+    } catch (error: any) {
+      console.error('Error al suscribirse a ubicaciones de ruta:', error);
       return () => {};
     }
   },

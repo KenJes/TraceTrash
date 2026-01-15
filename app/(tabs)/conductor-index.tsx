@@ -1,15 +1,15 @@
 import { useAuthContext } from '@/components/auth-context';
+import { ConductorMapView } from '@/components/conductor-map-view';
 import { useThemeContext } from '@/components/theme-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { ConductorMapView } from '@/components/conductor-map-view';
 import { firebaseService, RutaData, UbicacionData } from '@/services/firebase';
 import { locationService } from '@/services/location';
 import { notifyRutaFinalizada, notifyRutaIniciada } from '@/services/notification-service';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, Image, Platform, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Platform, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { getModernStyles } from '../_styles/modernStyles';
 
 export default function ConductorIndexScreen() {

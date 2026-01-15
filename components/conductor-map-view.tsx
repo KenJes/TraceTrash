@@ -1,6 +1,6 @@
+import { RutaData, UbicacionData } from '@/services/firebase';
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import { RutaData, UbicacionData } from '@/services/firebase';
 
 interface ConductorMapViewProps {
   ubicacionActual: UbicacionData;

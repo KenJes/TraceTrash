@@ -6,7 +6,7 @@ import { ThemedView } from '@/components/themed-view';
 import { firebaseService, RutaData, UbicacionData } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Image, RefreshControl, ScrollView, View } from 'react-native';
 import { getModernStyles } from '../_styles/modernStyles';
 
@@ -50,13 +50,29 @@ export default function IndexScreen() {
     useCallback(() => {
       setIsLoading(true);
       cargarDatos();
-
-      // Actualizar ubicación cada 10 segundos
-      const interval = setInterval(cargarDatos, 10000);
-      
-      return () => clearInterval(interval);
     }, [cargarDatos])
   );
+
+  // Suscripción en tiempo real a ubicaciones de la ruta
+  useEffect(() => {
+    if (!user?.rutaId || !ruta) {
+      return;
+    }
+
+    const unsubscribe = firebaseService.subscribeToUbicacionesRuta(
+      user.rutaId,
+      (ubicaciones) => {
+        if (ubicaciones.length > 0) {
+          // Tomar la ubicación más reciente
+          setUbicacionCamion(ubicaciones[0]);
+        } else {
+          setUbicacionCamion(null);
+        }
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user?.rutaId, ruta]);
 
   const onRefresh = () => {
     setRefreshing(true);
