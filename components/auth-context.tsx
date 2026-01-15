@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 export interface User {
   email: string;
@@ -23,20 +24,61 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = (userData: User) => {
-    setUser(userData);
-  };
+  // Cargar sesión guardada al iniciar
+  useEffect(() => {
+    loadUserSession();
+  }, []);
 
-  const logout = () => {
-    setUser(null);
-  };
-
-  const updateUser = (updates: Partial<User>) => {
-    if (user) {
-      setUser({ ...user, ...updates });
+  const loadUserSession = async () => {
+    try {
+      const savedUser = await AsyncStorage.getItem('userSession');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    } catch (error) {
+      console.error('Error al cargar sesión:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const login = async (userData: User) => {
+    try {
+      setUser(userData);
+      await AsyncStorage.setItem('userSession', JSON.stringify(userData));
+    } catch (error) {
+      console.error('Error al guardar sesión:', error);
+      setUser(userData);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await AsyncStorage.removeItem('userSession');
+      setUser(null);
+    } catch (error) {
+      console.error('Error al limpiar sesión:', error);
+      setUser(null);
+    }
+  };
+
+  const updateUser = async (updates: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      try {
+        await AsyncStorage.setItem('userSession', JSON.stringify(updatedUser));
+      } catch (error) {
+        console.error('Error al actualizar sesión:', error);
+      }
+    }
+  };
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <AuthContext.Provider

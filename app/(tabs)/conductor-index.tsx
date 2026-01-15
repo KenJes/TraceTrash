@@ -2,6 +2,7 @@ import { useAuthContext } from '@/components/auth-context';
 import { useThemeContext } from '@/components/theme-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { ConductorMapView } from '@/components/conductor-map-view';
 import { firebaseService, RutaData, UbicacionData } from '@/services/firebase';
 import { locationService } from '@/services/location';
 import { notifyRutaFinalizada, notifyRutaIniciada } from '@/services/notification-service';
@@ -197,7 +198,7 @@ export default function ConductorIndexScreen() {
         </View>
 
         {/* Mapa de ruta en curso */}
-        {enRuta && ruta && ubicacionActual && (
+        {enRuta && ruta && (
           <View style={localStyles.mapContainer}>
             <View style={[localStyles.progressHeader, { backgroundColor: isDarkMode ? '#1E1E1E' : '#FFF' }]}>
               <View style={localStyles.progressInfo}>
@@ -215,12 +216,14 @@ export default function ConductorIndexScreen() {
               <View style={[localStyles.webMapPlaceholder, { backgroundColor: isDarkMode ? '#2A2A2A' : '#F5F5F5' }]}>
                 <Ionicons name="map-outline" size={48} color={isDarkMode ? '#666' : '#999'} />
                 <ThemedText style={{ marginTop: 12, opacity: 0.7 }}>Mapa disponible en app móvil</ThemedText>
-                <View style={{ marginTop: 16, padding: 12, backgroundColor: isDarkMode ? '#333' : '#E8F5E9', borderRadius: 8 }}>
-                  <ThemedText style={{ fontSize: 12, color: '#4CAF50' }}>📍 {ubicacionActual.conductorNombre}</ThemedText>
-                  <ThemedText style={{ fontSize: 11, marginTop: 4, opacity: 0.7 }}>Unidad {ubicacionActual.unidad}</ThemedText>
-                </View>
+                {ubicacionActual && (
+                  <View style={{ marginTop: 16, padding: 12, backgroundColor: isDarkMode ? '#333' : '#E8F5E9', borderRadius: 8 }}>
+                    <ThemedText style={{ fontSize: 12, color: '#4CAF50' }}>📍 {ubicacionActual.conductorNombre}</ThemedText>
+                    <ThemedText style={{ fontSize: 11, marginTop: 4, opacity: 0.7 }}>Unidad {ubicacionActual.unidad}</ThemedText>
+                  </View>
+                )}
               </View>
-            ) : (
+            ) : ubicacionActual ? (
               <ConductorMapView
                 ubicacionActual={ubicacionActual}
                 ruta={ruta}
@@ -231,6 +234,11 @@ export default function ConductorIndexScreen() {
                   }
                 }}
               />
+            ) : (
+              <View style={[localStyles.webMapPlaceholder, { backgroundColor: isDarkMode ? '#2A2A2A' : '#F5F5F5' }]}>
+                <ActivityIndicator size="large" color="#4CAF50" />
+                <ThemedText style={{ marginTop: 12, opacity: 0.7 }}>Cargando ubicación...</ThemedText>
+              </View>
             )}
             
             {ruta.direcciones && ruta.direcciones.length > 0 && (
@@ -463,76 +471,3 @@ const localStyles = StyleSheet.create({
     color: '#FFF',
   },
 });
-
-// Componente para el mapa del conductor (solo móvil)
-function ConductorMapView({
-  ubicacionActual,
-  ruta,
-  direccionesCompletadas,
-  onMarcarDireccion,
-}: {
-  ubicacionActual: UbicacionData;
-  ruta: RutaData;
-  direccionesCompletadas: string[];
-  onMarcarDireccion: (direccion: string) => void;
-}) {
-  if (Platform.OS === 'web') {
-    return null;
-  }
-
-  // Importación dinámica para mobile
-  const MapView = require('react-native-maps').default;
-  const { Marker, Polyline } = require('react-native-maps');
-
-  const { width } = Dimensions.get('window');
-  const mapHeight = 300;
-
-  return (
-    <MapView
-      style={{ width, height: mapHeight }}
-      initialRegion={{
-        latitude: ubicacionActual.latitude,
-        longitude: ubicacionActual.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      }}
-      showsUserLocation={false}
-      showsMyLocationButton={false}
-      showsCompass={true}
-      loadingEnabled={true}
-    >
-      {/* Marcador del camión */}
-      <Marker
-        coordinate={{
-          latitude: ubicacionActual.latitude,
-          longitude: ubicacionActual.longitude,
-        }}
-        title={`Unidad ${ubicacionActual.unidad}`}
-        rotation={ubicacionActual.heading || 0}
-        anchor={{ x: 0.5, y: 0.5 }}
-      >
-        <View style={{
-          backgroundColor: '#4CAF50',
-          borderRadius: 20,
-          padding: 8,
-          borderWidth: 2,
-          borderColor: '#FFF',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.3,
-          shadowRadius: 3,
-          elevation: 5,
-        }}>
-          <Ionicons name="car" size={24} color="#FFF" />
-        </View>
-      </Marker>
-
-      {/* Marcadores de direcciones si hay coordenadas */}
-      {ruta.direcciones?.map((dir, index) => {
-        // TODO: Agregar coordenadas reales a las direcciones
-        // Por ahora solo mostramos el camión
-        return null;
-      })}
-    </MapView>
-  );
-}
