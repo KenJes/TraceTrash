@@ -44,22 +44,22 @@ export interface UserData {
 
 export interface RutaData {
   id?: string;
-  nombre: string;  // Ej: "Ruta Centro 1"
+  nombre: string;
   calle: string;
   colonia: string;
-  conductorAsignado?: string;  // UID del conductor
+  direcciones?: string[];
+  conductorAsignado?: string;
   conductorNombre?: string;
   unidad?: string;
-  horario?: string;  // Ej: "08:00 - 12:00"
+  horario?: string;
   activa: boolean;
-  usuariosCount: number;  // Cantidad de usuarios en la ruta
+  usuariosCount: number;
   createdAt: string;
-  color?: string;  // Color para visualización en mapa
-  // Campos de optimización
-  eficiencia?: number;  // Score 0-100
-  distanciaEstimada?: number;  // En km
-  tiempoEstimado?: number;  // En minutos
-  ahorroCombustible?: number;  // En %
+  color?: string;
+  eficiencia?: number;
+  distanciaEstimada?: number;
+  tiempoEstimado?: number;
+  ahorroCombustible?: number;
   prioridad?: 'alta' | 'media' | 'baja';
 }
 
@@ -865,7 +865,33 @@ export const firebaseService = {
     }
   },
 
-  // Eliminar ruta
+  createRuta: async (rutaData: Omit<RutaData, 'id'>): Promise<string> => {
+    try {
+      const nuevaRuta = {
+        ...rutaData,
+        activa: false,
+        usuariosCount: 0,
+        createdAt: new Date().toISOString(),
+      };
+
+      const docRef = await addDoc(collection(db, 'rutas'), nuevaRuta);
+      return docRef.id;
+    } catch (error: any) {
+      console.error('Error al crear ruta:', error);
+      throw new Error(error.message || 'Error al crear ruta');
+    }
+  },
+
+  updateRuta: async (rutaId: string, updates: Partial<RutaData>): Promise<void> => {
+    try {
+      const rutaRef = doc(db, 'rutas', rutaId);
+      await updateDoc(rutaRef, updates as any);
+    } catch (error: any) {
+      console.error('Error al actualizar ruta:', error);
+      throw new Error(error.message || 'Error al actualizar ruta');
+    }
+  },
+
   deleteRuta: async (rutaId: string): Promise<void> => {
     try {
       await deleteDoc(doc(db, 'rutas', rutaId));

@@ -120,7 +120,9 @@ export default function AdminRutasScreen() {
         colonia,
         direcciones: direcciones.length > 0 ? direcciones : [calle + ', ' + colonia],
         color,
-        estado: 'inactiva',
+        activa: false,
+        usuariosCount: 0,
+        createdAt: new Date().toISOString(),
       });
       
       Alert.alert('Éxito', 'Ruta creada correctamente');
