@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -17,6 +17,15 @@ const db = getFirestore(app);
 
 async function crearRutaPrueba() {
   try {
+    console.log('Iniciando sesión como admin...');
+    
+    // Reemplaza con las credenciales de tu cuenta admin
+    const email = 'admin@trace.com'; // CAMBIAR por tu email admin
+    const password = 'tu_password'; // CAMBIAR por tu password admin
+    
+    await signInWithEmailAndPassword(auth, email, password);
+    console.log('Autenticado exitosamente');
+    
     console.log('Creando ruta de prueba...');
 
     const rutaData = {

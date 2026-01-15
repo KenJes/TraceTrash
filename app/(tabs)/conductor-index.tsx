@@ -2,13 +2,13 @@ import { useAuthContext } from '@/components/auth-context';
 import { useThemeContext } from '@/components/theme-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { firebaseService, RutaData } from '@/services/firebase';
+import { firebaseService, RutaData, UbicacionData } from '@/services/firebase';
 import { locationService } from '@/services/location';
 import { notifyRutaFinalizada, notifyRutaIniciada } from '@/services/notification-service';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
-import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, Image, RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Dimensions, Image, Platform, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { getModernStyles } from '../_styles/modernStyles';
 
 export default function ConductorIndexScreen() {
@@ -18,6 +18,8 @@ export default function ConductorIndexScreen() {
   const [ruta, setRuta] = useState<RutaData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [ubicacionActual, setUbicacionActual] = useState<UbicacionData | null>(null);
+  const [direccionesCompletadas, setDireccionesCompletadas] = useState<string[]>([]);
   
   const isDarkMode = theme === 'dark';
   const styles = getModernStyles(isDarkMode);
@@ -48,6 +50,22 @@ export default function ConductorIndexScreen() {
       setEnRuta(locationService.isTrackingActive());
     }, [user?.rutaId])
   );
+
+  // Listener para actualizaciones de ubicación en tiempo real
+  useEffect(() => {
+    if (!enRuta || !user?.uid || !ruta?.id) {
+      return;
+    }
+
+    const unsubscribe = firebaseService.subscribeToUbicacionConductor(
+      user.uid,
+      (ubicacion) => {
+        setUbicacionActual(ubicacion);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [enRuta, user?.uid, ruta?.id]);
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -178,8 +196,98 @@ export default function ConductorIndexScreen() {
           )}
         </View>
 
+        {/* Mapa de ruta en curso */}
+        {enRuta && ruta && ubicacionActual && (
+          <View style={localStyles.mapContainer}>
+            <View style={[localStyles.progressHeader, { backgroundColor: isDarkMode ? '#1E1E1E' : '#FFF' }]}>
+              <View style={localStyles.progressInfo}>
+                <Ionicons name="navigate" size={20} color="#4CAF50" />
+                <ThemedText style={localStyles.progressText}>RUTA EN CURSO</ThemedText>
+              </View>
+              <ThemedText style={localStyles.progressPercentage}>
+                {ruta.direcciones && ruta.direcciones.length > 0
+                  ? Math.round((direccionesCompletadas.length / ruta.direcciones.length) * 100)
+                  : 0}%
+              </ThemedText>
+            </View>
+            
+            {Platform.OS === 'web' ? (
+              <View style={[localStyles.webMapPlaceholder, { backgroundColor: isDarkMode ? '#2A2A2A' : '#F5F5F5' }]}>
+                <Ionicons name="map-outline" size={48} color={isDarkMode ? '#666' : '#999'} />
+                <ThemedText style={{ marginTop: 12, opacity: 0.7 }}>Mapa disponible en app móvil</ThemedText>
+                <View style={{ marginTop: 16, padding: 12, backgroundColor: isDarkMode ? '#333' : '#E8F5E9', borderRadius: 8 }}>
+                  <ThemedText style={{ fontSize: 12, color: '#4CAF50' }}>📍 {ubicacionActual.conductorNombre}</ThemedText>
+                  <ThemedText style={{ fontSize: 11, marginTop: 4, opacity: 0.7 }}>Unidad {ubicacionActual.unidad}</ThemedText>
+                </View>
+              </View>
+            ) : (
+              <ConductorMapView
+                ubicacionActual={ubicacionActual}
+                ruta={ruta}
+                direccionesCompletadas={direccionesCompletadas}
+                onMarcarDireccion={(direccion) => {
+                  if (!direccionesCompletadas.includes(direccion)) {
+                    setDireccionesCompletadas([...direccionesCompletadas, direccion]);
+                  }
+                }}
+              />
+            )}
+            
+            {ruta.direcciones && ruta.direcciones.length > 0 && (
+              <View style={[localStyles.direccionesList, { backgroundColor: isDarkMode ? '#1E1E1E' : '#FFF' }]}>
+                <ThemedText style={localStyles.direccionesTitle}>PUNTOS DE RECOLECCIÓN:</ThemedText>
+                <ScrollView style={{ maxHeight: 120 }} showsVerticalScrollIndicator={false}>
+                  {ruta.direcciones.map((dir, index) => {
+                    const completado = direccionesCompletadas.includes(dir);
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        style={[localStyles.direccionItem, { backgroundColor: completado ? (isDarkMode ? 'rgba(76,175,80,0.2)' : 'rgba(76,175,80,0.1)') : 'transparent' }]}
+                        onPress={() => {
+                          if (completado) {
+                            setDireccionesCompletadas(direccionesCompletadas.filter(d => d !== dir));
+                          } else {
+                            setDireccionesCompletadas([...direccionesCompletadas, dir]);
+                          }
+                        }}
+                      >
+                        <Ionicons
+                          name={completado ? 'checkmark-circle' : 'ellipse-outline'}
+                          size={20}
+                          color={completado ? '#4CAF50' : (isDarkMode ? '#666' : '#999')}
+                        />
+                        <ThemedText style={[localStyles.direccionText, { textDecorationLine: completado ? 'line-through' : 'none', opacity: completado ? 0.6 : 1 }]}>
+                          {dir}
+                        </ThemedText>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+              </View>
+            )}
+
+            <TouchableOpacity
+              style={[localStyles.pausarButton, { backgroundColor: isDarkMode ? '#8B4513' : '#FF9800' }]}
+              onPress={() => {
+                Alert.alert('Pausar Ruta', 'Esta función estará disponible próximamente');
+              }}
+            >
+              <Ionicons name="pause" size={20} color="#FFF" />
+              <ThemedText style={localStyles.pausarText}>PAUSAR RUTA</ThemedText>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[localStyles.finalizarButton, { backgroundColor: '#E53935' }]}
+              onPress={handleIniciarRuta}
+            >
+              <Ionicons name="checkmark-circle" size={20} color="#FFF" />
+              <ThemedText style={localStyles.finalizarText}>FINALIZAR RUTA</ThemedText>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Información de ruta */}
-        {ruta ? (
+        {!enRuta && ruta ? (
           <>
             <View style={styles.card}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
@@ -216,20 +324,20 @@ export default function ConductorIndexScreen() {
               </View>
             </View>
 
-            {/* Botón iniciar/finalizar ruta */}
+            {/* Botón iniciar ruta */}
             <TouchableOpacity 
               style={[
                 styles.button, 
                 { 
-                  backgroundColor: enRuta ? '#E53935' : '#4CAF50',
+                  backgroundColor: '#4CAF50',
                   paddingVertical: 16,
                 }
               ]}
               onPress={handleIniciarRuta}
             >
-              <Ionicons name={enRuta ? 'stop-circle' : 'play-circle'} size={24} color="#FFF" />
+              <Ionicons name="play-circle" size={24} color="#FFF" />
               <ThemedText style={[styles.buttonText, { fontSize: 16, marginLeft: 12 }]}>
-                {enRuta ? 'Finalizar Ruta' : 'Iniciar Ruta'}
+                Iniciar Ruta
               </ThemedText>
             </TouchableOpacity>
           </>
@@ -261,5 +369,170 @@ export default function ConductorIndexScreen() {
         </View>
       </ScrollView>
     </ThemedView>
+  );
+}
+
+// Estilos específicos para el mapa de conductor
+const localStyles = StyleSheet.create({
+  mapContainer: {
+    marginHorizontal: 16,
+    marginVertical: 8,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  progressInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  progressText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#4CAF50',
+  },
+  progressPercentage: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#4CAF50',
+  },
+  webMapPlaceholder: {
+    height: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  direccionesList: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+  },
+  direccionesTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    opacity: 0.7,
+    marginBottom: 12,
+  },
+  direccionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 6,
+    gap: 12,
+  },
+  direccionText: {
+    fontSize: 13,
+    flex: 1,
+  },
+  pausarButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    gap: 8,
+  },
+  pausarText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFF',
+  },
+  finalizarButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    gap: 8,
+  },
+  finalizarText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFF',
+  },
+});
+
+// Componente para el mapa del conductor (solo móvil)
+function ConductorMapView({
+  ubicacionActual,
+  ruta,
+  direccionesCompletadas,
+  onMarcarDireccion,
+}: {
+  ubicacionActual: UbicacionData;
+  ruta: RutaData;
+  direccionesCompletadas: string[];
+  onMarcarDireccion: (direccion: string) => void;
+}) {
+  if (Platform.OS === 'web') {
+    return null;
+  }
+
+  // Importación dinámica para mobile
+  const MapView = require('react-native-maps').default;
+  const { Marker, Polyline } = require('react-native-maps');
+
+  const { width } = Dimensions.get('window');
+  const mapHeight = 300;
+
+  return (
+    <MapView
+      style={{ width, height: mapHeight }}
+      initialRegion={{
+        latitude: ubicacionActual.latitude,
+        longitude: ubicacionActual.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      }}
+      showsUserLocation={false}
+      showsMyLocationButton={false}
+      showsCompass={true}
+      loadingEnabled={true}
+    >
+      {/* Marcador del camión */}
+      <Marker
+        coordinate={{
+          latitude: ubicacionActual.latitude,
+          longitude: ubicacionActual.longitude,
+        }}
+        title={`Unidad ${ubicacionActual.unidad}`}
+        rotation={ubicacionActual.heading || 0}
+        anchor={{ x: 0.5, y: 0.5 }}
+      >
+        <View style={{
+          backgroundColor: '#4CAF50',
+          borderRadius: 20,
+          padding: 8,
+          borderWidth: 2,
+          borderColor: '#FFF',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.3,
+          shadowRadius: 3,
+          elevation: 5,
+        }}>
+          <Ionicons name="car" size={24} color="#FFF" />
+        </View>
+      </Marker>
+
+      {/* Marcadores de direcciones si hay coordenadas */}
+      {ruta.direcciones?.map((dir, index) => {
+        // TODO: Agregar coordenadas reales a las direcciones
+        // Por ahora solo mostramos el camión
+        return null;
+      })}
+    </MapView>
   );
 }

@@ -12,6 +12,7 @@ import {
     doc,
     getDoc,
     getDocs,
+    onSnapshot,
     orderBy,
     query,
     serverTimestamp,
@@ -1070,6 +1071,39 @@ export const firebaseService = {
     } catch (error: any) {
       console.error('Error al obtener usuarios de la ruta:', error);
       return [];
+    }
+  },
+
+  // Suscribirse a actualizaciones de ubicación de un conductor en tiempo real
+  subscribeToUbicacionConductor: (
+    conductorId: string,
+    callback: (ubicacion: UbicacionData) => void
+  ): (() => void) => {
+    try {
+      console.log('📍 Suscribiendo a ubicación del conductor:', conductorId);
+      
+      const q = query(
+        collection(db, 'ubicaciones'),
+        where('conductorId', '==', conductorId),
+        orderBy('timestamp', 'desc')
+      );
+
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        if (!snapshot.empty) {
+          const ubicacion = {
+            id: snapshot.docs[0].id,
+            ...snapshot.docs[0].data(),
+          } as UbicacionData;
+          
+          console.log('📍 Ubicación actualizada:', ubicacion);
+          callback(ubicacion);
+        }
+      });
+
+      return unsubscribe;
+    } catch (error: any) {
+      console.error('Error al suscribirse a ubicación:', error);
+      return () => {};
     }
   },
 

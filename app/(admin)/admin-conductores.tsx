@@ -5,7 +5,7 @@ import { firebaseService, RutaData, UserData } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, Alert, Modal, RefreshControl, ScrollView, Switch, TextInput, TouchableOpacity, View, Platform } from 'react-native';
+import { ActivityIndicator, Alert, Modal, Platform, RefreshControl, ScrollView, Switch, TextInput, TouchableOpacity, View } from 'react-native';
 import { getModernStyles } from '../_styles/modernStyles';
 
 export default function AdminConductoresScreen() {
