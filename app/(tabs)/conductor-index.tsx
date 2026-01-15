@@ -75,44 +75,60 @@ export default function ConductorIndexScreen() {
 
   const handleIniciarRuta = async () => {
     if (!ruta?.id || !user?.uid || !user?.nombre || !user?.unidad) {
-      Alert.alert('Error', 'No tienes una ruta asignada');
+      if (Platform.OS === 'web') {
+        window.alert('Error: No tienes una ruta asignada');
+      } else {
+        Alert.alert('Error', 'No tienes una ruta asignada');
+      }
       return;
     }
 
     if (enRuta) {
       // Detener ruta
-      Alert.alert(
-        'Finalizar Ruta',
-        '¿Deseas detener el compartir tu ubicación?',
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          {
-            text: 'Finalizar',
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                await locationService.stopTracking();
-                
-                // Enviar notificación de ruta finalizada
-                await notifyRutaFinalizada(
-                  ruta.id!,
-                  user.nombre,
-                  user.unidad || ''
-                );
-                
-                // Actualizar estado de ruta a finalizada
-                await firebaseService.actualizarEstadoRuta(ruta.id!, 'finalizada');
-                
-                setEnRuta(false);
-                Alert.alert('Ruta Finalizada', 'Has dejado de compartir tu ubicación');
-              } catch (error) {
-                console.error('Error al finalizar ruta:', error);
-                Alert.alert('Error', 'No se pudo finalizar la ruta');
-              }
-            },
-          },
-        ]
-      );
+      const confirmar = Platform.OS === 'web' 
+        ? window.confirm('¿Deseas detener el compartir tu ubicación?')
+        : await new Promise<boolean>((resolve) => {
+            Alert.alert(
+              'Finalizar Ruta',
+              '¿Deseas detener el compartir tu ubicación?',
+              [
+                { text: 'Cancelar', style: 'cancel', onPress: () => resolve(false) },
+                { text: 'Finalizar', style: 'destructive', onPress: () => resolve(true) },
+              ]
+            );
+          });
+      
+      if (confirmar) {
+        try {
+          await locationService.stopTracking();
+          
+          // Enviar notificación de ruta finalizada
+          await notifyRutaFinalizada(
+            ruta.id!,
+            user.nombre,
+            user.unidad || ''
+          );
+          
+          // Actualizar estado de ruta a finalizada
+          await firebaseService.actualizarEstadoRuta(ruta.id!, 'finalizada');
+          
+          setEnRuta(false);
+          setUbicacionActual(null);
+          
+          if (Platform.OS === 'web') {
+            window.alert('Ruta Finalizada: Has dejado de compartir tu ubicación');
+          } else {
+            Alert.alert('Ruta Finalizada', 'Has dejado de compartir tu ubicación');
+          }
+        } catch (error) {
+          console.error('Error al finalizar ruta:', error);
+          if (Platform.OS === 'web') {
+            window.alert('Error: No se pudo finalizar la ruta');
+          } else {
+            Alert.alert('Error', 'No se pudo finalizar la ruta');
+          }
+        }
+      }
     } else {
       // Iniciar ruta
       const success = await locationService.startTracking(
@@ -124,28 +140,36 @@ export default function ConductorIndexScreen() {
 
       if (success) {
         try {
-          // Enviar notificación de ruta iniciada
+          // Actualizar estado de ruta a activa PRIMERO
+          await firebaseService.actualizarEstadoRuta(ruta.id!, 'activa');
+          
+          // Enviar notificación de ruta iniciada (incluye admin)
           await notifyRutaIniciada(
             ruta.id!,
             user.nombre,
             user.unidad || ''
           );
           
-          // Actualizar estado de ruta a activa
-          await firebaseService.actualizarEstadoRuta(ruta.id!, 'activa');
-          
           setEnRuta(true);
-          Alert.alert('Ruta Iniciada', 'Ahora estás compartiendo tu ubicación en tiempo real');
+          
+          if (Platform.OS === 'web') {
+            window.alert('Ruta Iniciada: Ahora estás compartiendo tu ubicación en tiempo real');
+          } else {
+            Alert.alert('Ruta Iniciada', 'Ahora estás compartiendo tu ubicación en tiempo real');
+          }
         } catch (error) {
           console.error('Error al actualizar estado de ruta:', error);
-          // Aún así marcar como en ruta localmente
           setEnRuta(true);
         }
       } else {
-        Alert.alert(
-          'Error',
-          'No se pudo iniciar el tracking. Verifica que los permisos de ubicación estén activados.'
-        );
+        if (Platform.OS === 'web') {
+          window.alert('Error: No se pudo iniciar el tracking. Verifica que los permisos de ubicación estén activados.');
+        } else {
+          Alert.alert(
+            'Error',
+            'No se pudo iniciar el tracking. Verifica que los permisos de ubicación estén activados.'
+          );
+        }
       }
     }
   };

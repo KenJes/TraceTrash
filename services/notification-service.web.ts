@@ -17,6 +17,10 @@ export async function notifyRutaIniciada(): Promise<void> {
   console.log('📱 Notificaciones push no disponibles en web');
 }
 
+export async function notifyAdmins(): Promise<void> {
+  console.log('📱 Notificaciones push no disponibles en web');
+}
+
 export async function notifyRutaFinalizada(): Promise<void> {
   console.log('📱 Notificaciones push no disponibles en web');
 }

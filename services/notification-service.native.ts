@@ -130,11 +130,11 @@ export async function notifyRutaIniciada(
 ): Promise<void> {
   try {
     // Obtener usuarios de la ruta con pushToken
-    const usuariosRef = collection(db, 'usuarios');
+    const usuariosRef = collection(db, 'users');
     const q = query(
       usuariosRef,
       where('rutaId', '==', rutaId),
-      where('rol', '==', 'residente')
+      where('rol', '==', 'usuario')
     );
     
     const snapshot = await getDocs(q);
@@ -147,23 +147,27 @@ export async function notifyRutaIniciada(
       }
     });
 
-    if (tokens.length === 0) {
-      console.log('⚠️ No hay usuarios con token para notificar');
-      return;
+    if (tokens.length > 0) {
+      await sendPushNotifications({
+        to: tokens,
+        title: '🚛 ¡Camión en camino!',
+        body: `${conductorNombre}${unidad ? ` (Unidad ${unidad})` : ''} ha iniciado la recolección`,
+        data: {
+          type: 'route_started',
+          rutaId,
+          conductorNombre,
+        },
+      });
+
+      console.log(`✅ Notificados ${tokens.length} usuarios`);
     }
 
-    await sendPushNotifications({
-      to: tokens,
-      title: '🚛 ¡Camión en camino!',
-      body: `${conductorNombre}${unidad ? ` (Unidad ${unidad})` : ''} ha iniciado la recolección`,
-      data: {
-        type: 'route_started',
-        rutaId,
-        conductorNombre,
-      },
-    });
-
-    console.log(`✅ Notificados ${tokens.length} usuarios`);
+    // Notificar también a admins
+    await notifyAdmins(
+      '🚛 Ruta Iniciada',
+      `${conductorNombre} (${unidad}) ha iniciado la ruta`,
+      { rutaId, type: 'route_started' }
+    );
   } catch (error) {
     console.error('❌ Error en notifyRutaIniciada:', error);
   }
@@ -208,7 +212,7 @@ export async function notifyAdmins(
 ): Promise<void> {
   try {
     // Obtener admins con pushToken
-    const usuariosRef = collection(db, 'usuarios');
+    const usuariosRef = collection(db, 'users');
     const q = query(usuariosRef, where('rol', '==', 'admin'));
     
     const snapshot = await getDocs(q);
@@ -249,11 +253,11 @@ export async function notifyRutaPausada(
 ): Promise<void> {
   try {
     // Obtener usuarios de la ruta
-    const usuariosRef = collection(db, 'usuarios');
+    const usuariosRef = collection(db, 'users');
     const q = query(
       usuariosRef,
       where('rutaId', '==', rutaId),
-      where('rol', '==', 'residente')
+      where('rol', '==', 'usuario')
     );
     
     const snapshot = await getDocs(q);
@@ -300,11 +304,11 @@ export async function notifyRutaFinalizada(
 ): Promise<void> {
   try {
     // Obtener usuarios de la ruta
-    const usuariosRef = collection(db, 'usuarios');
+    const usuariosRef = collection(db, 'users');
     const q = query(
       usuariosRef,
       where('rutaId', '==', rutaId),
-      where('rol', '==', 'residente')
+      where('rol', '==', 'usuario')
     );
     
     const snapshot = await getDocs(q);
