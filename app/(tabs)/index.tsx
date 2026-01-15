@@ -152,27 +152,28 @@ export default function IndexScreen() {
               </View>
             </View>
 
-            {/* Mapa del camión */}
-            {ubicacionCamion && (
-              <View style={styles.card}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-                  <View style={[styles.iconBadge, { backgroundColor: '#2196F3', marginRight: 12 }]}>
-                    <Ionicons name="map" size={20} color="#FFF" />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <ThemedText style={styles.sectionTitle}>Ubicación en Tiempo Real</ThemedText>
-                    <ThemedText style={{ fontSize: 13, opacity: 0.7 }}>
-                      Rastrea el camión en el mapa
-                    </ThemedText>
-                  </View>
+            {/* Mapa del camión - siempre visible */}
+            <View style={styles.card}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                <View style={[styles.iconBadge, { backgroundColor: '#2196F3', marginRight: 12 }]}>
+                  <Ionicons name="map" size={20} color="#FFF" />
                 </View>
+                <View style={{ flex: 1 }}>
+                  <ThemedText style={styles.sectionTitle}>
+                    {ubicacionCamion ? 'Ubicación en Tiempo Real' : 'Mapa de la Zona'}
+                  </ThemedText>
+                  <ThemedText style={{ fontSize: 13, opacity: 0.7 }}>
+                    {ubicacionCamion ? 'Rastrea el camión en el mapa' : 'El camión aparecerá cuando inicie la ruta'}
+                  </ThemedText>
+                </View>
+              </View>
 
-                <TruckMapView
-                  ubicacionCamion={ubicacionCamion}
-                  height={250}
-                />
+              <TruckMapView
+                ubicacionCamion={ubicacionCamion}
+                height={250}
+              />
 
-                {ubicacionCamion.velocidad !== undefined && (
+              {ubicacionCamion?.velocidad !== undefined && (
                   <View style={{
                     marginTop: 12,
                     padding: 12,
@@ -196,22 +197,7 @@ export default function IndexScreen() {
                   </View>
                 )}
               </View>
-            )}
-
-            {/* Mensaje cuando no hay camión en ruta */}
-            {!ubicacionCamion && (
-              <View style={styles.card}>
-                <View style={{ alignItems: 'center', paddingVertical: 20 }}>
-                  <Ionicons name="location-outline" size={48} color={isDarkMode ? '#666' : '#999'} />
-                  <ThemedText style={{ marginTop: 12, textAlign: 'center', opacity: 0.7 }}>
-                    El camión aún no ha iniciado su ruta
-                  </ThemedText>
-                  <ThemedText style={{ marginTop: 4, fontSize: 12, textAlign: 'center', opacity: 0.5 }}>
-                    La ubicación aparecerá cuando el conductor inicie la recolección
-                  </ThemedText>
-                </View>
-              </View>
-            )}
+            </View>
           </>
         ) : (
           <View style={styles.card}>

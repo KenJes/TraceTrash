@@ -247,7 +247,7 @@ export default function ConductorIndexScreen() {
                   </View>
                 )}
               </View>
-            ) : ubicacionActual ? (
+            ) : (
               <ConductorMapView
                 ubicacionActual={ubicacionActual}
                 ruta={ruta}
@@ -258,11 +258,6 @@ export default function ConductorIndexScreen() {
                   }
                 }}
               />
-            ) : (
-              <View style={[localStyles.webMapPlaceholder, { backgroundColor: isDarkMode ? '#2A2A2A' : '#F5F5F5' }]}>
-                <ActivityIndicator size="large" color="#4CAF50" />
-                <ThemedText style={{ marginTop: 12, opacity: 0.7 }}>Cargando ubicación...</ThemedText>
-              </View>
             )}
             
             {ruta.direcciones && ruta.direcciones.length > 0 && (

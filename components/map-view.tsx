@@ -3,6 +3,14 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, StyleSheet, Text, View } from 'react-native';
 
+// Coordenadas de Temascaltepec, México
+const TEMASCALTEPEC_COORDS = {
+  latitude: 19.0442,
+  longitude: -100.1512,
+  latitudeDelta: 0.05,
+  longitudeDelta: 0.05,
+};
+
 interface TruckMapViewProps {
   ubicacionCamion: UbicacionData | null;
   rutaPolyline?: { latitude: number; longitude: number }[];
@@ -47,10 +55,6 @@ export function TruckMapView({
     );
   }
 
-  if (!ubicacionCamion) {
-    return null;
-  }
-
   // En web, mostrar mensaje informativo
   if (Platform.OS === 'web') {
     return (
@@ -60,12 +64,26 @@ export function TruckMapView({
         <Text style={{ fontSize: 14, color: '#999', textAlign: 'center', paddingHorizontal: 20 }}>
           La visualización de mapas requiere la app móvil
         </Text>
-        <Text style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
-          Camión: {ubicacionCamion.conductorNombre} - Unidad {ubicacionCamion.unidad}
-        </Text>
+        {ubicacionCamion ? (
+          <Text style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
+            Camión: {ubicacionCamion.conductorNombre} - Unidad {ubicacionCamion.unidad}
+          </Text>
+        ) : (
+          <Text style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
+            Región: Temascaltepec, México
+          </Text>
+        )}
       </View>
     );
   }
+
+  // Usar ubicación del camión si existe, sino Temascaltepec
+  const initialRegion = ubicacionCamion ? {
+    latitude: ubicacionCamion.latitude,
+    longitude: ubicacionCamion.longitude,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01,
+  } : TEMASCALTEPEC_COORDS;
 
   return (
     <View style={[styles.container, { height }]}>
@@ -73,12 +91,7 @@ export function TruckMapView({
         ref={mapRef}
         provider={PROVIDER_DEFAULT}
         style={styles.map}
-        initialRegion={{
-          latitude: ubicacionCamion.latitude,
-          longitude: ubicacionCamion.longitude,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
+        initialRegion={initialRegion}
         onMapReady={() => setIsMapReady(true)}
         showsUserLocation={!!userLocation}
         showsMyLocationButton={true}
@@ -86,21 +99,23 @@ export function TruckMapView({
         showsScale={true}
         loadingEnabled={true}
       >
-        {/* Marcador del camión */}
-        <Marker
-          coordinate={{
-            latitude: ubicacionCamion.latitude,
-            longitude: ubicacionCamion.longitude,
-          }}
-          title={`Unidad ${ubicacionCamion.unidad}`}
-          description={ubicacionCamion.conductorNombre}
-          rotation={ubicacionCamion.heading || 0}
-          anchor={{ x: 0.5, y: 0.5 }}
-        >
-          <View style={styles.truckMarker}>
-            <Ionicons name="car" size={32} color="#4CAF50" />
-          </View>
-        </Marker>
+        {/* Marcador del camión si existe */}
+        {ubicacionCamion && (
+          <Marker
+            coordinate={{
+              latitude: ubicacionCamion.latitude,
+              longitude: ubicacionCamion.longitude,
+            }}
+            title={`Unidad ${ubicacionCamion.unidad}`}
+            description={ubicacionCamion.conductorNombre}
+            rotation={ubicacionCamion.heading || 0}
+            anchor={{ x: 0.5, y: 0.5 }}
+          >
+            <View style={styles.truckMarker}>
+              <Ionicons name="car" size={32} color="#4CAF50" />
+            </View>
+          </Marker>
+        )}
 
         {/* Marcador del usuario si está disponible */}
         {userLocation && (
