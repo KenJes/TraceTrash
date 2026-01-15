@@ -165,6 +165,14 @@ export default function AdminRutasScreen() {
   };
 
   const handleEliminarRuta = (ruta: RutaData) => {
+    console.log('handleEliminarRuta llamado con:', ruta);
+    console.log('ID de la ruta:', ruta.id);
+    
+    if (!ruta.id) {
+      Alert.alert('Error', 'La ruta no tiene ID válido');
+      return;
+    }
+    
     Alert.alert(
       'Eliminar Ruta',
       `¿Estás seguro de eliminar la ruta "${ruta.nombre}"?`,
@@ -175,7 +183,7 @@ export default function AdminRutasScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              console.log('Eliminando ruta:', ruta.id);
+              console.log('Eliminando ruta con ID:', ruta.id);
               await firebaseService.deleteRuta(ruta.id!);
               console.log('Ruta eliminada exitosamente');
               Alert.alert('Éxito', 'Ruta eliminada');

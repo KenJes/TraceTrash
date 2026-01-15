@@ -894,17 +894,23 @@ export const firebaseService = {
 
   deleteRuta: async (rutaId: string): Promise<void> => {
     try {
-      await deleteDoc(doc(db, 'rutas', rutaId));
+      console.log('deleteRuta: Iniciando eliminación de ruta:', rutaId);
       
-      // Limpiar asignación de conductores
+      console.log('deleteRuta: Eliminando documento de rutas...');
+      await deleteDoc(doc(db, 'rutas', rutaId));
+      console.log('deleteRuta: Documento eliminado exitosamente');
+      
+      console.log('deleteRuta: Buscando conductores asignados...');
       const conductoresQuery = query(
         collection(db, 'users'),
         where('rutaId', '==', rutaId)
       );
       const conductoresSnapshot = await getDocs(conductoresQuery);
+      console.log('deleteRuta: Conductores encontrados:', conductoresSnapshot.size);
       
       const updates: Promise<void>[] = [];
       conductoresSnapshot.forEach((conductorDoc) => {
+        console.log('deleteRuta: Desasignando conductor:', conductorDoc.id);
         updates.push(
           updateDoc(doc(db, 'users', conductorDoc.id), {
             rutaId: null,
@@ -914,8 +920,11 @@ export const firebaseService = {
       });
       
       await Promise.all(updates);
+      console.log('deleteRuta: Eliminación completada exitosamente');
     } catch (error: any) {
-      console.error('Error al eliminar ruta:', error);
+      console.error('deleteRuta: Error al eliminar ruta:', error);
+      console.error('deleteRuta: Error code:', error.code);
+      console.error('deleteRuta: Error message:', error.message);
       throw new Error(error.message || 'Error al eliminar ruta');
     }
   },
