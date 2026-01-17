@@ -2,32 +2,32 @@
 
 Sistema de rastreo en tiempo real de recolección de basura para Temascaltepec, México.
 
-## 📱 Descripción
+##  Descripción
 
 Aplicación multiplataforma (Android, iOS, Web) que permite rastrear camiones recolectores de basura en tiempo real, gestionar rutas optimizadas, y reportar incidencias. Incluye tres roles de usuario con funcionalidades específicas.
 
-## ✨ Características
+##  Características
 
-### 👤 Residentes
+###  Residentes
 - Rastreo en tiempo real del camión asignado
 - Notificaciones push de proximidad del camión
 - Reporte de incidencias con foto y ubicación
 - Historial personal de reportes
 
-### 🚛 Conductores
+###  Conductores
 - GPS tracking automático durante servicio
 - Control de ruta (iniciar/pausar/finalizar)
 - Vista de mapa con direcciones asignadas
 - Notificación automática a usuarios en ruta
 
-### 👨‍💼 Administradores
+###  Administradores
 - Dashboard con métricas en tiempo real
 - Mapa con ubicación de todos los camiones activos
 - Gestión completa de conductores y rutas
 - Optimización automática de rutas
 - Administración y seguimiento de reportes
 
-## 🛠 Stack Tecnológico
+##  Stack Tecnológico
 
 - **Frontend**: React Native + Expo SDK 54 + TypeScript
 - **Navegación**: Expo Router 6
@@ -36,7 +36,7 @@ Aplicación multiplataforma (Android, iOS, Web) que permite rastrear camiones re
 - **Notificaciones**: Expo Push Notifications
 - **Build**: EAS Build
 
-## 🚀 Instalación
+##  Instalación
 
 ### Prerrequisitos
 - Node.js 20+
@@ -51,7 +51,7 @@ npm install
 npm start
 ```
 
-## 📦 Comandos Disponibles
+##  Comandos Disponibles
 
 ```bash
 npm start          # Iniciar servidor de desarrollo
@@ -60,7 +60,7 @@ npm run ios        # Ejecutar en iOS
 npm run web        # Ejecutar en navegador
 ```
 
-## 📁 Estructura del Proyecto
+##  Estructura del Proyecto
 
 ```
 app/
@@ -83,7 +83,7 @@ constants/         # Configuración y constantes
 utils/             # Utilidades compartidas
 ```
 
-## ⚙️ Configuración Firebase
+##  Configuración Firebase
 
 1. Crear proyecto en [Firebase Console](https://console.firebase.google.com)
 2. Activar Firestore Database
@@ -91,7 +91,7 @@ utils/             # Utilidades compartidas
 4. Descargar `google-services.json` y colocarlo en la raíz
 5. Configurar credenciales en `services/firebaseconfig.ts`
 
-## 📄 Build Producción
+##  Build Producción
 
 Guía detallada disponible en [DEPLOY.md](./DEPLOY.md)
 
@@ -108,7 +108,7 @@ eas build --platform ios
 npx expo export --platform web
 ```
 
-## 🗄️ Estructura de Datos
+##  Estructura de Datos
 
 ### Colección: `users`
 ```typescript
@@ -160,18 +160,18 @@ npx expo export --platform web
 }
 ```
 
-## 🔒 Seguridad
+## Seguridad
 
 - Autenticación Firebase obligatoria
 - Reglas de Firestore configuradas (ver `firestore.rules`)
 - Control de permisos por rol
 - Tokens de notificación seguros
 
-## 📝 Licencia
+##  Licencia
 
 MIT License
 
-## 👨‍💻 Autor
+##  Autor
 
 **Kenneth Alcalá**  
 GitHub: [@KenJes](https://github.com/KenJes)
