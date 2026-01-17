@@ -14,6 +14,8 @@ export default function AjustesScreen() {
   const isDarkMode = theme === 'dark';
   const styles = getModernStyles(isDarkMode);
 
+  console.log('⚙️ Usuario en Ajustes:', user);
+
   const [editingName, setEditingName] = useState(false);
   const [editingAddress, setEditingAddress] = useState(false);
   const [tempNombre, setTempNombre] = useState('');
@@ -96,7 +98,9 @@ export default function AjustesScreen() {
                 <Ionicons name="pencil" size={18} color="#43A047" />
               </TouchableOpacity>
             </View>
-            <ThemedText style={styles.bodyText}>{user?.nombre}</ThemedText>
+            <ThemedText style={[styles.bodyText, !user?.nombre && { opacity: 0.5 }]}>
+              {user?.nombre || 'No configurado'}
+            </ThemedText>
           </View>
 
           <View style={{ marginBottom: 16 }}>
@@ -106,14 +110,18 @@ export default function AjustesScreen() {
                 <Ionicons name="pencil" size={18} color="#43A047" />
               </TouchableOpacity>
             </View>
-            <ThemedText style={styles.bodyText}>{user?.direccion}</ThemedText>
+            <ThemedText style={[styles.bodyText, !user?.direccion && { opacity: 0.5 }]}>
+              {user?.direccion || 'No configurada'}
+            </ThemedText>
           </View>
 
           <View style={styles.divider} />
 
           <View style={{ marginTop: 12 }}>
             <ThemedText style={[styles.label, { marginBottom: 4 }]}>Email</ThemedText>
-            <ThemedText style={styles.bodyText}>{user?.email}</ThemedText>
+            <ThemedText style={[styles.bodyText, !user?.email && { opacity: 0.5 }]}>
+              {user?.email || 'No configurado'}
+            </ThemedText>
           </View>
         </View>
 

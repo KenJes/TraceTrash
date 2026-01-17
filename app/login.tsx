@@ -5,7 +5,7 @@ import { ThemedView } from '@/components/themed-view';
 import { firebaseService } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Image, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Platform, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 import { getModernStyles } from './_styles/modernStyles';
 import RegisterScreen from './register';
 
@@ -39,7 +39,7 @@ export default function LoginScreen() {
       login({
         email: userData.email,
         nombre: userData.nombre,
-        direccion: `${userData.calle}, ${userData.numero}, ${userData.colonia}`,
+        direccion: userData.direccion || `${userData.calle}, ${userData.numero}, ${userData.colonia}`,
         rol: userData.rol,
         uid: userData.uid,
         rutaId: userData.rutaId,
@@ -63,7 +63,11 @@ export default function LoginScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40, flexGrow: 1 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={{ paddingBottom: 40, flexGrow: 1 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1, justifyContent: 'center' }}>
           {screen === 'welcome' && (
             <>
@@ -170,7 +174,8 @@ export default function LoginScreen() {
             />
           )}
         </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ThemedView>
   );
 }

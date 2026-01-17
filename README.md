@@ -1,52 +1,49 @@
 # TraceTrash
 
-Sistema de rastreo en tiempo real de recolección de basura con gestión de rutas, conductores y reportes de incidencias.
+Sistema de rastreo en tiempo real de recolección de basura para Temascaltepec, México.
 
-## Descripción
+## 📱 Descripción
 
-Aplicación multiplataforma (Android, iOS, Web) que permite rastrear camiones recolectores en tiempo real, gestionar rutas y conductores, y reportar incidencias. Incluye tres roles de usuario: residentes, conductores y administradores.
+Aplicación multiplataforma (Android, iOS, Web) que permite rastrear camiones recolectores de basura en tiempo real, gestionar rutas optimizadas, y reportar incidencias. Incluye tres roles de usuario con funcionalidades específicas.
 
-## Características
+## ✨ Características
 
-**Residentes**
+### 👤 Residentes
 - Rastreo en tiempo real del camión asignado
-- Notificaciones push de proximidad
-- Reporte de incidencias con ubicación
-- Historial de reportes personales
+- Notificaciones push de proximidad del camión
+- Reporte de incidencias con foto y ubicación
+- Historial personal de reportes
 
-**Conductores**
+### 🚛 Conductores
 - GPS tracking automático durante servicio
 - Control de ruta (iniciar/pausar/finalizar)
+- Vista de mapa con direcciones asignadas
 - Notificación automática a usuarios en ruta
 
-**Administradores**
+### 👨‍💼 Administradores
 - Dashboard con métricas en tiempo real
-- Mapa con ubicación de todos los camiones
+- Mapa con ubicación de todos los camiones activos
 - Gestión completa de conductores y rutas
-- Administración de reportes e incidencias
+- Optimización automática de rutas
+- Administración y seguimiento de reportes
 
-## Stack Tecnológico
+## 🛠 Stack Tecnológico
 
-- Frontend: React Native 0.81 + Expo SDK 54 + Expo Router 6 + TypeScript 5.3
-- Backend: Firebase (Firestore + Authentication)
-- Mapas: react-native-maps (móvil), react-leaflet + OpenStreetMap (web)
-- Notificaciones: Expo Push Notifications API
-- Build: EAS Build
+- **Frontend**: React Native + Expo SDK 54 + TypeScript
+- **Navegación**: Expo Router 6
+- **Backend**: Firebase (Firestore + Authentication)
+- **Mapas**: react-native-maps (móvil) | react-leaflet (web)
+- **Notificaciones**: Expo Push Notifications
+- **Build**: EAS Build
 
-## Instalación
+## 🚀 Instalación
 
 ### Prerrequisitos
-```bash
-Node.js 20+
-npm o yarn
-Expo CLI
-```
-
-Requisitos previos:
-- Node.js 20 o superior
+- Node.js 20+
 - npm o yarn
 - Expo CLI
 
+### Pasos
 ```bash
 git clone https://github.com/KenJes/TraceTrash.git
 cd Trace
@@ -54,129 +51,128 @@ npm install
 npm start
 ```
 
-## Comandos
+## 📦 Comandos Disponibles
 
 ```bash
 npm start          # Iniciar servidor de desarrollo
 npm run android    # Ejecutar en Android
 npm run ios        # Ejecutar en iOS
-npm run web        # Ejecutar en navegador web
+npm run web        # Ejecutar en navegador
 ```
 
-## Estructura del Proyecto
+## 📁 Estructura del Proyecto
 
 ```
-app/                        Pantallas y navegación (Expo Router)
-  (tabs)/                   Pantallas de usuario y conductor
-  (admin)/                  Pantallas de administrador
-  login.tsx, register.tsx   Autenticación
+app/
+  (tabs)/          # Pantallas residentes/conductores
+  (admin)/         # Pantallas administrador
+  login.tsx        # Autenticación
+  register.tsx     # Registro
 
-services/                   Lógica de negocio
-  firebase.ts               Operaciones CRUD con Firestore
-  location.ts               Servicio de geolocalización
-  notification-service.*    Notificaciones push (separado por plataforma)
+components/        # Componentes reutilizables
+  map-*.tsx        # Componentes de mapas (web/native)
+  map-markers.tsx  # Marcadores reutilizables
 
-components/                 Componentes reutilizables
-hooks/                      Custom hooks de React
-constants/                  Constantes y configuración global
+services/
+  firebase.ts      # Operaciones Firestore
+  location.ts      # Geolocalización
+  notification-*   # Push notifications
+
+hooks/             # Custom hooks
+constants/         # Configuración y constantes
+utils/             # Utilidades compartidas
 ```
 
-## Configuración Firebase
+## ⚙️ Configuración Firebase
 
-1. Crear proyecto en Firebase Console
-2. Activar Firestore Database en modo producción
-3. Activar Authentication con Email/Password
-4. Copiar credenciales al archivo de configuración
+1. Crear proyecto en [Firebase Console](https://console.firebase.google.com)
+2. Activar Firestore Database
+3. Activar Authentication (Email/Password)
+4. Descargar `google-services.json` y colocarlo en la raíz
+5. Configurar credenciales en `services/firebaseconfig.ts`
 
-Reglas de seguridad Firestore:
-
-```bash
-firebase deploy --only firestore:rules
-```
-
-Índices compuestos se crean automáticamente al hacer clic en el enlace del error de Firebase.
-
-## Build para Producción
+## 📄 Build Producción
 
 Guía detallada disponible en [DEPLOY.md](./DEPLOY.md)
 
 Android APK:
 ```bash
+
+```bash
 eas build --platform android
+eas build --platform ios
 ```
 
-Web:
+**Web**:
 ```bash
 npx expo export --platform web
 ```
 
-## Estructura de Datos Firebase
+## 🗄️ Estructura de Datos
 
-**Colección users**
+### Colección: `users`
 ```typescript
 {
   uid: string
   nombre: string
   email: string
-  rol: 'residente' | 'conductor' | 'admin'
+  rol: 'usuario' | 'conductor' | 'admin'
   direccion?: string
   rutaId?: string
   pushToken?: string
 }
 ```
 
-**Colección rutas**
+### Colección: `rutas`
 ```typescript
 {
   id: string
   nombre: string
   direcciones: string[]
-  color: string
   conductorAsignado?: string
+  color?: string
+  activa: boolean
 }
 ```
 
-**Colección incidencias**
+### Colección: `incidencias`
 ```typescript
 {
   id: string
   tipoIncidencia: string
   descripcion: string
   ubicacion: string
+  imagenes: string[]
   usuarioId: string
   estado: 'pendiente' | 'en_proceso' | 'resuelta'
   createdAt: timestamp
 }
 ```
 
-## Seguridad
+### Colección: `ubicaciones`
+```typescript
+{
+  conductorId: string
+  rutaId: string
+  latitude: number
+  longitude: number
+  timestamp: timestamp
+}
+```
+
+## 🔒 Seguridad
 
 - Autenticación Firebase obligatoria
-- Reglas de Firestore en firestore.rules
-- Control de permisos por rol a nivel de aplicación
-- Sin credenciales hardcodeadas en código
+- Reglas de Firestore configuradas (ver `firestore.rules`)
+- Control de permisos por rol
+- Tokens de notificación seguros
 
-## Desarrollo
-
-Ver [CODING_STANDARDS.md](./CODING_STANDARDS.md) para estándares de código y mejores prácticas.
-
-## Solución de Problemas
-
-**Error: Missing or insufficient permissions**
-Actualizar reglas de Firestore desde firestore.rules
-
-**Error: Requires index**
-Hacer clic en el enlace del error para crear el índice automáticamente
-
-**Web: window is not defined**
-Componentes que usan window/localStorage están separados por plataforma (.tsx para web, .native.tsx para móvil)
-
-## Licencia
+## 📝 Licencia
 
 MIT License
 
-## Autor
+## 👨‍💻 Autor
 
-Kenneth Alcalá
-GitHub: @KenJes
+**Kenneth Alcalá**  
+GitHub: [@KenJes](https://github.com/KenJes)
 

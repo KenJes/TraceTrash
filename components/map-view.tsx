@@ -1,15 +1,13 @@
-import { UbicacionData } from '@/services/firebase';
-import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, StyleSheet, Text, View } from 'react-native';
-
-// Coordenadas de Temascaltepec, México
-const TEMASCALTEPEC_COORDS = {
-  latitude: 19.0442,
-  longitude: -100.1512,
-  latitudeDelta: 0.05,
-  longitudeDelta: 0.05,
-};
+import {
+    CLOSE_ZOOM_DELTA,
+    MAP_COLORS,
+    TEMASCALTEPEC_COORDS,
+} from "@/constants/map-constants";
+import { UbicacionData } from "@/services/firebase";
+import React, { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
+import { TruckMarker, UserMarker } from "./map-markers";
 
 interface TruckMapViewProps {
   ubicacionCamion: UbicacionData | null;
@@ -42,7 +40,7 @@ export function TruckMapView({
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         },
-        1000
+        1000,
       );
     }
   }, [ubicacionCamion, isMapReady]);
@@ -55,35 +53,14 @@ export function TruckMapView({
     );
   }
 
-  // En web, mostrar mensaje informativo
-  if (Platform.OS === 'web') {
-    return (
-      <View style={[styles.container, { height, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f5f5f5' }]}>
-        <Ionicons name="map-outline" size={48} color="#999" style={{ marginBottom: 16 }} />
-        <Text style={{ fontSize: 16, fontWeight: '600', color: '#666', marginBottom: 8 }}>Mapa no disponible en web</Text>
-        <Text style={{ fontSize: 14, color: '#999', textAlign: 'center', paddingHorizontal: 20 }}>
-          La visualización de mapas requiere la app móvil
-        </Text>
-        {ubicacionCamion ? (
-          <Text style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
-            Camión: {ubicacionCamion.conductorNombre} - Unidad {ubicacionCamion.unidad}
-          </Text>
-        ) : (
-          <Text style={{ fontSize: 12, color: '#999', marginTop: 8 }}>
-            Región: Temascaltepec, México
-          </Text>
-        )}
-      </View>
-    );
-  }
-
   // Usar ubicación del camión si existe, sino Temascaltepec
-  const initialRegion = ubicacionCamion ? {
-    latitude: ubicacionCamion.latitude,
-    longitude: ubicacionCamion.longitude,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  } : TEMASCALTEPEC_COORDS;
+  const initialRegion = ubicacionCamion
+    ? {
+        latitude: ubicacionCamion.latitude,
+        longitude: ubicacionCamion.longitude,
+        ...CLOSE_ZOOM_DELTA,
+      }
+    : TEMASCALTEPEC_COORDS;
 
   return (
     <View style={[styles.container, { height }]}>
@@ -111,22 +88,14 @@ export function TruckMapView({
             rotation={ubicacionCamion.heading || 0}
             anchor={{ x: 0.5, y: 0.5 }}
           >
-            <View style={styles.truckMarker}>
-              <Ionicons name="car" size={32} color="#4CAF50" />
-            </View>
+            <TruckMarker size={32} />
           </Marker>
         )}
 
         {/* Marcador del usuario si está disponible */}
         {userLocation && (
-          <Marker
-            coordinate={userLocation}
-            title="Tu ubicación"
-            pinColor="#2196F3"
-          >
-            <View style={styles.userMarker}>
-              <Ionicons name="person" size={24} color="#2196F3" />
-            </View>
+          <Marker coordinate={userLocation} title="Tu ubicación">
+            <UserMarker />
           </Marker>
         )}
 
@@ -134,7 +103,7 @@ export function TruckMapView({
         {rutaPolyline.length > 0 && (
           <Polyline
             coordinates={rutaPolyline}
-            strokeColor="#4CAF50"
+            strokeColor={MAP_COLORS.route}
             strokeWidth={3}
             lineDashPattern={[10, 5]}
           />
@@ -147,37 +116,13 @@ export function TruckMapView({
 const styles = StyleSheet.create({
   container: {
     borderRadius: 12,
-    overflow: 'hidden',
-    backgroundColor: '#f5f5f5',
-    justifyContent: 'center',
-    alignItems: 'center',
+    overflow: "hidden",
+    backgroundColor: "#f5f5f5",
+    justifyContent: "center",
+    alignItems: "center",
   },
   map: {
-    width: '100%',
-    height: '100%',
-  },
-  truckMarker: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 8,
-    borderWidth: 2,
-    borderColor: '#4CAF50',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  userMarker: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 6,
-    borderWidth: 2,
-    borderColor: '#2196F3',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    width: "100%",
+    height: "100%",
   },
 });

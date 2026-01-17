@@ -147,6 +147,9 @@ export const firebaseService = {
       const user = userCredential.user;
       console.log('✅ Usuario creado en Auth:', user.uid);
 
+      // Buscar ruta que corresponda a la dirección del usuario
+      const rutaEncontrada = await firebaseService.findRutaByCalle(calle, colonia);
+      
       // Construir datos del usuario que guardaremos en Firestore
       const userData: UserData = {
         email,
@@ -155,10 +158,18 @@ export const firebaseService = {
         calle,
         numero,
         colonia,
-        rol: 'residente', // Todos los usuarios son residentes
+        direccion: `${calle}, ${numero}, ${colonia}`, // Dirección completa
+        rol: 'usuario', // Todos los usuarios nuevos son residentes
         createdAt: new Date().toISOString(),
         uid: user.uid,
+        rutaId: rutaEncontrada?.id, // Auto-asignar ruta si se encontró
       };
+      
+      if (rutaEncontrada) {
+        console.log('🚛 Ruta asignada automáticamente:', rutaEncontrada.nombre);
+      } else {
+        console.log('⚠️ No hay ruta disponible para esta dirección aún');
+      }
 
       // Asegurarnos de que el token de auth esté disponible antes de escribir en Firestore
       try {
@@ -224,7 +235,7 @@ export const firebaseService = {
             calle: '',
             numero: '',
             colonia: '',
-            rol: 'residente',
+            rol: 'usuario',
             createdAt: new Date().toISOString(),
             uid: user.uid,
           } as UserData;
@@ -244,7 +255,7 @@ export const firebaseService = {
             calle: '',
             numero: '',
             colonia: '',
-            rol: 'residente',
+            rol: 'usuario',
             createdAt: new Date().toISOString(),
             uid: user.uid,
           } as UserData;
@@ -258,7 +269,7 @@ export const firebaseService = {
             calle: '',
             numero: '',
             colonia: '',
-            rol: 'residente',
+            rol: 'usuario',
             createdAt: new Date().toISOString(),
             uid: user.uid,
           } as UserData;
@@ -793,6 +804,46 @@ export const firebaseService = {
   },
 
   // Obtener todas las rutas
+  // Buscar ruta por calle y colonia
+  findRutaByCalle: async (calle: string, colonia: string): Promise<RutaData | null> => {
+    try {
+      const rutasRef = collection(db, 'rutas');
+      const q = query(rutasRef);
+      const snapshot = await getDocs(q);
+      
+      // Normalizar entrada para comparación
+      const calleNorm = calle.toLowerCase().trim();
+      const coloniaNorm = colonia.toLowerCase().trim();
+      
+      // Buscar coincidencia exacta o parcial
+      for (const docSnap of snapshot.docs) {
+        const ruta = { id: docSnap.id, ...docSnap.data() } as RutaData;
+        const rutaCalleNorm = ruta.calle?.toLowerCase().trim() || '';
+        const rutaColoniaNorm = ruta.colonia?.toLowerCase().trim() || '';
+        
+        // Coincidencia exacta
+        if (rutaCalleNorm === calleNorm && rutaColoniaNorm === coloniaNorm) {
+          console.log('✅ Ruta encontrada (exacta):', ruta.nombre);
+          return ruta;
+        }
+        
+        // Coincidencia parcial de calle y colonia
+        if (rutaCalleNorm.includes(calleNorm) || calleNorm.includes(rutaCalleNorm)) {
+          if (rutaColoniaNorm === coloniaNorm) {
+            console.log('✅ Ruta encontrada (parcial):', ruta.nombre);
+            return ruta;
+          }
+        }
+      }
+      
+      console.log('⚠️ No se encontró ruta para:', calle, colonia);
+      return null;
+    } catch (error) {
+      console.error('❌ Error al buscar ruta:', error);
+      return null;
+    }
+  },
+
   getAllRutas: async (): Promise<RutaData[]> => {
     try {
       const querySnapshot = await getDocs(collection(db, 'rutas'));

@@ -1,8 +1,7 @@
-import { UbicacionData } from '@/services/firebase';
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { View } from 'react-native';
-import MapView, { Marker, PROVIDER_DEFAULT } from 'react-native-maps';
+import { UbicacionData } from "@/services/firebase";
+import React from "react";
+import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
+import { TruckMarker } from "./map-markers";
 
 interface AdminMapViewProps {
   ubicaciones: UbicacionData[];
@@ -33,15 +32,7 @@ export const AdminMapView = ({ ubicaciones }: AdminMapViewProps) => {
           title={`Unidad ${ubicacion.unidad}`}
           description={ubicacion.conductorNombre}
         >
-          <View style={{
-            backgroundColor: '#4CAF50',
-            padding: 8,
-            borderRadius: 20,
-            borderWidth: 2,
-            borderColor: '#FFF',
-          }}>
-            <Ionicons name="car" size={20} color="#FFF" />
-          </View>
+          <TruckMarker size={20} />
         </Marker>
       ))}
     </MapView>

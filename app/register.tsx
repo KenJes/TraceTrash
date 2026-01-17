@@ -4,7 +4,7 @@ import { ThemedText } from '@/components/themed-text';
 import { firebaseService } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, TextInput, TouchableOpacity, View } from 'react-native';
 import { getModernStyles } from './_styles/modernStyles';
 
 interface RegisterScreenProps {
@@ -61,8 +61,19 @@ export default function RegisterScreen({ onRegisterSuccess, onBackPress }: Regis
         registerEmail, registerPassword, registerNombre,
         registerCalle, registerNumero, registerColonia
       );
-      const address = `${userData.calle}, ${userData.numero}, ${userData.colonia}`;
-      login(userData.email, userData.nombre, address, userData.rol, userData.uid);
+      // Construir dirección completa
+      const direccion = `${userData.calle}, ${userData.numero}, ${userData.colonia}`;
+      // Pasar el objeto completo al AuthContext
+      const userToLogin = {
+        email: userData.email,
+        nombre: userData.nombre,
+        direccion: direccion,
+        rol: userData.rol,
+        uid: userData.uid,
+        rutaId: userData.rutaId
+      };
+      console.log('📱 Registrando usuario en AuthContext:', userToLogin);
+      await login(userToLogin);
       setRegisterEmail('');
       setRegisterNombre('');
       setRegisterPassword('');
@@ -79,11 +90,15 @@ export default function RegisterScreen({ onRegisterSuccess, onBackPress }: Regis
   };
 
   return (
-    <>
-      <ThemedText type="title" style={styles.title}>Crear Cuenta</ThemedText>
-      <ThemedText style={styles.subtitle}>Regístrate para comenzar</ThemedText>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <>
+        <ThemedText type="title" style={styles.title}>Crear Cuenta</ThemedText>
+        <ThemedText style={styles.subtitle}>Regístrate para comenzar</ThemedText>
 
-      <View style={styles.card}>
+        <View style={styles.card}>
         <View style={styles.inputGroup}>
           <ThemedText style={styles.label}>Email</ThemedText>
           <TextInput
@@ -243,6 +258,7 @@ export default function RegisterScreen({ onRegisterSuccess, onBackPress }: Regis
           <ThemedText style={{ color: '#43A047', fontWeight: '600' }}>Volver</ThemedText>
         </TouchableOpacity>
       </View>
-    </>
+      </>
+    </KeyboardAvoidingView>
   );
 }
