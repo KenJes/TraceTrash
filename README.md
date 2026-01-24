@@ -1,6 +1,6 @@
 # TraceTrash
 
-Sistema de rastreo en tiempo real de recolección de basura para Temascaltepec, México.
+Sistema de rastreo en tiempo real de recolección de basura
 
 ##  Descripción
 
