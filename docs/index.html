@@ -1,0 +1,1124 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="TraceTrash - Sistema inteligente de rastreo de recolección de basura en tiempo real"
+    />
+    <meta
+      name="keywords"
+      content="rastreo, basura, recolección, tiempo real, gestión urbana"
+    />
+    <title>TraceTrash - Rastreo Inteligente de Recolección de Basura</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- ============================================
+         NAVIGATION BAR
+         Navbar fija y responsive con efecto de scroll
+    ============================================= -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand" href="#home">
+          <i class="bi bi-recycle"></i>
+          <span class="brand-name">TraceTrash</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#home">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#features">Características</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#benefits">Beneficios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#demo">Demo</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#testimonials">Testimonios</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-primary ms-lg-3" href="#contact"
+                >Contáctanos</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ============================================
+         HERO SECTION
+         Sección principal con llamado a la acción
+    ============================================= -->
+    <section id="home" class="hero-section">
+      <div class="hero-overlay"></div>
+      <div class="container">
+        <div class="row align-items-center min-vh-100">
+          <div class="col-lg-6" data-aos="fade-right" data-aos-duration="1000">
+            <h1 class="hero-title">
+              Transforma la
+              <span class="text-gradient">Gestión de Residuos</span> en tu
+              Ciudad
+            </h1>
+            <p class="hero-subtitle">
+              Sistema inteligente de rastreo en tiempo real que conecta a
+              residentes, conductores y administradores para una recolección de
+              basura más eficiente y transparente.
+            </p>
+            <div class="hero-buttons">
+              <a href="#demo" class="btn btn-primary btn-lg me-3">
+                <i class="bi bi-play-circle me-2"></i>Ver Demo
+              </a>
+              <a href="#contact" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-envelope me-2"></i>Solicitar Info
+              </a>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="hero-stats mt-5">
+              <div class="row">
+                <div class="col-4">
+                  <div class="stat-item">
+                    <h3 class="stat-number" data-count="100">0</h3>
+                    <p class="stat-label">% Transparencia</p>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="stat-item">
+                    <h3 class="stat-number" data-count="40">0</h3>
+                    <p class="stat-label">% Más Eficiente</p>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="stat-item">
+                    <h3 class="stat-number" data-count="24">0</h3>
+                    <p class="stat-label">/7 Monitoreo</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="col-lg-6"
+            data-aos="fade-left"
+            data-aos-duration="1000"
+            data-aos-delay="200"
+          >
+            <div class="hero-image">
+              <img
+                src="images/hero-mockup.png"
+                alt="TraceTrash App"
+                class="img-fluid mockup-float"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div class="scroll-indicator">
+        <a href="#features">
+          <i class="bi bi-chevron-down"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============================================
+         FEATURES SECTION
+         Características principales del producto
+    ============================================= -->
+    <section id="features" class="section-padding bg-light">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+            <span class="section-badge">Funcionalidades</span>
+            <h2 class="section-title">
+              Todo lo que Necesitas en una Plataforma
+            </h2>
+            <p class="section-subtitle">
+              Una solución completa que conecta todos los actores del proceso de
+              recolección
+            </p>
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Feature 1: Rastreo en Tiempo Real -->
+          <div
+            class="col-lg-4 col-md-6"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <div class="feature-card">
+              <div class="feature-icon bg-primary">
+                <i class="bi bi-geo-alt-fill"></i>
+              </div>
+              <h3 class="feature-title">Rastreo en Tiempo Real</h3>
+              <p class="feature-description">
+                Visualiza la ubicación exacta de cada camión recolector en
+                tiempo real, con actualizaciones cada segundo.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 2: Notificaciones Inteligentes -->
+          <div
+            class="col-lg-4 col-md-6"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="feature-card">
+              <div class="feature-icon bg-success">
+                <i class="bi bi-bell-fill"></i>
+              </div>
+              <h3 class="feature-title">Notificaciones Inteligentes</h3>
+              <p class="feature-description">
+                Los residentes reciben alertas automáticas cuando el camión se
+                aproxima a su ubicación.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 3: Optimización de Rutas -->
+          <div
+            class="col-lg-4 col-md-6"
+            data-aos="fade-up"
+            data-aos-delay="300"
+          >
+            <div class="feature-card">
+              <div class="feature-icon bg-warning">
+                <i class="bi bi-diagram-3-fill"></i>
+              </div>
+              <h3 class="feature-title">Optimización de Rutas</h3>
+              <p class="feature-description">
+                Algoritmo inteligente que genera las rutas más eficientes,
+                ahorrando tiempo y combustible.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 4: Gestión de Incidencias -->
+          <div
+            class="col-lg-4 col-md-6"
+            data-aos="fade-up"
+            data-aos-delay="400"
+          >
+            <div class="feature-card">
+              <div class="feature-icon bg-danger">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+              </div>
+              <h3 class="feature-title">Reporte de Incidencias</h3>
+              <p class="feature-description">
+                Los usuarios pueden reportar problemas con foto y ubicación para
+                una atención rápida.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 5: Dashboard Administrativo -->
+          <div
+            class="col-lg-4 col-md-6"
+            data-aos="fade-up"
+            data-aos-delay="500"
+          >
+            <div class="feature-card">
+              <div class="feature-icon bg-info">
+                <i class="bi bi-graph-up"></i>
+              </div>
+              <h3 class="feature-title">Dashboard Completo</h3>
+              <p class="feature-description">
+                Panel administrativo con métricas en tiempo real y análisis de
+                rendimiento detallado.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 6: Multiplataforma -->
+          <div
+            class="col-lg-4 col-md-6"
+            data-aos="fade-up"
+            data-aos-delay="600"
+          >
+            <div class="feature-card">
+              <div class="feature-icon bg-purple">
+                <i class="bi bi-phone"></i>
+              </div>
+              <h3 class="feature-title">Multiplataforma</h3>
+              <p class="feature-description">
+                Disponible en Android, iOS y Web. Accede desde cualquier
+                dispositivo, en cualquier lugar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         BENEFITS SECTION
+         Beneficios para cada tipo de usuario
+    ============================================= -->
+    <section id="benefits" class="section-padding">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+            <span class="section-badge">Beneficios</span>
+            <h2 class="section-title">Soluciones para Todos</h2>
+            <p class="section-subtitle">
+              Cada actor del proceso obtiene valor inmediato
+            </p>
+          </div>
+        </div>
+
+        <!-- Tabs de beneficios por rol -->
+        <div class="benefits-tabs">
+          <ul
+            class="nav nav-pills justify-content-center mb-5"
+            id="benefitsTabs"
+            role="tablist"
+            data-aos="fade-up"
+          >
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="residents-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#residents"
+                type="button"
+              >
+                <i class="bi bi-people-fill"></i>
+                <span>Residentes</span>
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="drivers-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#drivers"
+                type="button"
+              >
+                <i class="bi bi-truck"></i>
+                <span>Conductores</span>
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="admins-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#admins"
+                type="button"
+              >
+                <i class="bi bi-shield-check"></i>
+                <span>Administradores</span>
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="benefitsTabContent">
+            <!-- Beneficios para Residentes -->
+            <div
+              class="tab-pane fade show active"
+              id="residents"
+              role="tabpanel"
+            >
+              <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                  <img
+                    src="images/resident-benefits.png"
+                    alt="Beneficios Residentes"
+                    class="img-fluid rounded-3 shadow-lg"
+                  />
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                  <h3 class="mb-4">Para Residentes</h3>
+                  <ul class="benefits-list">
+                    <li>
+                      <i class="bi bi-check-circle-fill text-success"></i>
+                      <div>
+                        <strong>Nunca pierdas el camión</strong>
+                        <p>
+                          Recibe notificaciones cuando el camión esté cerca de
+                          tu hogar
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-check-circle-fill text-success"></i>
+                      <div>
+                        <strong>Visibilidad total</strong>
+                        <p>
+                          Consulta en tiempo real dónde está el camión de tu
+                          ruta
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-check-circle-fill text-success"></i>
+                      <div>
+                        <strong>Reporta problemas fácilmente</strong>
+                        <p>
+                          Informa sobre basura acumulada o contenedores dañados
+                          con foto
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-check-circle-fill text-success"></i>
+                      <div>
+                        <strong>Transparencia garantizada</strong>
+                        <p>
+                          Sabe exactamente cuándo pasará el servicio de
+                          recolección
+                        </p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Beneficios para Conductores -->
+            <div class="tab-pane fade" id="drivers" role="tabpanel">
+              <div class="row align-items-center">
+                <div class="col-lg-6 order-lg-2" data-aos="fade-left">
+                  <img
+                    src="images/driver-benefits.png"
+                    alt="Beneficios Conductores"
+                    class="img-fluid rounded-3 shadow-lg"
+                  />
+                </div>
+                <div class="col-lg-6 order-lg-1" data-aos="fade-right">
+                  <h3 class="mb-4">Para Conductores</h3>
+                  <ul class="benefits-list">
+                    <li>
+                      <i class="bi bi-check-circle-fill text-primary"></i>
+                      <div>
+                        <strong>Rutas optimizadas</strong>
+                        <p>
+                          Recorre menos distancia y ahorra tiempo con rutas
+                          inteligentes
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-check-circle-fill text-primary"></i>
+                      <div>
+                        <strong>Interfaz simple</strong>
+                        <p>
+                          App fácil de usar con un solo botón para
+                          iniciar/terminar servicio
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-check-circle-fill text-primary"></i>
+                      <div>
+                        <strong>Tracking automático</strong>
+                        <p>
+                          El GPS se actualiza solo, sin necesidad de
+                          intervención manual
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-check-circle-fill text-primary"></i>
+                      <div>
+                        <strong>Mejor comunicación</strong>
+                        <p>
+                          Los residentes saben cuándo vienes, evitando reclamos
+                          innecesarios
+                        </p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Beneficios para Administradores -->
+            <div class="tab-pane fade" id="admins" role="tabpanel">
+              <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                  <img
+                    src="images/admin-benefits.png"
+                    alt="Beneficios Administradores"
+                    class="img-fluid rounded-3 shadow-lg"
+                  />
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                  <h3 class="mb-4">Para Administradores</h3>
+                  <ul class="benefits-list">
+                    <li>
+                      <i class="bi bi-check-circle-fill text-warning"></i>
+                      <div>
+                        <strong>Control total</strong>
+                        <p>
+                          Visualiza todos los camiones en un solo mapa en tiempo
+                          real
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-check-circle-fill text-warning"></i>
+                      <div>
+                        <strong>Métricas detalladas</strong>
+                        <p>
+                          Analiza eficiencia, tiempos y cobertura del servicio
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-check-circle-fill text-warning"></i>
+                      <div>
+                        <strong>Gestión simplificada</strong>
+                        <p>
+                          Administra conductores, rutas y reportes desde un solo
+                          panel
+                        </p>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="bi bi-check-circle-fill text-warning"></i>
+                      <div>
+                        <strong>Optimización continua</strong>
+                        <p>
+                          Genera automáticamente las mejores rutas para ahorrar
+                          recursos
+                        </p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         DEMO SECTION
+         Slider de capturas y videos demostrativos
+    ============================================= -->
+    <section id="demo" class="section-padding bg-dark text-white">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+            <span class="section-badge bg-primary">Demo</span>
+            <h2 class="section-title text-white">Mira TraceTrash en Acción</h2>
+            <p class="section-subtitle text-light">
+              Explora la interfaz y descubre lo fácil que es usar nuestra
+              plataforma
+            </p>
+          </div>
+        </div>
+
+        <!-- Slider de screenshots -->
+        <div
+          id="demoCarousel"
+          class="carousel slide"
+          data-bs-ride="carousel"
+          data-aos="fade-up"
+          data-aos-delay="200"
+        >
+          <div class="carousel-indicators">
+            <button
+              type="button"
+              data-bs-target="#demoCarousel"
+              data-bs-slide-to="0"
+              class="active"
+            ></button>
+            <button
+              type="button"
+              data-bs-target="#demoCarousel"
+              data-bs-slide-to="1"
+            ></button>
+            <button
+              type="button"
+              data-bs-target="#demoCarousel"
+              data-bs-slide-to="2"
+            ></button>
+            <button
+              type="button"
+              data-bs-target="#demoCarousel"
+              data-bs-slide-to="3"
+            ></button>
+          </div>
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <div class="row align-items-center">
+                <div class="col-lg-6">
+                  <img
+                    src="images/demo-1.png"
+                    class="d-block w-100 rounded-3 shadow-lg"
+                    alt="Rastreo en tiempo real"
+                  />
+                </div>
+                <div class="col-lg-6">
+                  <h3 class="mb-3">Vista de Usuario</h3>
+                  <p class="lead">
+                    Interfaz limpia y moderna que muestra la ubicación del
+                    camión en tiempo real con mapa interactivo.
+                  </p>
+                  <ul class="demo-features">
+                    <li>
+                      <i class="bi bi-check2"></i> Ubicación exacta del camión
+                    </li>
+                    <li>
+                      <i class="bi bi-check2"></i> Ruta completa visualizada
+                    </li>
+                    <li>
+                      <i class="bi bi-check2"></i> Notificaciones de proximidad
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div class="row align-items-center">
+                <div class="col-lg-6">
+                  <img
+                    src="images/demo-2.png"
+                    class="d-block w-100 rounded-3 shadow-lg"
+                    alt="Dashboard Administrativo"
+                  />
+                </div>
+                <div class="col-lg-6">
+                  <h3 class="mb-3">Panel Administrativo</h3>
+                  <p class="lead">
+                    Dashboard completo con métricas, gráficos y mapa de todos
+                    los vehículos activos.
+                  </p>
+                  <ul class="demo-features">
+                    <li>
+                      <i class="bi bi-check2"></i> Métricas en tiempo real
+                    </li>
+                    <li>
+                      <i class="bi bi-check2"></i> Gestión de conductores y
+                      rutas
+                    </li>
+                    <li><i class="bi bi-check2"></i> Reportes detallados</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div class="row align-items-center">
+                <div class="col-lg-6">
+                  <img
+                    src="images/demo-3.png"
+                    class="d-block w-100 rounded-3 shadow-lg"
+                    alt="App de Conductor"
+                  />
+                </div>
+                <div class="col-lg-6">
+                  <h3 class="mb-3">App para Conductores</h3>
+                  <p class="lead">
+                    Interfaz simple diseñada para usar mientras se conduce, con
+                    controles grandes y claros.
+                  </p>
+                  <ul class="demo-features">
+                    <li><i class="bi bi-check2"></i> Control de un toque</li>
+                    <li><i class="bi bi-check2"></i> GPS automático</li>
+                    <li><i class="bi bi-check2"></i> Vista de ruta asignada</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div class="row align-items-center">
+                <div class="col-lg-6">
+                  <img
+                    src="images/demo-4.png"
+                    class="d-block w-100 rounded-3 shadow-lg"
+                    alt="Sistema de Reportes"
+                  />
+                </div>
+                <div class="col-lg-6">
+                  <h3 class="mb-3">Sistema de Reportes</h3>
+                  <p class="lead">
+                    Los usuarios pueden reportar incidencias con foto, ubicación
+                    y descripción detallada.
+                  </p>
+                  <ul class="demo-features">
+                    <li><i class="bi bi-check2"></i> Captura de foto in-app</li>
+                    <li>
+                      <i class="bi bi-check2"></i> Geolocalización automática
+                    </li>
+                    <li><i class="bi bi-check2"></i> Seguimiento de estado</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            data-bs-target="#demoCarousel"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            data-bs-target="#demoCarousel"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         TESTIMONIALS SECTION
+         Slider de testimonios de clientes
+    ============================================= -->
+    <section id="testimonials" class="section-padding bg-light">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+            <span class="section-badge">Testimonios</span>
+            <h2 class="section-title">Lo Que Dicen Nuestros Clientes</h2>
+            <p class="section-subtitle">
+              Municipios satisfechos que han transformado su gestión de residuos
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-10 mx-auto">
+            <div
+              id="testimonialsCarousel"
+              class="carousel slide"
+              data-bs-ride="carousel"
+              data-aos="fade-up"
+            >
+              <div class="carousel-inner">
+                <div class="carousel-item active">
+                  <div class="testimonial-card">
+                    <div class="stars mb-3">
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                    </div>
+                    <p class="testimonial-text">
+                      "TraceTrash ha revolucionado nuestro servicio de
+                      recolección. Los ciudadanos están más satisfechos y hemos
+                      reducido quejas en un 80%. La transparencia que ofrece es
+                      invaluable."
+                    </p>
+                    <div class="testimonial-author">
+                      <img
+                        src="images/testimonial-1.jpg"
+                        alt="María González"
+                        class="author-image"
+                      />
+                      <div class="author-info">
+                        <h5 class="author-name">María González</h5>
+                        <p class="author-title">
+                          Directora de Servicios Públicos
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="carousel-item">
+                  <div class="testimonial-card">
+                    <div class="stars mb-3">
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                    </div>
+                    <p class="testimonial-text">
+                      "Como conductor, ahora sé exactamente qué ruta seguir. Las
+                      rutas optimizadas nos ahorran combustible y tiempo. La app
+                      es muy fácil de usar mientras manejo."
+                    </p>
+                    <div class="testimonial-author">
+                      <img
+                        src="images/testimonial-2.jpg"
+                        alt="Carlos Ramírez"
+                        class="author-image"
+                      />
+                      <div class="author-info">
+                        <h5 class="author-name">Carlos Ramírez</h5>
+                        <p class="author-title">Conductor de Recolección</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="carousel-item">
+                  <div class="testimonial-card">
+                    <div class="stars mb-3">
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                      <i class="bi bi-star-fill text-warning"></i>
+                    </div>
+                    <p class="testimonial-text">
+                      "Finalmente puedo saber cuándo pasará el camión. Las
+                      notificaciones son precisas y ya no pierdo el servicio.
+                      ¡Deberían implementarlo en todas las ciudades!"
+                    </p>
+                    <div class="testimonial-author">
+                      <img
+                        src="images/testimonial-3.jpg"
+                        alt="Ana Martínez"
+                        class="author-image"
+                      />
+                      <div class="author-info">
+                        <h5 class="author-name">Ana Martínez</h5>
+                        <p class="author-title">Residente Temascaltepec</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                class="carousel-control-prev"
+                type="button"
+                data-bs-target="#testimonialsCarousel"
+                data-bs-slide="prev"
+              >
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button
+                class="carousel-control-next"
+                type="button"
+                data-bs-target="#testimonialsCarousel"
+                data-bs-slide="next"
+              >
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         CTA SECTION
+         Llamado a la acción final
+    ============================================= -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto text-center" data-aos="zoom-in">
+            <h2 class="cta-title">¿Listo para Transformar tu Ciudad?</h2>
+            <p class="cta-text">
+              Únete a los municipios que ya están mejorando su servicio de
+              recolección con TraceTrash
+            </p>
+            <div class="cta-buttons">
+              <a href="#contact" class="btn btn-light btn-lg me-3">
+                <i class="bi bi-calendar-check me-2"></i>Agendar Demo
+              </a>
+              <a href="#contact" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-download me-2"></i>Descargar Brochure
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         CONTACT SECTION
+         Formulario de contacto
+    ============================================= -->
+    <section id="contact" class="section-padding">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+            <span class="section-badge">Contacto</span>
+            <h2 class="section-title">Hablemos de tu Proyecto</h2>
+            <p class="section-subtitle">
+              Completa el formulario y nos pondremos en contacto contigo en
+              menos de 24 horas
+            </p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <div
+              class="contact-form-wrapper"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <form id="contactForm" class="contact-form">
+                <div class="row g-4">
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="name"
+                        placeholder="Nombre completo"
+                        required
+                      />
+                      <label for="name">Nombre completo</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="email"
+                        placeholder="Email"
+                        required
+                      />
+                      <label for="email">Email</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="tel"
+                        class="form-control"
+                        id="phone"
+                        placeholder="Teléfono"
+                        required
+                      />
+                      <label for="phone">Teléfono</label>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-floating">
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="city"
+                        placeholder="Ciudad/Municipio"
+                        required
+                      />
+                      <label for="city">Ciudad/Municipio</label>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-floating">
+                      <select class="form-select" id="interest" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="demo">Solicitar Demo</option>
+                        <option value="pricing">Información de Precios</option>
+                        <option value="implementation">Implementación</option>
+                        <option value="other">Otro</option>
+                      </select>
+                      <label for="interest">¿En qué estás interesado?</label>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-floating">
+                      <textarea
+                        class="form-control"
+                        id="message"
+                        placeholder="Mensaje"
+                        style="height: 150px"
+                        required
+                      ></textarea>
+                      <label for="message"
+                        >Cuéntanos más sobre tu proyecto</label
+                      >
+                    </div>
+                  </div>
+                  <div class="col-12 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                      <i class="bi bi-send me-2"></i>Enviar Mensaje
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              <!-- Mensaje de éxito/error -->
+              <div
+                id="formMessage"
+                class="alert mt-4"
+                style="display: none"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información de contacto -->
+        <div class="row mt-5">
+          <div
+            class="col-lg-4 col-md-6 mb-4"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <div class="contact-info-card">
+              <div class="contact-icon">
+                <i class="bi bi-geo-alt-fill"></i>
+              </div>
+              <h4>Ubicación</h4>
+              <p>Temascaltepec, Estado de México<br />México</p>
+            </div>
+          </div>
+          <div
+            class="col-lg-4 col-md-6 mb-4"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="contact-info-card">
+              <div class="contact-icon">
+                <i class="bi bi-envelope-fill"></i>
+              </div>
+              <h4>Email</h4>
+              <p>
+                <a href="mailto:contacto@tracetrash.com"
+                  >contacto@tracetrash.com</a
+                >
+              </p>
+            </div>
+          </div>
+          <div
+            class="col-lg-4 col-md-6 mb-4"
+            data-aos="fade-up"
+            data-aos-delay="300"
+          >
+            <div class="contact-info-card">
+              <div class="contact-icon">
+                <i class="bi bi-phone-fill"></i>
+              </div>
+              <h4>Teléfono</h4>
+              <p><a href="tel:+525555555555">+52 (555) 555-5555</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================
+         FOOTER
+         Pie de página con links y redes sociales
+    ============================================= -->
+    <footer class="footer">
+      <div class="container">
+        <div class="row g-4">
+          <div class="col-lg-4 col-md-6">
+            <div class="footer-brand">
+              <i class="bi bi-recycle"></i>
+              <span>TraceTrash</span>
+            </div>
+            <p class="footer-description">
+              Transformando la gestión de residuos urbanos con tecnología
+              inteligente y transparente.
+            </p>
+            <div class="social-links">
+              <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+              <a href="#" class="social-link"><i class="bi bi-twitter"></i></a>
+              <a href="#" class="social-link"
+                ><i class="bi bi-instagram"></i
+              ></a>
+              <a href="#" class="social-link"><i class="bi bi-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <h5 class="footer-title">Producto</h5>
+            <ul class="footer-links">
+              <li><a href="#features">Características</a></li>
+              <li><a href="#benefits">Beneficios</a></li>
+              <li><a href="#demo">Demo</a></li>
+              <li><a href="#testimonials">Testimonios</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <h5 class="footer-title">Empresa</h5>
+            <ul class="footer-links">
+              <li><a href="#">Nosotros</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">Carreras</a></li>
+              <li><a href="#contact">Contacto</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <h5 class="footer-title">Recursos</h5>
+            <ul class="footer-links">
+              <li><a href="#">Documentación</a></li>
+              <li><a href="#">Soporte</a></li>
+              <li><a href="#">FAQ</a></li>
+              <li><a href="#">API</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-6">
+            <h5 class="footer-title">Legal</h5>
+            <ul class="footer-links">
+              <li><a href="#">Privacidad</a></li>
+              <li><a href="#">Términos</a></li>
+              <li><a href="#">Licencia</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr class="footer-divider" />
+        <div class="row">
+          <div class="col-12 text-center">
+            <p class="footer-copyright">
+              &copy; 2026 TraceTrash. Todos los derechos reservados. |
+              Desarrollado por
+              <a href="https://github.com/KenJes" target="_blank"
+                >Kenneth Alcalá</a
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Botón de scroll to top -->
+    <button id="scrollTopBtn" class="scroll-top-btn">
+      <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AOS Animation Library JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script src="js/main.js"></script>
+  </body>
+</html>
