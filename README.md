@@ -9,18 +9,21 @@ Aplicación multiplataforma (Android, iOS, Web) que permite rastrear camiones re
 ## ✨ Características
 
 ### 👤 Residentes
+
 - Rastreo en tiempo real del camión asignado
 - Notificaciones push de proximidad del camión
 - Reporte de incidencias con foto y ubicación
 - Historial personal de reportes
 
 ### 🚛 Conductores
+
 - GPS tracking automático durante servicio
 - Control de ruta (iniciar/pausar/finalizar)
 - Vista de mapa con direcciones asignadas
 - Notificación automática a usuarios en ruta
 
 ### 👨‍💼 Administradores
+
 - Dashboard con métricas en tiempo real
 - Mapa con ubicación de todos los camiones activos
 - Gestión completa de conductores y rutas
@@ -39,11 +42,13 @@ Aplicación multiplataforma (Android, iOS, Web) que permite rastrear camiones re
 ## 🚀 Instalación
 
 ### Prerrequisitos
+
 - Node.js 20+
 - npm o yarn
 - Expo CLI
 
 ### Pasos
+
 ```bash
 git clone https://github.com/KenJes/TraceTrash.git
 cd Trace
@@ -96,14 +101,16 @@ utils/             # Utilidades compartidas
 Guía detallada disponible en [DEPLOY.md](./DEPLOY.md)
 
 Android APK:
-```bash
+
+````bash
 
 ```bash
 eas build --platform android
 eas build --platform ios
-```
+````
 
 **Web**:
+
 ```bash
 npx expo export --platform web
 ```
@@ -111,6 +118,7 @@ npx expo export --platform web
 ## 🗄️ Estructura de Datos
 
 ### Colección: `users`
+
 ```typescript
 {
   uid: string
@@ -124,6 +132,7 @@ npx expo export --platform web
 ```
 
 ### Colección: `rutas`
+
 ```typescript
 {
   id: string
@@ -136,6 +145,7 @@ npx expo export --platform web
 ```
 
 ### Colección: `incidencias`
+
 ```typescript
 {
   id: string
@@ -150,13 +160,14 @@ npx expo export --platform web
 ```
 
 ### Colección: `ubicaciones`
+
 ```typescript
 {
-  conductorId: string
-  rutaId: string
-  latitude: number
-  longitude: number
-  timestamp: timestamp
+  conductorId: string;
+  rutaId: string;
+  latitude: number;
+  longitude: number;
+  timestamp: timestamp;
 }
 ```
 
@@ -175,4 +186,3 @@ MIT License
 
 **Kenneth Alcalá**  
 GitHub: [@KenJes](https://github.com/KenJes)
-

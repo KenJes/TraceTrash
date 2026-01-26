@@ -62,6 +62,7 @@ docs/
 Para que la landing page se vea completa, necesitas agregar las siguientes imágenes en la carpeta `images/`:
 
 ### Mockups y Screenshots
+
 - `hero-mockup.png` (600x800px) - Mockup del teléfono con la app
 - `demo-1.png` (800x600px) - Vista de usuario
 - `demo-2.png` (800x600px) - Dashboard administrativo
@@ -69,32 +70,38 @@ Para que la landing page se vea completa, necesitas agregar las siguientes imág
 - `demo-4.png` (800x600px) - Sistema de reportes
 
 ### Beneficios
+
 - `resident-benefits.png` (600x400px) - Imagen representativa
 - `driver-benefits.png` (600x400px) - Imagen representativa
 - `admin-benefits.png` (600x400px) - Imagen representativa
 
 ### Testimonios
+
 - `testimonial-1.jpg` (100x100px) - Foto de María González
 - `testimonial-2.jpg` (100x100px) - Foto de Carlos Ramírez
 - `testimonial-3.jpg` (100x100px) - Foto de Ana Martínez
 
 ### Backgrounds
+
 - `hero-bg.jpg` (1920x1080px) - Imagen de fondo hero
 - `cta-bg.jpg` (1920x600px) - Imagen de fondo CTA
 
 ## 🔧 Personalización
 
 ### Colores
+
 Edita las variables CSS en `styles.css`:
+
 ```css
 :root {
-    --primary-color: #4CAF50;
-    --primary-dark: #2D7A3E;
-    /* ... más colores */
+  --primary-color: #4caf50;
+  --primary-dark: #2d7a3e;
+  /* ... más colores */
 }
 ```
 
 ### Contenido
+
 - Actualiza textos en `index.html`
 - Modifica funcionalidades en `main.js`
 - Agrega/elimina secciones según necesites
@@ -111,6 +118,7 @@ Para publicar en GitHub Pages:
 ## 🌐 SEO y Metadata
 
 La página incluye:
+
 - Meta tags descriptivos
 - Open Graph para redes sociales
 - Estructura semántica HTML5
