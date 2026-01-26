@@ -145,7 +145,7 @@ a:hover {
    NAVEGACIÓN
    ============================================ */
 .navbar {
-  padding: 1.5rem 0;
+  padding: 0.75rem 0;
   transition: all var(--transition-base);
   background: rgba(26, 26, 26, 0.85);
   backdrop-filter: blur(10px);
@@ -154,12 +154,12 @@ a:hover {
 .navbar.navbar-scrolled {
   background: rgba(26, 26, 26, 0.98);
   backdrop-filter: blur(10px);
-  padding: 1rem 0;
+  padding: 0.5rem 0;
   box-shadow: var(--shadow-md);
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -168,7 +168,7 @@ a:hover {
 }
 
 .navbar-logo {
-  height: 45px;
+  height: 40px;
   width: auto;
   transition: var(--transition-base);
 }
