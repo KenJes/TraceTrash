@@ -147,7 +147,8 @@ a:hover {
 .navbar {
   padding: 1.5rem 0;
   transition: all var(--transition-base);
-  background: transparent;
+  background: rgba(26, 26, 26, 0.85);
+  backdrop-filter: blur(10px);
 }
 
 .navbar.navbar-scrolled {
