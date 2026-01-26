@@ -166,6 +166,16 @@ a:hover {
   color: var(--white) !important;
 }
 
+.navbar-logo {
+  height: 45px;
+  width: auto;
+  transition: var(--transition-base);
+}
+
+.navbar-brand:hover .navbar-logo {
+  transform: scale(1.05);
+}
+
 .navbar-brand i {
   font-size: 2rem;
   color: var(--primary-color);
@@ -1124,7 +1134,7 @@ a:hover {
     font-size: 1.5rem;
   }
 
-  .navbar-brand img {
+  .navbar-logo {
     height: 35px;
   }
 
