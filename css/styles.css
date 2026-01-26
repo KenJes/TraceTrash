@@ -217,7 +217,7 @@ a:hover {
   align-items: center;
   background:
     var(--gradient-overlay),
-    url("../images/hero-bg.jpg") center/cover no-repeat;
+    url("https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1920&h=1080&fit=crop") center/cover no-repeat;
   color: var(--white);
   overflow: hidden;
 }
@@ -638,7 +638,7 @@ a:hover {
 .cta-section {
   background:
     var(--gradient-overlay),
-    url("../images/cta-bg.jpg") center/cover fixed no-repeat;
+    url("https://images.unsplash.com/photo-1523821741446-edb2b68bb7a0?w=1920&h=600&fit=crop") center/cover fixed no-repeat;
   padding: 120px 0;
   color: var(--white);
   text-align: center;
