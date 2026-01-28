@@ -688,6 +688,25 @@ a:hover {
   letter-spacing: 0.5px;
 }
 
+.download-instructions {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.download-instructions ol {
+  text-align: left;
+  line-height: 2;
+  font-size: 1rem;
+}
+
+.download-instructions ol li {
+  margin-bottom: 0.5rem;
+}
+
+.download-instructions strong {
+  color: var(--white);
+}
+
 /* ============================================
    CONTACT SECTION
    ============================================ */
