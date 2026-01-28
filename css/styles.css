@@ -141,6 +141,10 @@ a:hover {
   padding: var(--section-padding);
 }
 
+.bg-light {
+  background: rgba(248, 249, 250, 0.95) !important;
+}
+
 /* ============================================
    NAVEGACIÓN
    ============================================ */
