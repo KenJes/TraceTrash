@@ -400,10 +400,11 @@ a:hover {
 
 .section-subtitle {
   font-size: 1.125rem;
-  color: var(--gray-700);
+  color: var(--gray-800);
   max-width: 600px;
   margin: 0 auto 3rem;
   line-height: 1.7;
+  font-weight: 500;
 }
 
 /* ============================================
@@ -464,9 +465,10 @@ a:hover {
 }
 
 .feature-description {
-  color: var(--gray-700);
+  color: var(--gray-800);
   margin-bottom: 0;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 /* ============================================
