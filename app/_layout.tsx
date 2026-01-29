@@ -1,15 +1,19 @@
-import { AuthProvider, useAuthContext } from '@/components/auth-context';
-import { ThemeProvider, useThemeContext } from '@/components/theme-context';
+import { AuthProvider, useAuthContext } from "@/components/auth-context";
+import { ThemeProvider, useThemeContext } from "@/components/theme-context";
 // import { usePushNotifications } from '@/hooks/use-push-notifications';
-import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
-import { Slot, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import { Platform } from 'react-native';
-import 'react-native-reanimated';
+import {
+    DarkTheme,
+    DefaultTheme,
+    ThemeProvider as NavigationThemeProvider,
+} from "@react-navigation/native";
+import { Slot, useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { Platform } from "react-native";
+import "react-native-reanimated";
 
 export const unstable_settings = {
-  anchor: 'login',
+  anchor: "login",
 };
 
 function LayoutHelpers() {
@@ -19,11 +23,13 @@ function LayoutHelpers() {
 
   // Registrar notificaciones push solo en móvil (no web)
   useEffect(() => {
-    if (Platform.OS !== 'web') {
+    if (Platform.OS !== "web") {
       // Importación dinámica para evitar problemas SSR
-      import('@/hooks/use-push-notifications').then(({ usePushNotifications }) => {
-        // Este hook se ejecutará solo en móvil
-      });
+      import("@/hooks/use-push-notifications").then(
+        ({ usePushNotifications }) => {
+          // Este hook se ejecutará solo en móvil
+        },
+      );
     }
   }, []);
 
@@ -31,18 +37,23 @@ function LayoutHelpers() {
     const t = setTimeout(() => {
       try {
         if (isLoggedIn) {
-          if (user?.rol === 'admin') {
-            router.replace('/(admin)/admin-index');
-          } else if (user?.rol === 'conductor') {
-            router.replace('/(tabs)/conductor-index');
+          if (user?.rol === "admin") {
+            // Admins deben usar el panel web (admin-trace)
+            // En móvil solo tienen acceso limitado como residente
+            router.replace("/(tabs)");
+          } else if (user?.rol === "conductor") {
+            router.replace("/(tabs)/conductor-index");
           } else {
-            router.replace('/(tabs)');
+            router.replace("/(tabs)");
           }
         } else {
-          router.replace('/login');
+          router.replace("/login");
         }
       } catch (err) {
-        console.warn('RootLayout navigation skipped (router not ready yet):', err);
+        console.warn(
+          "RootLayout navigation skipped (router not ready yet):",
+          err,
+        );
       }
     }, 0);
 
@@ -50,7 +61,9 @@ function LayoutHelpers() {
   }, [isLoggedIn, user, router]);
 
   return (
-    <NavigationThemeProvider value={theme === 'dark' ? DarkTheme : DefaultTheme}>
+    <NavigationThemeProvider
+      value={theme === "dark" ? DarkTheme : DefaultTheme}
+    >
       <StatusBar style="auto" />
     </NavigationThemeProvider>
   );

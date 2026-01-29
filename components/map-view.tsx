@@ -4,8 +4,15 @@ import {
     TEMASCALTEPEC_COORDS,
 } from "@/constants/map-constants";
 import { UbicacionData } from "@/services/firebase";
-import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useRef, useState } from "react";
+import {
+    ActivityIndicator,
+    Platform,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from "react-native-maps";
 import { TruckMarker, UserMarker } from "./map-markers";
 
@@ -18,7 +25,9 @@ interface TruckMapViewProps {
 }
 
 /**
- * Componente de mapa para visualizar ubicación del camión y ruta
+ * Componente de mapa unificado para web y móvil
+ * - Web: Muestra mensaje informativo (mapas no soportados)
+ * - Móvil: Muestra mapa completo con react-native-maps
  */
 export function TruckMapView({
   ubicacionCamion,
@@ -30,9 +39,17 @@ export function TruckMapView({
   const mapRef = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
+  // Debug logs
+  console.log(`[MAP-VIEW-${Platform.OS.toUpperCase()}] Renderizando con:`);
+  console.log("  - ubicacionCamion:", ubicacionCamion ? "SÍ" : "NO");
+  console.log(
+    "  - userLocation:",
+    userLocation ? `${userLocation.latitude}, ${userLocation.longitude}` : "NO",
+  );
+  console.log("  - rutaPolyline:", rutaPolyline.length, "puntos");
+
   useEffect(() => {
     if (isMapReady && mapRef.current && ubicacionCamion) {
-      // Centrar mapa en la ubicación del camión
       mapRef.current.animateToRegion(
         {
           latitude: ubicacionCamion.latitude,
@@ -53,14 +70,78 @@ export function TruckMapView({
     );
   }
 
-  // Usar ubicación del camión si existe, sino Temascaltepec
+  // VERSIÓN WEB: Solo mensaje informativo
+  if (Platform.OS === "web") {
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            height,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#f5f5f5",
+          },
+        ]}
+      >
+        <Ionicons
+          name="map-outline"
+          size={48}
+          color="#999"
+          style={{ marginBottom: 16 }}
+        />
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: "600",
+            color: "#666",
+            marginBottom: 8,
+          }}
+        >
+          Mapa disponible en app móvil
+        </Text>
+        <Text
+          style={{
+            fontSize: 14,
+            color: "#999",
+            textAlign: "center",
+            paddingHorizontal: 20,
+          }}
+        >
+          Descarga la aplicación para ver el mapa en tiempo real
+        </Text>
+        {ubicacionCamion && (
+          <Text style={{ fontSize: 12, color: "#4CAF50", marginTop: 12 }}>
+            📍 Camión activo: {ubicacionCamion.conductorNombre} (Unidad{" "}
+            {ubicacionCamion.unidad})
+          </Text>
+        )}
+        {userLocation && (
+          <Text style={{ fontSize: 12, color: "#2196F3", marginTop: 4 }}>
+            📍 Tu ubicación: {userLocation.latitude.toFixed(5)},{" "}
+            {userLocation.longitude.toFixed(5)}
+          </Text>
+        )}
+      </View>
+    );
+  }
+
+  // VERSIÓN NATIVE: Mapa completo con react-native-maps
   const initialRegion = ubicacionCamion
     ? {
         latitude: ubicacionCamion.latitude,
         longitude: ubicacionCamion.longitude,
         ...CLOSE_ZOOM_DELTA,
       }
-    : TEMASCALTEPEC_COORDS;
+    : userLocation
+      ? {
+          latitude: userLocation.latitude,
+          longitude: userLocation.longitude,
+          ...CLOSE_ZOOM_DELTA,
+        }
+      : TEMASCALTEPEC_COORDS;
+
+  console.log("[MAP-VIEW] Region inicial:", initialRegion);
 
   return (
     <View style={[styles.container, { height }]}>
@@ -69,8 +150,11 @@ export function TruckMapView({
         provider={PROVIDER_DEFAULT}
         style={styles.map}
         initialRegion={initialRegion}
-        onMapReady={() => setIsMapReady(true)}
-        showsUserLocation={!!userLocation}
+        onMapReady={() => {
+          console.log("[MAP-VIEW] Mapa listo");
+          setIsMapReady(true);
+        }}
+        showsUserLocation={false}
         showsMyLocationButton={true}
         showsCompass={true}
         showsScale={true}

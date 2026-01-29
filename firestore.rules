@@ -2,49 +2,150 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
+    // FUNCIÓN HELPER: Verificar si el usuario es admin
+    function isAdmin() {
+      return request.auth != null &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.rol == 'admin';
+    }
+    
+    // FUNCIÓN HELPER: Verificar si el usuario es conductor
+    function isConductor() {
+      return request.auth != null &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.rol == 'conductor';
+    }
+    
+    // FUNCIÓN HELPER: Verificar si el usuario es dueño del documento
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+    
+    // FUNCIÓN HELPER: Validar campos obligatorios de usuario
+    function validUserData() {
+      let data = request.resource.data;
+      return data.keys().hasAll(['email', 'nombre', 'rol']) &&
+             data.email is string && data.email.size() > 0 &&
+             data.nombre is string && data.nombre.size() >= 2 && data.nombre.size() <= 100 &&
+             data.rol in ['admin', 'conductor', 'usuario'] &&
+             (!data.keys().hasAny(['password'])); // NUNCA permitir campo password
+    }
+    
+    // FUNCIÓN HELPER: Validar coordenadas GPS dentro de México
+    function validMexicoCoords(lat, lon) {
+      return lat >= 14.5 && lat <= 32.7 && lon >= -118.4 && lon <= -86.7;
+    }
+    
+    // ============================
     // COLECCIÓN: users
+    // ============================
     match /users/{userId} {
+      // Lectura: Todos los autenticados pueden leer usuarios (sin password)
       allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null;
-      allow delete: if request.auth != null;
+      
+      // Creación: Solo durante registro o admin, con datos válidos
+      allow create: if (request.auth == null || isAdmin()) && validUserData();
+      
+      // Actualización: Solo el propio usuario o admin, sin modificar rol
+      allow update: if (isOwner(userId) || isAdmin()) && 
+                       validUserData() &&
+                       (isAdmin() || resource.data.rol == request.resource.data.rol);
+      
+      // Eliminación: Solo admin
+      allow delete: if isAdmin();
     }
     
+    // ============================
     // COLECCIÓN: rutas
+    // ============================
     match /rutas/{rutaId} {
-      // Todos los autenticados pueden leer rutas
-      allow read: if request.auth != null;
-      // Todos pueden crear/actualizar/eliminar - control en la app
-      allow create, update, delete: if request.auth != null;
-    }
-    
-    // COLECCIÓN: ubicaciones
-    match /ubicaciones/{ubicacionId} {
-      // Todos pueden leer ubicaciones
-      allow read: if request.auth != null;
-      // Todos pueden escribir - control en la app
-      allow create, update, delete: if request.auth != null;
-    }
-    
-    // COLECCIÓN: incidencias
-    match /incidencias/{incidenciaId} {
-      // Todos los autenticados pueden leer todas las incidencias
+      // Lectura: Todos los autenticados
       allow read: if request.auth != null;
       
-      // Cualquier usuario autenticado puede crear incidencias
+      // Validación de campos de ruta
+      function validRutaData() {
+        let data = request.resource.data;
+        return data.keys().hasAll(['nombre', 'puntos']) &&
+               data.nombre is string && data.nombre.size() >= 3 &&
+               data.puntos is list && data.puntos.size() > 0;
+      }
+      
+      // Escritura: Solo admin y conductores con datos válidos
+      allow create: if (isAdmin() || isConductor()) && validRutaData();
+      allow update: if (isAdmin() || isConductor()) && validRutaData();
+      allow delete: if isAdmin();
+    }
+    Validación de ubicación GPS
+      function validUbicacionData() {
+        let data = request.resource.data;
+        return data.keys().hasAll(['latitud', 'longitud', 'timestamp']) &&
+               data.latitud is number && data.longitud is number &&
+               validMexicoCoords(data.latitud, data.longitud) &&
+               data.timestamp is timestamp;
+      }
+      
+      // Escritura: Solo conductores con ubicaciones válidas
+      allow create: if (isConductor() || isAdmin()) && validUbicacionData();
+      allow update: if (isConductor() || isAdmin()) && validUbicacionData
+    // ============================
+    match /ubicaciones/{ubicacionId} {
+      // Lectura: Todos los autenticados
+      allow read: if request. (reportes)
+    // ============================
+    match /incidencias/{incidenciaId} {
+      // Lectura: Todos los autenticados
+      allow read: if request.auth != null;
+      
+      // Validación de reporte
+      function validIncidenciaData() {
+        let data = request.resource.data;
+        return data.keys().hasAll(['tipo', 'descripcion', 'usuarioId', 'timestamp']) &&
+               data.tipo is string && data.tipo.size() > 0 &&
+               data.descripcion is string && 
+               data.descripcion.size() >= 10 && data.descripcion.size() <= 1000 &&
+               data.usuarioId == request.auth.uid &&
+               data.timestamp is timestamp;
+      }
+      
+      // Creación: Cualquier usuario autenticado con datos válidos
+      allow create: if request.auth != null && validIncidenciaData();
+      
+      // Actualización: Solo el creador o admin
+      allow update: if (isOwner(resource.data.usuarioId) || isAdmin()) && validIncidenciaData();
+      
+      // Eliminación: Solo admin
+      allow delete: if isAdmin();
+    }
+    
+    // ============================
+    // COLECCIÓN: auditLogs (logs de auditoría)
+    // ============================
+    match /auditLogs/{logId} {
+      // Lectura: Solo admin
+      allow read: if isAdmin();
+      
+      // Escritura: Solo sistema (se creará desde Cloud Functions o admin)
+      allow create: if isAdmin();
+      allow update: if false; // Los logs no se modifican
+      allow delete: if false; // Los logs no se eliminan != null;
+      
+      // Creación: Cualquier usuario autenticado
       allow create: if request.auth != null;
       
-      // Todos pueden actualizar
-      allow update: if request.auth != null;
+      // Actualización: Solo el creador o admin
+      allow update: if isOwner(resource.data.usuarioId) || isAdmin();
       
-      // Todos pueden eliminar - control en la app
-      allow delete: if request.auth != null;
+      // Eliminación: Solo admin
+      allow delete: if isAdmin();
     }
     
+    // ============================
     // COLECCIÓN: historial
+    // ============================
     match /historial/{historialId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
+      // Lectura: Solo admin
+      allow read: if isAdmin();
+      
+      // Escritura: Solo admin o sistema
+      allow write: if isAdmin();
     }
   }
 }

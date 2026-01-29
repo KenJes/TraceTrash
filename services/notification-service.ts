@@ -21,13 +21,23 @@ Notifications.setNotificationHandler({
 
 /**
  * Registra el dispositivo para recibir notificaciones push
+ * NOTA: Requiere Development Build en SDK 53+ (no funciona con Expo Go)
  */
 export async function registerForPushNotificationsAsync(): Promise<
   string | undefined
 > {
   if (!Device.isDevice) {
     console.log(
-      "Las notificaciones push solo funcionan en dispositivos físicos",
+      "[WARNING] Las notificaciones push solo funcionan en dispositivos físicos",
+    );
+    return undefined;
+  }
+
+  // Verificar si estamos en Expo Go (SDK 53+ no soporta notificaciones)
+  if (Constants.appOwnership === "expo") {
+    console.log("[WARNING] Expo Go no soporta notificaciones push en SDK 53+");
+    console.log(
+      "[TIP] Solucion: Usa 'npx expo run:android' o 'npx expo run:ios' para development build",
     );
     return undefined;
   }
@@ -43,7 +53,7 @@ export async function registerForPushNotificationsAsync(): Promise<
     }
 
     if (finalStatus !== "granted") {
-      console.log("No se obtuvo permiso para notificaciones");
+      console.log("[ERROR] No se obtuvo permiso para notificaciones");
       return undefined;
     }
 
@@ -108,10 +118,10 @@ export async function sendPushNotifications(
     }
 
     const result = await response.json();
-    console.log("✅ Notificaciones enviadas:", result);
+    console.log("[SUCCESS] Notificaciones enviadas:", result);
     return true;
   } catch (error) {
-    console.error("❌ Error enviando notificaciones:", error);
+    console.error("[ERROR] Error enviando notificaciones:", error);
     return false;
   }
 }
@@ -146,7 +156,7 @@ export async function notifyRutaIniciada(
     if (tokens.length > 0) {
       await sendPushNotifications({
         to: tokens,
-        title: "🚛 ¡Camión en camino!",
+        title: "Camión en camino",
         body: `${conductorNombre}${unidad ? ` (Unidad ${unidad})` : ""} ha iniciado la recolección`,
         data: {
           type: "route_started",
@@ -155,17 +165,17 @@ export async function notifyRutaIniciada(
         },
       });
 
-      console.log(`✅ Notificados ${tokens.length} usuarios`);
+      console.log(`[SUCCESS] Notificados ${tokens.length} usuarios`);
     }
 
     // Notificar también a admins
     await notifyAdmins(
-      "🚛 Ruta Iniciada",
+      "Ruta Iniciada",
       `${conductorNombre} (${unidad}) ha iniciado la ruta`,
       { rutaId, type: "route_started" },
     );
   } catch (error) {
-    console.error("❌ Error en notifyRutaIniciada:", error);
+    console.error("[ERROR] Error en notifyRutaIniciada:", error);
   }
 }
 
@@ -182,7 +192,7 @@ export async function notifyTruckNearby(
   try {
     await sendPushNotifications({
       to: [pushToken],
-      title: "🚛 ¡El camión está cerca!",
+      title: "El camión está cerca",
       body: `${conductorNombre}${unidad ? ` (Unidad ${unidad})` : ""} está a ${distancia} metros de tu ubicación`,
       data: {
         type: "truck_nearby",
@@ -192,9 +202,9 @@ export async function notifyTruckNearby(
       priority: "high",
     });
 
-    console.log(`✅ Notificado usuario ${usuarioId} - ${distancia}m`);
+    console.log(`[SUCCESS] Notificado usuario ${usuarioId} - ${distancia}m`);
   } catch (error) {
-    console.error("❌ Error en notifyTruckNearby:", error);
+    console.error("[ERROR] Error en notifyTruckNearby:", error);
   }
 }
 
@@ -222,7 +232,7 @@ export async function notifyAdmins(
     });
 
     if (tokens.length === 0) {
-      console.log("⚠️ No hay admins con token");
+      console.log("[WARNING] No hay admins con token");
       return;
     }
 
@@ -233,9 +243,9 @@ export async function notifyAdmins(
       data,
     });
 
-    console.log(`✅ Notificados ${tokens.length} administradores`);
+    console.log(`[SUCCESS] Notificados ${tokens.length} administradores`);
   } catch (error) {
-    console.error("❌ Error en notifyAdmins:", error);
+    console.error("[ERROR] Error en notifyAdmins:", error);
   }
 }
 
@@ -269,8 +279,8 @@ export async function notifyRutaPausada(
     if (tokens.length > 0) {
       await sendPushNotifications({
         to: tokens,
-        title: "⏸️ Ruta Pausada",
-        body: `El camión${unidad ? ` (Unidad ${unidad})` : ""} ha pausado temporalmente`,
+        title: "Ruta Pausada",
+        body: `El camion${unidad ? ` (Unidad ${unidad})` : ""} ha pausado temporalmente`,
         data: {
           type: "route_paused",
           rutaId,
@@ -280,12 +290,12 @@ export async function notifyRutaPausada(
 
     // Notificar también a admins
     await notifyAdmins(
-      "⏸️ Ruta Pausada",
+      "Ruta Pausada",
       `${conductorNombre} ha pausado la ruta`,
       { rutaId, type: "route_paused" },
     );
   } catch (error) {
-    console.error("❌ Error en notifyRutaPausada:", error);
+    console.error("[ERROR] Error en notifyRutaPausada:", error);
   }
 }
 
@@ -319,8 +329,8 @@ export async function notifyRutaFinalizada(
     if (tokens.length > 0) {
       await sendPushNotifications({
         to: tokens,
-        title: "✅ Ruta Completada",
-        body: `${conductorNombre} ha finalizado la recolección`,
+        title: "Ruta Completada",
+        body: `${conductorNombre} ha finalizado la recoleccion`,
         data: {
           type: "route_completed",
           rutaId,
@@ -330,11 +340,11 @@ export async function notifyRutaFinalizada(
 
     // Notificar también a admins
     await notifyAdmins(
-      "✅ Ruta Completada",
+      "Ruta Completada",
       `${conductorNombre} ha finalizado la ruta`,
       { rutaId, type: "route_completed" },
     );
   } catch (error) {
-    console.error("❌ Error en notifyRutaFinalizada:", error);
+    console.error("[ERROR] Error en notifyRutaFinalizada:", error);
   }
 }

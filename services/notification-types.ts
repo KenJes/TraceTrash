@@ -15,8 +15,8 @@ export interface NotificationHandler {
   shouldShowAlert: boolean;
   shouldPlaySound: boolean;
   shouldSetBadge: boolean;
-  shouldShowBanner?: boolean;
-  shouldShowList?: boolean;
+  shouldShowBanner: boolean;
+  shouldShowList: boolean;
 }
 
 export const DEFAULT_NOTIFICATION_HANDLER: NotificationHandler = {

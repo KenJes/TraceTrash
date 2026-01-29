@@ -1,27 +1,28 @@
-import { StyleSheet, Text, type TextProps } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, type TextProps } from "react-native";
 
-import { useThemeContext } from '@/components/theme-context';
-import { Colors } from '@/constants/theme';
+import { useThemeContext } from "@/components/theme-context";
+import { Colors } from "@/constants/theme";
 
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: "default" | "title" | "defaultSemiBold" | "subtitle" | "link";
 };
 
-export function ThemedText({
+function ThemedTextComponent({
   style,
   lightColor,
   darkColor,
-  type = 'default',
+  type = "default",
   ...rest
 }: ThemedTextProps) {
   const { theme } = useThemeContext();
-  
+
   let color: string;
-  if (theme === 'dark' && darkColor) {
+  if (theme === "dark" && darkColor) {
     color = darkColor;
-  } else if (theme === 'light' && lightColor) {
+  } else if (theme === "light" && lightColor) {
     color = lightColor;
   } else {
     color = Colors[theme].text;
@@ -31,17 +32,20 @@ export function ThemedText({
     <Text
       style={[
         { color },
-        type === 'default' ? styles.default : undefined,
-        type === 'title' ? styles.title : undefined,
-        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
-        type === 'subtitle' ? styles.subtitle : undefined,
-        type === 'link' ? styles.link : undefined,
+        type === "default" ? styles.default : undefined,
+        type === "title" ? styles.title : undefined,
+        type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
+        type === "subtitle" ? styles.subtitle : undefined,
+        type === "link" ? styles.link : undefined,
         style,
       ]}
       {...rest}
     />
   );
 }
+
+// Optimización: Memoizar para evitar re-renders cuando props no cambian
+export const ThemedText = React.memo(ThemedTextComponent);
 
 const styles = StyleSheet.create({
   default: {
@@ -51,20 +55,20 @@ const styles = StyleSheet.create({
   defaultSemiBold: {
     fontSize: 16,
     lineHeight: 24,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   title: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     lineHeight: 32,
   },
   subtitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   link: {
     lineHeight: 30,
     fontSize: 16,
-    color: '#0a7ea4',
+    color: "#0a7ea4",
   },
 });

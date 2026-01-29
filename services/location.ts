@@ -1,6 +1,6 @@
-import * as Location from 'expo-location';
-import { firebaseService } from './firebase';
-import { notifyTruckNearby } from './notification-service';
+import * as Location from "expo-location";
+import { firebaseService } from "./firebase";
+import { notifyTruckNearby } from "./notification-service";
 
 class LocationService {
   private watchId: Location.LocationSubscription | null = null;
@@ -18,7 +18,7 @@ class LocationService {
     lat1: number,
     lon1: number,
     lat2: number,
-    lon2: number
+    lon2: number,
   ): number {
     const R = 6371e3; // Radio de la Tierra en metros
     const φ1 = (lat1 * Math.PI) / 180;
@@ -42,7 +42,7 @@ class LocationService {
     conductorLon: number,
     rutaId: string,
     conductorNombre: string,
-    unidad: string
+    unidad: string,
   ): Promise<void> {
     try {
       // Obtener usuarios de la ruta con pushToken
@@ -59,15 +59,19 @@ class LocationService {
           conductorLat,
           conductorLon,
           usuario.latitude,
-          usuario.longitude
+          usuario.longitude,
         );
 
-        console.log(`📏 Distancia a ${usuario.nombre}: ${Math.round(distancia)}m`);
+        console.log(
+          `[LOCATION] Distancia a ${usuario.nombre}: ${Math.round(distancia)}m`,
+        );
 
         // Si está a menos de 100m y no ha sido notificado
         if (distancia < 100 && !this.notifiedUsers.has(usuario.uid)) {
-          console.log(`🔔 Notificando a ${usuario.nombre} - ${Math.round(distancia)}m`);
-          
+          console.log(
+            `[NOTIFY] Notificando a ${usuario.nombre} - ${Math.round(distancia)}m`,
+          );
+
           // Enviar notificación si tiene pushToken
           if (usuario.pushToken) {
             await notifyTruckNearby(
@@ -75,7 +79,7 @@ class LocationService {
               usuario.pushToken,
               conductorNombre,
               Math.round(distancia),
-              unidad
+              unidad,
             );
           }
 
@@ -89,7 +93,7 @@ class LocationService {
         }
       }
     } catch (error) {
-      console.error('❌ Error en verificación de proximidad:', error);
+      console.error("❌ Error en verificación de proximidad:", error);
     }
   }
 
@@ -99,24 +103,26 @@ class LocationService {
   async requestPermissions(): Promise<boolean> {
     try {
       // Solicitar permisos de primer plano
-      const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
-      
-      if (foregroundStatus !== 'granted') {
-        console.error('❌ Permiso de ubicación denegado');
+      const { status: foregroundStatus } =
+        await Location.requestForegroundPermissionsAsync();
+
+      if (foregroundStatus !== "granted") {
+        console.error("❌ Permiso de ubicación denegado");
         return false;
       }
 
       // Solicitar permisos de segundo plano (necesario para tracking continuo)
-      const { status: backgroundStatus } = await Location.requestBackgroundPermissionsAsync();
-      
-      if (backgroundStatus !== 'granted') {
-        console.warn('⚠️ Permiso de ubicación en segundo plano denegado');
+      const { status: backgroundStatus } =
+        await Location.requestBackgroundPermissionsAsync();
+
+      if (backgroundStatus !== "granted") {
+        console.warn("⚠️ Permiso de ubicación en segundo plano denegado");
       }
 
-      console.log('✅ Permisos de ubicación concedidos');
+      console.log("✅ Permisos de ubicación concedidos");
       return true;
     } catch (error) {
-      console.error('Error al solicitar permisos:', error);
+      console.error("Error al solicitar permisos:", error);
       return false;
     }
   }
@@ -128,7 +134,7 @@ class LocationService {
     conductorId: string,
     conductorNombre: string,
     rutaId: string,
-    unidad: string
+    unidad: string,
   ): Promise<boolean> {
     try {
       const hasPermission = await this.requestPermissions();
@@ -137,21 +143,23 @@ class LocationService {
       }
 
       if (this.isTracking && !this.isPaused) {
-        console.log('⚠️ Tracking ya está activo');
+        console.log("⚠️ Tracking ya está activo");
         return true;
       }
 
       // Reanudar o iniciar
       if (this.isPaused) {
         this.isPaused = false;
-        console.log('▶️ Tracking reanudado');
+        console.log("▶️ Tracking reanudado");
         return true;
       }
 
       this.currentConductorId = conductorId;
       this.currentRutaId = rutaId;
 
-      console.log(`🚛 Iniciando tracking para ${conductorNombre} - Ruta ${rutaId}`);
+      console.log(
+        `[TRACKING] Iniciando tracking para ${conductorNombre} - Ruta ${rutaId}`,
+      );
 
       // Configurar tracking con intervalo de 30 segundos
       this.watchId = await Location.watchPositionAsync(
@@ -163,13 +171,15 @@ class LocationService {
         },
         async (location) => {
           if (this.isPaused) {
-            console.log('⏸️ Tracking pausado, saltando actualización');
+            console.log("[TRACKING] Tracking pausado, saltando actualización");
             return;
           }
 
           try {
             const { latitude, longitude, speed, heading } = location.coords;
-            console.log(`📍 Ubicación: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+            console.log(
+              `[LOCATION] Ubicación: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`,
+            );
 
             // Guardar ubicación en Firestore
             await firebaseService.guardarUbicacion({
@@ -189,20 +199,20 @@ class LocationService {
               longitude,
               rutaId,
               conductorNombre,
-              unidad
+              unidad,
             );
           } catch (error) {
-            console.error('❌ Error al guardar ubicación:', error);
+            console.error("❌ Error al guardar ubicación:", error);
           }
-        }
+        },
       );
 
       this.isTracking = true;
       this.isPaused = false;
-      console.log('✅ Tracking iniciado correctamente');
+      console.log("✅ Tracking iniciado correctamente");
       return true;
     } catch (error) {
-      console.error('❌ Error al iniciar tracking:', error);
+      console.error("❌ Error al iniciar tracking:", error);
       return false;
     }
   }
@@ -212,12 +222,12 @@ class LocationService {
    */
   pauseTracking(): void {
     if (!this.isTracking) {
-      console.warn('⚠️ No hay tracking activo para pausar');
+      console.warn("⚠️ No hay tracking activo para pausar");
       return;
     }
 
     this.isPaused = true;
-    console.log('⏸️ Tracking pausado');
+    console.log("⏸️ Tracking pausado");
   }
 
   /**
@@ -225,12 +235,12 @@ class LocationService {
    */
   resumeTracking(): void {
     if (!this.isTracking) {
-      console.warn('⚠️ No hay tracking activo para reanudar');
+      console.warn("⚠️ No hay tracking activo para reanudar");
       return;
     }
 
     this.isPaused = false;
-    console.log('▶️ Tracking reanudado');
+    console.log("▶️ Tracking reanudado");
   }
 
   /**
@@ -248,10 +258,10 @@ class LocationService {
       this.currentConductorId = null;
       this.currentRutaId = null;
       this.notifiedUsers.clear(); // Limpiar usuarios notificados
-      
-      console.log('🛑 Tracking detenido completamente');
+
+      console.log("[TRACKING] Tracking detenido completamente");
     } catch (error) {
-      console.error('❌ Error al detener tracking:', error);
+      console.error("[ERROR] Error al detener tracking:", error);
     }
   }
 
@@ -271,7 +281,7 @@ class LocationService {
 
       return location;
     } catch (error) {
-      console.error('❌ Error al obtener ubicación:', error);
+      console.error("❌ Error al obtener ubicación:", error);
       return null;
     }
   }

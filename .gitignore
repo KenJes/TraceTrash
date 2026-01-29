@@ -34,10 +34,12 @@ yarn-error.*
 .env*.local
 .env
 
-# Firebase
-# google-services.json (temporalmente comentado para EAS build)
+# Firebase - NUNCA subir archivos con credenciales
+google-services.json
 GoogleService-Info.plist
 fcm-key.json
+firebase-service-account.json
+*.keystore
 
 # typescript
 *.tsbuildinfo

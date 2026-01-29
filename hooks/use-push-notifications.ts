@@ -1,8 +1,8 @@
-import { useAuthContext } from '@/components/auth-context';
-import { firebaseService } from '@/services/firebase';
-import { registerForPushNotificationsAsync } from '@/services/notification-service';
-import * as Device from 'expo-device';
-import { useEffect } from 'react';
+import { useAuthContext } from "@/components/auth-context";
+import { firebaseService } from "@/services/firebase";
+import { registerForPushNotificationsAsync } from "@/services/notification-service";
+import * as Device from "expo-device";
+import { useEffect } from "react";
 
 /**
  * Hook personalizado para registrar notificaciones push automáticamente
@@ -16,27 +16,40 @@ export function usePushNotifications() {
 
     const setupPushNotifications = async () => {
       // Solo para usuarios residenciales (no conductores ni admins)
-      if (!user || user.rol !== 'usuario') {
+      if (!user || user.rol !== "usuario") {
         return;
       }
 
       // Solo en dispositivos físicos (no emulador)
       if (!Device.isDevice) {
-        console.log('⚠️ Las notificaciones push solo funcionan en dispositivos físicos');
+        console.log(
+          "[WARNING] Las notificaciones push solo funcionan en dispositivos físicos",
+        );
         return;
       }
 
       try {
-        console.log('📱 Registrando notificaciones push...');
-        
+        console.log("[PUSH] Registrando notificaciones push...");
+
         // Obtener token de notificación
         const pushToken = await registerForPushNotificationsAsync();
 
-        if (!pushToken || !isMounted) {
+        // Si no hay token (Expo Go en SDK 53+), no es un error crítico
+        if (!pushToken) {
+          console.log(
+            "[INFO] No se pudo obtener push token (requiere development build en SDK 53+)",
+          );
           return;
         }
 
-        console.log('✅ Push token obtenido:', pushToken.substring(0, 20) + '...');
+        if (!isMounted) {
+          return;
+        }
+
+        console.log(
+          "✅ Push token obtenido:",
+          pushToken.substring(0, 20) + "...",
+        );
 
         // Guardar pushToken en Firestore
         if (user.uid) {
@@ -44,10 +57,10 @@ export function usePushNotifications() {
             pushToken,
             lastTokenUpdate: new Date().toISOString(),
           });
-          console.log('✅ Push token guardado en Firestore');
+          console.log("✅ Push token guardado en Firestore");
         }
       } catch (error) {
-        console.error('❌ Error al configurar notificaciones push:', error);
+        console.error("❌ Error al configurar notificaciones push:", error);
       }
     };
 
