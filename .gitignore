@@ -58,3 +58,6 @@ app-example
 # generated native folders
 /ios
 /android
+
+firebase-service-account.json
+google-services.json
