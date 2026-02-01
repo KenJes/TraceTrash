@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Instalar expo-image-picker",
+			"type": "shell",
+			"command": "npx expo install expo-image-picker",
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}
