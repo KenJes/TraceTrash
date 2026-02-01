@@ -1,6 +1,6 @@
 # Axoloit - Sitio Web Corporativo
 
-Sitio web oficial de **Axoloit** con diseño moderno dark/tech. 
+Sitio web oficial de **Axoloit** con diseño moderno dark/tech inspirado en plataformas de IA contemporáneas.
 
 **URL de producción**: https://axoloit.com
 
