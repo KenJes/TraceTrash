@@ -1,8 +1,8 @@
 import { useAuthContext } from "@/components/auth-context";
 import { TruckMapView } from "@/components/map-view";
-import { useThemeContext } from "@/components/theme-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useModernStyles } from "@/hooks/use-modern-styles";
 import { firebaseService, RutaData, UbicacionData } from "@/services/firebase";
 import { batchGeocode } from "@/services/geocoding";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,7 +16,6 @@ import {
     ScrollView,
     View,
 } from "react-native";
-import { getModernStyles } from "../_styles/modernStyles";
 
 // Importación condicional para expo-location (solo en native)
 let Location: typeof import("expo-location") | null = null;
@@ -25,7 +24,7 @@ if (Platform.OS !== "web") {
 }
 
 export default function IndexScreen() {
-  const { theme } = useThemeContext();
+  const { isDarkMode, styles } = useModernStyles();
   const { user } = useAuthContext();
   const [ruta, setRuta] = useState<RutaData | null>(null);
   const [ubicacionCamion, setUbicacionCamion] = useState<UbicacionData | null>(
@@ -40,9 +39,6 @@ export default function IndexScreen() {
   >(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
-  const isDarkMode = theme === "dark";
-  const styles = getModernStyles(isDarkMode);
 
   const cargarDatos = useCallback(async () => {
     try {

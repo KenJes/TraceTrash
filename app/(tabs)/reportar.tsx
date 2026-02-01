@@ -1,7 +1,7 @@
 import { useAuthContext } from "@/components/auth-context";
-import { useThemeContext } from "@/components/theme-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useModernStyles } from "@/hooks/use-modern-styles";
 import { firebaseService } from "@/services/firebase";
 import {
     sanitizeText,
@@ -21,14 +21,11 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { getModernStyles } from "../_styles/modernStyles";
 
 export default function ReportarScreen() {
-  const { theme } = useThemeContext();
+  const { isDarkMode, styles } = useModernStyles();
   const { user } = useAuthContext();
   const router = useRouter();
-  const isDarkMode = theme === "dark";
-  const styles = getModernStyles(isDarkMode);
   const isConductor = user?.rol === "conductor";
 
   const [tipoIncidencia, setTipoIncidencia] = useState<string>(

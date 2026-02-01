@@ -31,17 +31,7 @@ export const userService = {
   },
 
   /**
-   * Actualizar perfil del usuario
-   */
-  updateUserProfile: async (
-    uid: string,
-    updates: Partial<UserData>,
-  ): Promise<void> => {
-    await updateDoc(doc(db, "users", uid), updates);
-  },
-
-  /**
-   * Actualizar usuario (genérico)
+   * Actualizar usuario (perfil o cualquier campo)
    */
   updateUser: async (
     userId: string,

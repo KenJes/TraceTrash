@@ -271,34 +271,16 @@ export async function getAlternativeRoutes(
 }
 
 /**
- * Geocodificación inversa - obtener dirección de coordenadas
+ * @deprecated Usar reverseGeocode de services/geocoding.ts en su lugar
+ * Esta función se mantiene por compatibilidad pero redirige a geocoding.ts
  */
 export async function reverseGeocode(
   latitude: number,
   longitude: number,
 ): Promise<string> {
-  try {
-    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`;
-
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent": "TraceApp/1.0",
-      },
-    });
-
-    const data = await response.json();
-
-    if (data.display_name) {
-      // Simplificar la dirección
-      const parts = data.display_name.split(",").slice(0, 3);
-      return parts.join(", ").trim();
-    }
-
-    return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-  } catch (error) {
-    console.error("[GEOCODE] Error:", error);
-    return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
-  }
+  const { reverseGeocode: geocodingReverse } = await import('./geocoding');
+  const result = await geocodingReverse(latitude, longitude);
+  return result || `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
 }
 
 /**

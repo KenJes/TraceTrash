@@ -1,8 +1,8 @@
 import { useAuthContext } from "@/components/auth-context";
 import { SearchBar } from "@/components/search-bar";
-import { useThemeContext } from "@/components/theme-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useModernStyles } from "@/hooks/use-modern-styles";
 import { firebaseService, IncidenciaData } from "@/services/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect, useRouter } from "expo-router";
@@ -15,16 +15,13 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { getModernStyles } from "../_styles/modernStyles";
 
 type EstadoFiltro = "todos" | "pendiente" | "en_proceso" | "resuelta";
 
 export default function ReportesScreen() {
-  const { theme } = useThemeContext();
+  const { isDarkMode, styles } = useModernStyles();
   const { user } = useAuthContext();
   const router = useRouter();
-  const isDarkMode = theme === "dark";
-  const styles = getModernStyles(isDarkMode);
 
   const [incidencias, setIncidencias] = useState<IncidenciaData[]>([]);
   const [filteredIncidencias, setFilteredIncidencias] = useState<

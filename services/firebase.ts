@@ -44,7 +44,6 @@ export const firebaseService = {
   // USUARIOS
   // ═══════════════════════════════════════════
   getUserData: userService.getUserData,
-  updateUserProfile: userService.updateUserProfile,
   updateUser: userService.updateUser,
   updateUserLocation: userService.updateUserLocation,
   getAllUsers: userService.getAllUsers,
@@ -57,7 +56,6 @@ export const firebaseService = {
   // ═══════════════════════════════════════════
   getAllRutas: rutaService.getAllRutas,
   getRutaById: rutaService.getRutaById,
-  getRuta: rutaService.getRuta,
   createRuta: rutaService.createRuta,
   updateRuta: rutaService.updateRuta,
   updateRutaCoordinates: rutaService.updateRutaCoordinates,

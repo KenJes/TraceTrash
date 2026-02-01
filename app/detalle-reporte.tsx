@@ -1,20 +1,17 @@
-import { useThemeContext } from '@/components/theme-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useModernStyles } from '@/hooks/use-modern-styles';
 import { IncidenciaData } from '@/services/firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
-import { getModernStyles } from './_styles/modernStyles';
 
 // Vista detallada de un reporte
 export default function DetalleReporteScreen() {
-	const { theme } = useThemeContext();
+	const { isDarkMode, styles } = useModernStyles();
 	const router = useRouter();
 	const params = useLocalSearchParams();
-	const isDarkMode = theme === 'dark';
-	const styles = getModernStyles(isDarkMode);
 
 	// Parsear datos del reporte
 	const incidencia: IncidenciaData = params.data ? JSON.parse(params.data as string) : null;

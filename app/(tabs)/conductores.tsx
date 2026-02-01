@@ -1,6 +1,6 @@
-import { useThemeContext } from "@/components/theme-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useModernStyles } from "@/hooks/use-modern-styles";
 import { firebaseService, RutaData, UserData } from "@/services/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "expo-router";
@@ -16,12 +16,9 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { getModernStyles } from "../_styles/modernStyles";
 
 export default function AdminConductoresScreen() {
-  const { theme } = useThemeContext();
-  const isDarkMode = theme === "dark";
-  const styles = getModernStyles(isDarkMode);
+  const { isDarkMode, styles } = useModernStyles();
 
   const [conductores, setConductores] = useState<UserData[]>([]);
   const [rutas, setRutas] = useState<RutaData[]>([]);

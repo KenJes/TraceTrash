@@ -1,7 +1,7 @@
 ﻿import { useAuthContext } from "@/components/auth-context";
-import { useThemeContext } from "@/components/theme-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useModernStyles } from "@/hooks/use-modern-styles";
 import { firebaseService } from "@/services/firebase";
 import { validateEmail, validatePassword } from "@/utils/input-sanitizer";
 import {
@@ -29,14 +29,11 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { getModernStyles } from "./_styles/modernStyles";
 import RegisterScreen from "./register";
 
 export default function LoginScreen() {
-  const { theme } = useThemeContext();
+  const { isDarkMode, styles } = useModernStyles();
   const { login } = useAuthContext();
-  const isDarkMode = theme === "dark";
-  const styles = getModernStyles(isDarkMode);
 
   const [screen, setScreen] = useState<"welcome" | "login" | "register">(
     "welcome",

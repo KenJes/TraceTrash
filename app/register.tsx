@@ -1,6 +1,6 @@
 import { useAuthContext } from "@/components/auth-context";
-import { useThemeContext } from "@/components/theme-context";
 import { ThemedText } from "@/components/themed-text";
+import { useModernStyles } from "@/hooks/use-modern-styles";
 import { firebaseService } from "@/services/firebase";
 import { findNearestRoute } from "@/services/geocoding";
 import {
@@ -19,7 +19,6 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { getModernStyles } from "./_styles/modernStyles";
 
 interface RegisterScreenProps {
   onRegisterSuccess: () => void;
@@ -30,10 +29,8 @@ export default function RegisterScreen({
   onRegisterSuccess,
   onBackPress,
 }: RegisterScreenProps) {
-  const { theme } = useThemeContext();
+  const { isDarkMode, styles } = useModernStyles();
   const { login } = useAuthContext();
-  const isDarkMode = theme === "dark";
-  const styles = getModernStyles(isDarkMode);
 
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerNombre, setRegisterNombre] = useState("");

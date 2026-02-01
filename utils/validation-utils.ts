@@ -1,8 +1,32 @@
 /**
- * Utilidades para validación de formularios
- * Reduce código duplicado en validaciones
+ * DEPRECATED: Este archivo está deprecado.
+ * Usar utils/input-validator.ts en su lugar.
+ * 
+ * Este archivo se mantiene temporalmente para compatibilidad.
+ * TODO: Eliminar después de migrar todas las referencias.
  */
 
+import {
+  isValidEmail as _isValidEmail,
+  validatePassword,
+  isValidName,
+} from './input-validator';
+
+// Re-export para compatibilidad temporal
+export function isValidEmail(email: string): boolean {
+  return _isValidEmail(email);
+}
+
+export function isValidPassword(password: string): boolean {
+  const result = validatePassword(password);
+  return result.valid;
+}
+
+export function isNotEmpty(value: string): boolean {
+  return value.trim().length > 0;
+}
+
+// Interfaces y utilidades adicionales
 export interface ValidationRule {
   validate: (value: string) => boolean;
   message: string;
@@ -13,31 +37,6 @@ export interface ValidationResult {
   errors: Record<string, string>;
 }
 
-/**
- * Validador de email
- */
-export function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-/**
- * Validador de contraseña (mínimo 6 caracteres)
- */
-export function isValidPassword(password: string): boolean {
-  return password.length >= 6;
-}
-
-/**
- * Valida si un campo no está vacío
- */
-export function isNotEmpty(value: string): boolean {
-  return value.trim().length > 0;
-}
-
-/**
- * Valida múltiples campos con reglas personalizadas
- */
 export function validateFields(
   fields: Record<string, string>,
   rules: Record<string, ValidationRule[]>,
@@ -51,7 +50,7 @@ export function validateFields(
     for (const rule of fieldRules) {
       if (!rule.validate(value)) {
         errors[fieldName] = rule.message;
-        break; // Solo mostrar el primer error por campo
+        break;
       }
     }
   }
@@ -62,9 +61,6 @@ export function validateFields(
   };
 }
 
-/**
- * Reglas de validación comunes
- */
 export const commonRules = {
   required: (fieldName: string): ValidationRule => ({
     validate: isNotEmpty,

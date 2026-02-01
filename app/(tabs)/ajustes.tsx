@@ -2,6 +2,7 @@ import { useAuthContext } from "@/components/auth-context";
 import { useThemeContext } from "@/components/theme-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useModernStyles } from "@/hooks/use-modern-styles";
 import { firebaseService, RutaData } from "@/services/firebase";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
@@ -16,13 +17,11 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { getModernStyles } from "../_styles/modernStyles";
 
 export default function AjustesScreen() {
   const { theme, setTheme } = useThemeContext();
+  const { isDarkMode, styles } = useModernStyles();
   const { user, logout, updateUser } = useAuthContext();
-  const isDarkMode = theme === "dark";
-  const styles = getModernStyles(isDarkMode);
 
   console.log("⚙️ Usuario en Ajustes:", user);
   useEffect(() => {
