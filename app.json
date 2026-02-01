@@ -17,10 +17,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.tracetrash.app",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "location",
-          "remote-notification"
-        ]
+        "UIBackgroundModes": ["location", "remote-notification"]
       }
     },
     "android": {
