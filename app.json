@@ -7,7 +7,6 @@
     "icon": "./assets/images/trace1_logo.png",
     "scheme": "tracetrash",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/trace1_logo.png",
       "resizeMode": "contain",
