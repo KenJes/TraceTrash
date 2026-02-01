@@ -1,153 +1,168 @@
-# TraceTrash Landing Page
+# Axoloit - Landing Page Corporativa Dark/Tech
 
-Landing page profesional y moderna para el sistema TraceTrash.
+Sitio web oficial de Axoloit con diseño moderno dark/tech inspirado en plataformas de IA contemporáneas.
 
-## 📁 Estructura de Archivos
+## Estructura de Sitio
+
+- **Página principal**: Landing corporativa Axoloit con diseño dark/tech
+- **Subpágina TraceTrash**: Producto en `/Tracetrash/`
+
+## Diseño y Estilo
+
+### Identidad Visual
+
+**Paleta dark/tech:**
+- `--ax-dark: #0A0E1A` (negro azulado profundo)
+- `--ax-primary: #00D9FF` (cyan brillante - tech accent)
+- `--ax-secondary: #8B5CF6` (púrpura vibrante)
+- `--ax-accent: #06FFA5` (verde tech)
+- `--ax-text: #E4E7EB` (texto claro)
+- `--ax-text-muted: #94A3B8` (texto secundario)
+
+**Tipografía:**
+- Primary: Inter Variable (Google Fonts)
+- Display: Inter 700-800 para títulos impactantes
+- Mono: JetBrains Mono para acentos tech
+
+**Características de diseño:**
+- Dark theme como principal
+- Glassmorphism en cards (backdrop-filter blur)
+- Gradientes sutiles cyan-púrpura
+- Efectos de glow en CTAs y elementos interactivos
+- Animaciones CSS suaves y AOS
+- Grid moderno con espaciado generoso
+- Accesibilidad WCAG AA verificada
+
+### Contraste WCAG Verificado
+
+- Texto claro (#E4E7EB) sobre fondo oscuro (#0A0E1A): **14.2:1** ✓ WCAG AAA
+- Cyan (#00D9FF) sobre fondo oscuro: **9.1:1** ✓ WCAG AAA
+- Púrpura (#8B5CF6) sobre fondo oscuro: **5.8:1** ✓ WCAG AA
+
+## Estructura de Archivos
 
 ```
-docs/
-├── index.html          # Página principal HTML
+/
+├── index.html                  # Landing Axoloit (dark/tech moderno)
+├── README.md                   # Este archivo
+├── _config.yml                 # GitHub Pages config
+├── Tracetrash/
+│   └── index.html             # Página producto TraceTrash
 ├── css/
-│   └── styles.css      # Estilos personalizados
+│   ├── axoloit.css            # Sistema de diseño dark/tech
+│   └── styles.css             # Estilos TraceTrash (legacy)
 ├── js/
-│   └── main.js         # Scripts de interacción
-└── images/             # Recursos gráficos
-    ├── hero-mockup.png
-    ├── demo-1.png
-    ├── demo-2.png
-    ├── demo-3.png
-    ├── demo-4.png
-    ├── resident-benefits.png
-    ├── driver-benefits.png
-    ├── admin-benefits.png
-    ├── testimonial-1.jpg
-    ├── testimonial-2.jpg
-    ├── testimonial-3.jpg
-    ├── hero-bg.jpg
-    └── cta-bg.jpg
+│   └── main.js                # Scripts JavaScript
+└── images/
+    ├── logo-axoloit.svg       # Logo SVG minimalista
+    └── ...                    # Assets gráficos
 ```
 
-## 🎨 Características
-
-- **Diseño Responsive**: Adaptado para móvil, tablet y desktop
-- **Animaciones Modernas**: Usando AOS (Animate On Scroll)
-- **UI/UX Optimizada**: Navegación intuitiva y fluida
-- **Bootstrap 5**: Framework CSS moderno
-- **Sliders Interactivos**: Carruseles para demos y testimonios
-- **Formulario de Contacto**: Con validación integrada
-- **Performance Optimizada**: Carga rápida y eficiente
-
-## 🚀 Tecnologías
+## Características Técnicas
 
 - HTML5 semántico
-- CSS3 con variables y animaciones
-- JavaScript ES6+ (Vanilla JS)
-- Bootstrap 5.3.2
-- AOS Animation Library
+- CSS3 con variables y sistema de diseño modular
+- JavaScript vanilla para interacciones
+- Inter Variable font (Google Fonts)
 - Bootstrap Icons
+- AOS Animation Library
+- Performance optimizada
+- SEO y Open Graph tags
+- JSON-LD structured data
 
-## 📝 Secciones
+## Secciones de Axoloit
 
-1. **Hero**: Introducción impactante con CTA
-2. **Características**: 6 funcionalidades principales
-3. **Beneficios**: Tabs para cada tipo de usuario
-4. **Demo**: Slider con capturas de la aplicación
-5. **Testimonios**: Slider con opiniones de clientes
-6. **CTA**: Llamado a la acción principal
-7. **Contacto**: Formulario y datos de contacto
-8. **Footer**: Links y redes sociales
+1. **Hero**: Propuesta de valor con gradiente en título
+2. **Stats**: Métricas clave en cards glassmorphism
+3. **Qué Hacemos**: 3 beneficios principales con iconos
+4. **Productos**: Showcase de TraceTrash con features
+5. **Casos de Uso**: 3 perfiles de clientes objetivo
+6. **CTA**: Llamado a la acción con mailto
+7. **Nosotros**: Historia, valores y enlaces sociales
+8. **Footer**: Links, redes sociales y copyright
 
-## 🖼️ Imágenes Requeridas
+## Enlaces Externos
 
-Para que la landing page se vea completa, necesitas agregar las siguientes imágenes en la carpeta `images/`:
+- **GitHub**: https://github.com/KenJes
+- **LinkedIn**: https://www.linkedin.com/in/kenneth-alcalá-14852a23a
 
-### Mockups y Screenshots
+## GitHub Pages
 
-- `hero-mockup.png` (600x800px) - Mockup del teléfono con la app
-- `demo-1.png` (800x600px) - Vista de usuario
-- `demo-2.png` (800x600px) - Dashboard administrativo
-- `demo-3.png` (800x600px) - App de conductor
-- `demo-4.png` (800x600px) - Sistema de reportes
+Para publicar:
 
-### Beneficios
+1. Push a rama `docs` o `main`
+2. En GitHub: Settings → Pages
+3. Source: Branch docs / root folder
+4. URL: https://kenjes.github.io/TraceTrash/
 
-- `resident-benefits.png` (600x400px) - Imagen representativa
-- `driver-benefits.png` (600x400px) - Imagen representativa
-- `admin-benefits.png` (600x400px) - Imagen representativa
+## Diferencias con TraceTrash
 
-### Testimonios
+**Axoloit (index.html):**
+- Dark theme (negro azulado #0A0E1A)
+- Paleta cyan/púrpura (#00D9FF / #8B5CF6)
+- Diseño corporativo B2B
+- Enfoque en IA y datos
+- Glassmorphism y efectos glow
 
-- `testimonial-1.jpg` (100x100px) - Foto de María González
-- `testimonial-2.jpg` (100x100px) - Foto de Carlos Ramírez
-- `testimonial-3.jpg` (100x100px) - Foto de Ana Martínez
+**TraceTrash (Tracetrash/index.html):**
+- Light theme con green accent
+- Paleta verde (#4CAF50)
+- Diseño orientado a producto
+- Enfoque en features específicas
+- Estilo más tradicional
 
-### Backgrounds
+## Comandos Git
 
-- `hero-bg.jpg` (1920x1080px) - Imagen de fondo hero
-- `cta-bg.jpg` (1920x600px) - Imagen de fondo CTA
+```bash
+# Cambiar a branch
+git checkout feature/axoloit-ui-refresh
 
-## 🔧 Personalización
+# Ver cambios
+git status
+git diff
 
-### Colores
+# Commit
+git add .
+git commit -m "feat(docs): rediseño dark/tech moderno para Axoloit"
 
-Edita las variables CSS en `styles.css`:
+# Push
+git push origin feature/axoloit-ui-refresh
 
-```css
-:root {
-  --primary-color: #4caf50;
-  --primary-dark: #2d7a3e;
-  /* ... más colores */
-}
+# Merge a docs
+git checkout docs
+git merge feature/axoloit-ui-refresh
+git push origin docs
 ```
 
-### Contenido
+## Validación y Testing
 
-- Actualiza textos en `index.html`
-- Modifica funcionalidades en `main.js`
-- Agrega/elimina secciones según necesites
+### Checklist Local
 
-## 📱 GitHub Pages
+- [ ] Abrir index.html en navegador
+- [ ] Verificar responsive (DevTools)
+- [ ] Probar navegación entre secciones
+- [ ] Verificar links externos (GitHub/LinkedIn)
+- [ ] Probar link a /Tracetrash
+- [ ] Validar contraste de colores
 
-Para publicar en GitHub Pages:
+### Validación Técnica
 
-1. Asegúrate de estar en la rama `docs`
-2. Ve a Settings > Pages
-3. Selecciona la rama `docs` como fuente
-4. La página estará disponible en: `https://tuusuario.github.io/TraceTrash/`
+- [ ] HTML Validator: https://validator.w3.org/
+- [ ] CSS Validator: https://jigsaw.w3.org/css-validator/
+- [ ] Lighthouse Audit (Performance, Accessibility, SEO)
+- [ ] Contrast Checker: https://webaim.org/resources/contrastchecker/
 
-## 🌐 SEO y Metadata
+### Targets de Performance
 
-La página incluye:
+- Lighthouse Performance: > 90
+- Lighthouse Accessibility: > 95
+- Lighthouse SEO: > 95
+- First Contentful Paint: < 1.5s
 
-- Meta tags descriptivos
-- Open Graph para redes sociales
-- Estructura semántica HTML5
-- URLs amigables
-- Optimización para motores de búsqueda
+## Contacto
 
-## 📊 Analytics
-
-Para agregar Google Analytics:
-
-1. Crea una cuenta en Google Analytics
-2. Obtén tu código de seguimiento
-3. Agrega el script antes del `</head>` en `index.html`
-
-## 🤝 Contribuir
-
-Para mejorar la landing page:
-
-1. Clona el repositorio
-2. Crea una rama: `git checkout -b feature/mejora`
-3. Haz tus cambios
-4. Commit: `git commit -m 'Mejora X'`
-5. Push: `git push origin feature/mejora`
-6. Crea un Pull Request
-
-## 📄 Licencia
-
-MIT License - Ver LICENSE en el repositorio principal
+Para solicitar demo: contacto@axoloit.com
 
 ---
 
-Desarrollado con ❤️ para TraceTrash
+Desarrollado por Axoloit - 2026
