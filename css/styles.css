@@ -331,11 +331,18 @@ a:hover {
 /* Imagen Hero con animación flotante */
 .hero-image {
   position: relative;
+  overflow: hidden;
+  max-height: 700px;
+  display: flex;
+  align-items: flex-start;
 }
 
 .mockup-float {
   animation: float 3s ease-in-out infinite;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+  object-fit: cover;
+  object-position: top center;
+  clip-path: inset(0 0 15% 0);
 }
 
 @keyframes float {
@@ -394,21 +401,61 @@ a:hover {
   letter-spacing: 1px;
   margin-bottom: 1rem;
 }
+.section-title-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  background: rgba(0, 0, 0, 0.32); /* fallback */
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  backdrop-filter: blur(8px) saturate(120%);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  will-change: backdrop-filter;
+}
 
 .section-title {
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 1rem;
   color: var(--dark);
+  position: relative;
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  z-index: 2;
+
 }
+
+
 
 .section-subtitle {
   font-size: 1.125rem;
-  color: var(--gray-800);
-  max-width: 600px;
+  color: #ffffff;
+  max-width: 680px;
   margin: 0 auto 3rem;
-  line-height: 1.7;
+  line-height: 1.6;
   font-weight: 500;
+  position: relative;
+  display: inline-block;
+  padding: 1rem 1.6rem;
+  border-radius: 12px;
+  z-index: 2;
+  text-align: center;
+  
+}
+
+.section-subtitle::before {
+  content: "";
+  position: absolute;
+  inset: 0;                    
+  border-radius: inherit;
+  z-index: -1;                 
+  background: rgba(0, 0, 0, 0.36);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  backdrop-filter: blur(8px) saturate(120%);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  will-change: backdrop-filter;
 }
 
 /* ============================================
