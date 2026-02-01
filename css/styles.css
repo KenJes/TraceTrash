@@ -338,11 +338,11 @@ a:hover {
 }
 
 .mockup-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 5s ease-in-out infinite;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
   object-fit: cover;
   object-position: top center;
-  clip-path: inset(0 0 15% 0);
+  clip-path: inset(0 0 0 0);
 }
 
 @keyframes float {

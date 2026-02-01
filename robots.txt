@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://axoloit.com/sitemap.xml
