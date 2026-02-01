@@ -44,6 +44,13 @@ export const rutaService = {
   },
 
   /**
+   * Alias para getRutaById (compatibilidad con código legacy)
+   */
+  getRuta: async (rutaId: string): Promise<RutaData | null> => {
+    return rutaService.getRutaById(rutaId);
+  },
+
+  /**
    * Crear nueva ruta
    */
   createRuta: async (rutaData: Omit<RutaData, "id">): Promise<string> => {
