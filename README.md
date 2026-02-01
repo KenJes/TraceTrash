@@ -1,11 +1,35 @@
-# Axoloit - Landing Page Corporativa Dark/Tech
+# Axoloit - Sitio Web Corporativo
 
-Sitio web oficial de Axoloit con diseño moderno dark/tech inspirado en plataformas de IA contemporáneas.
+Sitio web oficial de **Axoloit** con diseño moderno dark/tech. 
 
-## Estructura de Sitio
+**URL de producción**: https://axoloit.com
 
-- **Página principal**: Landing corporativa Axoloit con diseño dark/tech
-- **Subpágina TraceTrash**: Producto en `/Tracetrash/`
+## Estructura del Sitio
+
+```
+https://axoloit.com/              → Landing corporativa Axoloit (raíz)
+https://axoloit.com/Tracetrash/   → Producto TraceTrash (subcarpeta)
+```
+
+### Arquitectura de Archivos
+
+```
+/                                  (raíz = dominio axoloit.com)
+├── index.html                     Landing Axoloit (diseño dark/tech)
+├── robots.txt                     SEO crawler directives
+├── sitemap.xml                    Sitemap XML
+├── css/
+│   ├── axoloit.css               Sistema de diseño corporativo
+│   └── styles.css                Estilos legacy TraceTrash
+├── images/
+│   ├── logo-axoloit.svg          Logo ajolote (mascota Axoloit)
+│   ├── logo.png                  Logo TraceTrash
+│   └── screenshot-*.png          Capturas de pantalla producto
+├── js/
+│   └── main.js                   Scripts TraceTrash
+└── Tracetrash/
+    └── index.html                Landing producto TraceTrash
+```
 
 ## Diseño y Estilo
 
@@ -93,7 +117,87 @@ Para publicar:
 1. Push a rama `docs` o `main`
 2. En GitHub: Settings → Pages
 3. Source: Branch docs / root folder
-4. URL: https://kenjes.github.io/TraceTrash/
+## Deploy en Cloudflare Pages
+
+### Configuración Inicial
+
+1. **Conectar Repositorio**:
+   - Ir a Cloudflare Dashboard → Pages
+   - Click "Create a project" → "Connect to Git"
+   - Seleccionar repositorio: `KenJes/TraceTrash`
+   - Branch de producción: `docs`
+
+2. **Build Settings**:
+   ```
+   Framework preset: None (Static site)
+   Build command: (dejar vacío)
+   Build output directory: / (raíz del repo)
+   Root directory: / (raíz del repo)
+   ```
+
+3. **Variables de Entorno**:
+   - No requeridas para sitio estático
+
+### Mapeo de Dominio Personalizado
+
+1. **Añadir dominio axoloit.com**:
+   - Pages → [Tu proyecto] → Custom domains
+   - Click "Set up a custom domain"
+   - Ingresar: `axoloit.com`
+   - Click "Continue"
+
+2. **Configurar DNS en Cloudflare**:
+   ```
+   Tipo: CNAME
+   Name: @
+   Target: [tu-proyecto].pages.dev
+   Proxy: Activado (nube naranja)
+   ```
+
+3. **Añadir www (opcional)**:
+   ```
+   Tipo: CNAME
+   Name: www
+   Target: axoloit.com
+   Proxy: Activado
+   ```
+
+4. **Activar HTTPS**:
+   - Se configura automáticamente
+   - Forzar HTTPS: SSL/TLS → Edge Certificates → Always Use HTTPS
+
+### Verificación
+
+- URL principal: https://axoloit.com → `/index.html`
+- Subpágina: https://axoloit.com/Tracetrash/ → `/Tracetrash/index.html`
+- Tiempo propagación DNS: 1-5 minutos
+
+### Deploy Automático
+
+Cada push a rama `docs` dispara deploy automático:
+```bash
+git add .
+git commit -m "fix: actualizar contenido"
+git push origin docs
+```
+
+### Rollback
+
+- Cloudflare Pages → Deployments
+- Click en deployment previo → "Rollback to this deployment"
+
+## Alternativa: GitHub Pages
+
+Si prefieres mantener GitHub Pages temporalmente:
+
+1. Settings → Pages → Source: `docs` branch
+2. URL: https://kenjes.github.io/TraceTrash/
+3. Redirección DNS:
+   ```
+   Tipo: CNAME
+   Name: www
+   Target: kenjes.github.io
+   ```
 
 ## Diferencias con TraceTrash
 
