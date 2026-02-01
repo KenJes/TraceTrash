@@ -1,0 +1,43 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cuerpo del ajolote -->
+  <ellipse cx="16" cy="18" rx="8" ry="6" fill="url(#bodyGradient)"/>
+  
+  <!-- Cabeza -->
+  <circle cx="16" cy="12" r="5.5" fill="url(#headGradient)"/>
+  
+  <!-- Branquias externas (características del ajolote) - izquierda -->
+  <path d="M10 10 L7 8 L8 11 Z" fill="#00D9FF" opacity="0.8"/>
+  <path d="M9.5 12 L6.5 12 L7.5 14.5 Z" fill="#00D9FF" opacity="0.6"/>
+  
+  <!-- Branquias externas - derecha -->
+  <path d="M22 10 L25 8 L24 11 Z" fill="#8B5CF6" opacity="0.8"/>
+  <path d="M22.5 12 L25.5 12 L24.5 14.5 Z" fill="#8B5CF6" opacity="0.6"/>
+  
+  <!-- Ojos -->
+  <circle cx="14" cy="11" r="1.2" fill="#0A0E1A"/>
+  <circle cx="18" cy="11" r="1.2" fill="#0A0E1A"/>
+  <circle cx="14.4" cy="10.6" r="0.5" fill="#00D9FF"/>
+  <circle cx="18.4" cy="10.6" r="0.5" fill="#00D9FF"/>
+  
+  <!-- Cola -->
+  <path d="M24 18 Q28 18 30 16 Q28 20 24 20 Z" fill="url(#tailGradient)" opacity="0.9"/>
+  
+  <!-- Patas pequeñas -->
+  <ellipse cx="12" cy="22" rx="1.5" ry="2.5" fill="#00D9FF" opacity="0.7"/>
+  <ellipse cx="20" cy="22" rx="1.5" ry="2.5" fill="#8B5CF6" opacity="0.7"/>
+  
+  <defs>
+    <linearGradient id="bodyGradient" x1="8" y1="18" x2="24" y2="18">
+      <stop offset="0%" stop-color="#00D9FF"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="headGradient" x1="10.5" y1="12" x2="21.5" y2="12">
+      <stop offset="0%" stop-color="#00D9FF"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <linearGradient id="tailGradient" x1="24" y1="18" x2="30" y2="18">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#00D9FF"/>
+    </linearGradient>
+  </defs>
+</svg>
