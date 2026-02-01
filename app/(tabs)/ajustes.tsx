@@ -3,7 +3,9 @@ import { useThemeContext } from "@/components/theme-context";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useModernStyles } from "@/hooks/use-modern-styles";
-import { firebaseService, RutaData } from "@/services/firebase";
+import { rutaService } from "@/services/firebase/ruta-service";
+import { RutaData } from "@/services/firebase/types";
+import { userService } from "@/services/firebase/user-service";
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
@@ -32,7 +34,7 @@ export default function AjustesScreen() {
   const cargarRutas = async () => {
     try {
       setLoadingRutas(true);
-      const rutasData = await firebaseService.getAllRutas();
+      const rutasData = await rutaService.getAllRutas();
       setRutas(rutasData);
     } catch (error) {
       console.error("Error al cargar rutas:", error);
@@ -44,7 +46,7 @@ export default function AjustesScreen() {
   const cargarRutaActual = async () => {
     if (user?.rutaId) {
       try {
-        const ruta = await firebaseService.getRuta(user.rutaId);
+        const ruta = await rutaService.getRuta(user.rutaId);
         setRutaActual(ruta);
       } catch (error) {
         console.error("Error al cargar ruta actual:", error);
@@ -55,7 +57,7 @@ export default function AjustesScreen() {
   const handleChangeRoute = async (rutaId: string) => {
     try {
       if (user?.uid) {
-        await firebaseService.updateUserProfile(user.uid, { rutaId });
+        await userService.updateUser(user.uid, { rutaId });
         updateUser({ rutaId });
         await cargarRutaActual();
         setEditingRoute(false);
@@ -88,7 +90,7 @@ export default function AjustesScreen() {
     }
     try {
       if (user?.uid) {
-        await firebaseService.updateUserProfile(user.uid, { [field]: value });
+        await userService.updateUser(user.uid, { [field]: value });
         updateUser({ [field]: value });
         if (field === "nombre") {
           setEditingName(false);

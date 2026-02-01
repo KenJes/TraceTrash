@@ -25,7 +25,6 @@
     },
     "android": {
       "package": "com.tracetrash.app",
-      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#4CAF50",
         "foregroundImage": "./assets/images/trace1_logo.png"
@@ -83,8 +82,7 @@
       "expo-secure-store"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+      "typedRoutes": true
     },
     "extra": {
       "router": {},
