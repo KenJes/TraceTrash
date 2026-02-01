@@ -1,6 +1,38 @@
 # 📊 Análisis Completo del Proyecto TraceTrash
 **Fecha:** 31 de Enero, 2026  
-**Estado:** En desarrollo activo (MVP ~85% completo)
+**Estado:** En desarrollo activo (MVP ~90% completo)
+
+## 📁 Estructura de Repositorios
+
+Este proyecto está dividido en **3 repositorios independientes** para reducir complejidad:
+
+### **1. TraceTrash (Este repositorio)**
+📍 `c:\Users\kenne\Visual Studio Code\Tracetrash\TraceTrash`
+- **Tecnología:** React Native + Expo SDK 54
+- **Plataformas:** iOS, Android, Web
+- **Usuarios:** Residentes y Conductores
+- **Funcionalidades:** 
+  - Tracking GPS en tiempo real
+  - Reportes de incidencias
+  - Gestión de rutas (conductores)
+  - Notificaciones push
+
+### **2. Admin Panel**
+📍 `c:\Users\kenne\Visual Studio Code\admin-trace`
+- **Tecnología:** Next.js
+- **Usuarios:** Administradores
+- **Funcionalidades:**
+  - Dashboard con métricas
+  - Gestión de conductores
+  - Gestión de rutas
+  - Administración de reportes
+
+### **3. Landing Page**
+📍 `c:\Users\kenne\Visual Studio Code\Trace`
+- **Tecnología:** HTML/CSS/JS estático
+- **Hosting:** GitHub Pages (rama `docs`)
+- **URL:** Página de presentación del proyecto
+- **Contenido:** Marketing, características, contacto
 
 ---
 

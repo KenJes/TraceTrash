@@ -1,7 +1,26 @@
 # TraceTrash - AI Agent Instructions
 
 ## Project Overview
-Real-time garbage truck tracking system for Mexican municipalities. Multi-role React Native app (resident/driver/admin) with Firebase backend, GPS tracking, and route optimization.
+Real-time garbage truck tracking system for Mexican municipalities. Multi-role React Native app (resident/driver) with Firebase backend, GPS tracking, and route optimization.
+
+**⚠️ Important:** This is the **mobile app repository** (users + drivers). The admin panel is in a separate Next.js project at `c:\Users\kenne\Visual Studio Code\admin-trace`.
+
+## Repository Structure
+
+This project is part of a **3-repository architecture**:
+
+1. **TraceTrash (This repo)** - Mobile app (React Native/Expo)
+   - Residents: Track garbage trucks
+   - Drivers: GPS tracking + route control
+   
+2. **admin-trace** - Admin panel (Next.js)
+   - Dashboard with metrics
+   - Driver management
+   - Route management
+   
+3. **Trace (Landing)** - Marketing site (GitHub Pages)
+   - Static HTML/CSS/JS
+   - Hosted on `docs` branch
 
 ## Architecture & Patterns
 
@@ -28,8 +47,11 @@ await firebaseService.login(email, password);
 File-based routing via Expo Router with role separation:
 - `app/(tabs)/index.tsx` → Resident home (truck tracking map)
 - `app/(tabs)/conductor-index.tsx` → Driver home (route control)
-- `app/(tabs)/conductores.tsx` → Admin drivers management
-- `app/(tabs)/ajustes.tsx` → Shared settings screen (role-aware)
+- `app/(tabs)/reportar.tsx` → Report incidents (both roles)
+- `app/(tabs)/reportes.tsx` → Incident history (both roles)
+- `app/(tabs)/ajustes.tsx` → Settings (both roles)
+
+**Note:** Admin features (`conductores.tsx`) are present but **deprecated** - admin panel is now a separate Next.js app.
 
 **Pattern**: Check `user.rol` from `useAuthContext()` to conditionally render features.
 
