@@ -1,11 +1,8 @@
 // firebaseConfig.ts
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getReactNativePersistence, initializeAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-// AsyncStorage temporalmente deshabilitado para build
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { getReactNativePersistence, initializeAuth } from 'firebase/auth';
-// import { getStorage } from 'firebase/storage'; // Comentado: requiere plan Blaze
 
 // IMPORTANTE: Reemplaza con tus credenciales de Firebase
 // Ve a: https://console.firebase.google.com -> Proyecto -> Configuración
@@ -39,13 +36,10 @@ console.log("[INFO] Firebase Config:", {
 
 const app = initializeApp(firebaseConfig);
 
-// Inicializar Auth (sin AsyncStorage por ahora)
-export const auth = getAuth(app);
-
-// TODO: Re-habilitar AsyncStorage cuando el build funcione
-// export const auth = initializeAuth(app, {
-//   persistence: getReactNativePersistence(AsyncStorage),
-// });
+// Inicializar Auth con AsyncStorage persistence
+export const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
 
 export const db = getFirestore(app);
 // export const storage = getStorage(app); // Comentado: requiere plan Blaze
