@@ -16,10 +16,7 @@
       "android": {
         "buildType": "apk"
       },
-      "env": {
-        "NODE_ENV": "production"
-      },
-      "node": "20.18.1"
+      "node": "22.11.0"
     },
     "production": {
       "android": {
