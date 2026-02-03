@@ -1,7 +1,7 @@
 // firebaseConfig.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { initializeApp } from "firebase/app";
-import { getReactNativePersistence, initializeAuth } from "firebase/auth";
+import { initializeApp, getApps } from "firebase/app";
+import { getAuth, getReactNativePersistence, initializeAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // IMPORTANTE: Reemplaza con tus credenciales de Firebase
@@ -34,12 +34,20 @@ console.log("[INFO] Firebase Config:", {
   appId: firebaseConfig.appId ? "OK" : "MISSING",
 });
 
-const app = initializeApp(firebaseConfig);
+// Inicializar Firebase solo si no existe ya
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-// Inicializar Auth con AsyncStorage persistence
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
+// Inicializar Auth con AsyncStorage persistence (solo si no existe)
+let auth;
+try {
+  auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  });
+} catch (error) {
+  // Si ya está inicializado, obtener la instancia existente
+  auth = getAuth(app);
+}
 
+export { auth };
 export const db = getFirestore(app);
 // export const storage = getStorage(app); // Comentado: requiere plan Blaze
