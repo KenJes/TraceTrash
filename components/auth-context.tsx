@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import {
     createContext,
@@ -44,12 +45,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       let savedUser: string | null = null;
 
       if (Platform.OS === "web") {
-        // En web, usar AsyncStorage como fallback
-        const AsyncStorage =
-          require("@react-native-async-storage/async-storage").default;
         savedUser = await AsyncStorage.getItem(SESSION_KEY);
       } else {
-        // En móvil, usar SecureStore
         savedUser = await SecureStore.getItemAsync(SESSION_KEY);
       }
 
@@ -69,8 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userJson = JSON.stringify(userData);
 
       if (Platform.OS === "web") {
-        const AsyncStorage =
-          require("@react-native-async-storage/async-storage").default;
         await AsyncStorage.setItem(SESSION_KEY, userJson);
       } else {
         await SecureStore.setItemAsync(SESSION_KEY, userJson);
@@ -89,8 +84,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // Limpiar sesión
       if (Platform.OS === "web") {
-        const AsyncStorage =
-          require("@react-native-async-storage/async-storage").default;
         await AsyncStorage.removeItem(SESSION_KEY);
       } else {
         await SecureStore.deleteItemAsync(SESSION_KEY);
@@ -109,8 +102,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const userJson = JSON.stringify(updatedUser);
         if (Platform.OS === "web") {
-          const AsyncStorage =
-            require("@react-native-async-storage/async-storage").default;
           await AsyncStorage.setItem(SESSION_KEY, userJson);
         } else {
           await SecureStore.setItemAsync(SESSION_KEY, userJson);
