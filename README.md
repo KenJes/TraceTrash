@@ -79,8 +79,9 @@ Solución compartida entre varios municipios para optimizar recursos.
 ## Desarrollado por
 
 **Axoloit**  
-Soluciones Tecnológicas Inteligentes
-
+Axoloit S. De R.L. de C.V.
+Axoloit.com
+Axoloit.com/Tracetrash
 ---
 
 © 2026 Axoloit. Todos los derechos reservados.
