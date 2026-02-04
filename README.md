@@ -9,18 +9,21 @@ TraceTrash es una solución completa que digitaliza y optimiza el servicio de re
 ## ✨ Características Principales
 
 ### Para Residentes
+
 - 📍 **Rastreo en Tiempo Real**: Visualiza la ubicación exacta del camión recolector
 - 🔔 **Notificaciones Inteligentes**: Recibe alertas cuando el camión se acerca a tu zona
 - 📸 **Reporte de Incidencias**: Documenta problemas con fotos y ubicación GPS
 - 📊 **Historial Personal**: Consulta tus reportes anteriores y su estado
 
 ### Para Conductores
+
 - 🗺️ **Navegación Optimizada**: Rutas calculadas automáticamente para máxima eficiencia
 - ⏱️ **Control de Servicio**: Inicia, pausa y finaliza tu turno desde la app
 - 📱 **Interfaz Simplificada**: Diseño optimizado para uso durante conducción
 - ✅ **Registro Automático**: El sistema registra puntos visitados automáticamente
 
 ### Para Administradores
+
 - 📈 **Dashboard en Tiempo Real**: Monitorea todos los vehículos y métricas del servicio
 - 🚚 **Gestión de Flota**: Administra conductores, vehículos y asignaciones
 - 🛣️ **Optimización de Rutas**: Algoritmos inteligentes para planificación eficiente
@@ -37,12 +40,15 @@ TraceTrash es una solución completa que digitaliza y optimiza el servicio de re
 ## 🏙️ Casos de Uso
 
 ### Municipios Pequeños (< 50,000 habitantes)
+
 Sistema escalable que inicia con 1-3 vehículos y crece con tu ciudad.
 
 ### Ciudades Medianas (50,000 - 200,000 habitantes)
+
 Gestión completa de múltiples rutas, zonas y turnos.
 
 ### Mancomunidades
+
 Solución compartida entre varios municipios para optimizar recursos.
 
 ## 📲 Disponibilidad
@@ -162,6 +168,7 @@ https://axoloit.com/Tracetrash/   → Producto TraceTrash (subcarpeta)
 ### Identidad Visual
 
 **Paleta dark/tech:**
+
 - `--ax-dark: #0A0E1A` (negro azulado profundo)
 - `--ax-primary: #00D9FF` (cyan brillante - tech accent)
 - `--ax-secondary: #8B5CF6` (púrpura vibrante)
@@ -170,11 +177,13 @@ https://axoloit.com/Tracetrash/   → Producto TraceTrash (subcarpeta)
 - `--ax-text-muted: #94A3B8` (texto secundario)
 
 **Tipografía:**
+
 - Primary: Inter Variable (Google Fonts)
 - Display: Inter 700-800 para títulos impactantes
 - Mono: JetBrains Mono para acentos tech
 
 **Características de diseño:**
+
 - Dark theme como principal
 - Glassmorphism en cards (backdrop-filter blur)
 - Gradientes sutiles cyan-púrpura
@@ -243,6 +252,7 @@ Para publicar:
 1. Push a rama `docs` o `main`
 2. En GitHub: Settings → Pages
 3. Source: Branch docs / root folder
+
 ## Deploy en Cloudflare Pages
 
 ### Configuración Inicial
@@ -254,6 +264,7 @@ Para publicar:
    - Branch de producción: `docs`
 
 2. **Build Settings**:
+
    ```
    Framework preset: None (Static site)
    Build command: (dejar vacío)
@@ -273,6 +284,7 @@ Para publicar:
    - Click "Continue"
 
 2. **Configurar DNS en Cloudflare**:
+
    ```
    Tipo: CNAME
    Name: @
@@ -281,6 +293,7 @@ Para publicar:
    ```
 
 3. **Añadir www (opcional)**:
+
    ```
    Tipo: CNAME
    Name: www
@@ -301,6 +314,7 @@ Para publicar:
 ### Deploy Automático
 
 Cada push a rama `docs` dispara deploy automático:
+
 ```bash
 git add .
 git commit -m "fix: actualizar contenido"
@@ -328,6 +342,7 @@ Si prefieres mantener GitHub Pages temporalmente:
 ## Diferencias con TraceTrash
 
 **Axoloit (index.html):**
+
 - Dark theme (negro azulado #0A0E1A)
 - Paleta cyan/púrpura (#00D9FF / #8B5CF6)
 - Diseño corporativo B2B
@@ -335,6 +350,7 @@ Si prefieres mantener GitHub Pages temporalmente:
 - Glassmorphism y efectos glow
 
 **TraceTrash (Tracetrash/index.html):**
+
 - Light theme con green accent
 - Paleta verde (#4CAF50)
 - Diseño orientado a producto
@@ -395,38 +411,41 @@ Para solicitar demo: contacto@axoloit.com
 
 ---
 
-Desarrollado por Axoloit - 2026
-=======
+# Desarrollado por Axoloit - 2026
+
 # TraceTrash
 
 Sistema de rastreo en tiempo real de recolección de basura
 
-##  Descripción
+## Descripción
 
 Aplicación multiplataforma (Android, iOS, Web) que permite rastrear camiones recolectores de basura en tiempo real, gestionar rutas optimizadas, y reportar incidencias. Incluye tres roles de usuario con funcionalidades específicas.
 
-##  Características
+## Características
 
-###  Residentes
+### Residentes
+
 - Rastreo en tiempo real del camión asignado
 - Notificaciones push de proximidad del camión
 - Reporte de incidencias con foto y ubicación
 - Historial personal de reportes
 
-###  Conductores
+### Conductores
+
 - GPS tracking automático durante servicio
 - Control de ruta (iniciar/pausar/finalizar)
 - Vista de mapa con direcciones asignadas
 - Notificación automática a usuarios en ruta
 
-###  Administradores
+### Administradores
+
 - Dashboard con métricas en tiempo real
 - Mapa con ubicación de todos los camiones activos
 - Gestión completa de conductores y rutas
 - Optimización automática de rutas
 - Administración y seguimiento de reportes
 
-##  Stack Tecnológico
+## Stack Tecnológico
 
 - **Frontend**: React Native + Expo SDK 54 + TypeScript
 - **Navegación**: Expo Router 6
@@ -435,14 +454,13 @@ Aplicación multiplataforma (Android, iOS, Web) que permite rastrear camiones re
 - **Notificaciones**: Expo Push Notifications
 - **Build**: EAS Build
 
-
-##  Licencia
+## Licencia
 
 MIT License
 
-##  Autor
+## Autor
 
 **Kenneth Alcalá**  
 GitHub: [@KenJes](https://github.com/KenJes)
 
->>>>>>> main
+> > > > > > > main
