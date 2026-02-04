@@ -1,11 +1,136 @@
-<<<<<<< HEAD
-# Axoloit - Sitio Web Corporativo
+# TraceTrash 🚛♻️
 
-Sitio web oficial de **Axoloit** con diseño moderno dark/tech inspirado en plataformas de IA contemporáneas.
+Sistema inteligente de rastreo en tiempo real para recolección de residuos urbanos.
 
-**URL de producción**: https://axoloit.com
+## 📱 Descripción
 
-## Estructura del Sitio
+TraceTrash es una solución completa que digitaliza y optimiza el servicio de recolección de basura en municipios, conectando a residentes, operadores y administradores en tiempo real.
+
+## ✨ Características Principales
+
+### Para Residentes
+- 📍 **Rastreo en Tiempo Real**: Visualiza la ubicación exacta del camión recolector
+- 🔔 **Notificaciones Inteligentes**: Recibe alertas cuando el camión se acerca a tu zona
+- 📸 **Reporte de Incidencias**: Documenta problemas con fotos y ubicación GPS
+- 📊 **Historial Personal**: Consulta tus reportes anteriores y su estado
+
+### Para Conductores
+- 🗺️ **Navegación Optimizada**: Rutas calculadas automáticamente para máxima eficiencia
+- ⏱️ **Control de Servicio**: Inicia, pausa y finaliza tu turno desde la app
+- 📱 **Interfaz Simplificada**: Diseño optimizado para uso durante conducción
+- ✅ **Registro Automático**: El sistema registra puntos visitados automáticamente
+
+### Para Administradores
+- 📈 **Dashboard en Tiempo Real**: Monitorea todos los vehículos y métricas del servicio
+- 🚚 **Gestión de Flota**: Administra conductores, vehículos y asignaciones
+- 🛣️ **Optimización de Rutas**: Algoritmos inteligentes para planificación eficiente
+- 📋 **Gestión de Reportes**: Seguimiento y respuesta a incidencias ciudadanas
+- 📊 **Reportes y Analíticas**: Estadísticas detalladas del servicio
+
+## 🎯 Beneficios
+
+- **Ahorro de Costos**: Optimización automática reduce consumo de combustible hasta 20%
+- **Mejor Servicio**: Ciudadanos informados en tiempo real = mayor satisfacción
+- **Transparencia**: Trazabilidad completa del servicio de recolección
+- **Sustentabilidad**: Rutas optimizadas reducen huella de carbono
+
+## 🏙️ Casos de Uso
+
+### Municipios Pequeños (< 50,000 habitantes)
+Sistema escalable que inicia con 1-3 vehículos y crece con tu ciudad.
+
+### Ciudades Medianas (50,000 - 200,000 habitantes)
+Gestión completa de múltiples rutas, zonas y turnos.
+
+### Mancomunidades
+Solución compartida entre varios municipios para optimizar recursos.
+
+## 📲 Disponibilidad
+
+- **Android**: Disponible en APK para instalación directa
+- **iOS**: Próximamente en App Store
+- **Web**: Panel administrativo accesible desde navegador
+
+## 🔐 Seguridad y Privacidad
+
+- Autenticación segura de usuarios
+- Datos encriptados en tránsito y en reposo
+- Cumplimiento con normativas de protección de datos
+- Ubicación de usuarios solo visible para ellos mismos
+
+## 📞 Contacto
+
+¿Interesado en implementar TraceTrash en tu municipio?
+
+**Email**: contacto@axoloit.com  
+**Sitio Web**: https://axoloit.com
+
+---
+
+## 🚀 Información Técnica (Para Desarrolladores)
+
+### Stack Tecnológico
+
+- **Frontend**: React Native + Expo SDK 54
+- **Backend**: Firebase (Firestore + Authentication)
+- **Mapas**: OpenStreetMap + Leaflet (100% gratuito)
+- **Notificaciones**: Expo Push Notifications
+- **Lenguaje**: TypeScript
+
+### Requisitos del Sistema
+
+- Node.js 22.11.0 o superior
+- Expo CLI
+- Android Studio (para desarrollo Android)
+- Cuenta de Firebase
+
+### Variables de Entorno
+
+El proyecto requiere configuración de Firebase. Ver `.env.example` para referencia.
+
+### Instalación para Desarrollo
+
+```bash
+# Clonar repositorio
+git clone https://github.com/KenJes/TraceTrash.git
+
+# Instalar dependencias
+cd TraceTrash
+npm install --legacy-peer-deps
+
+# Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus credenciales de Firebase
+
+# Iniciar en modo desarrollo
+npx expo start
+```
+
+### Build de Producción
+
+```bash
+# Build para Android (APK)
+eas build --profile preview --platform android
+
+# Build para producción
+eas build --profile production --platform android
+```
+
+## 📄 Licencia
+
+MIT License - Ver archivo LICENSE para más detalles
+
+## 👨‍💻 Desarrollado por
+
+**Axoloit**  
+Soluciones Tecnológicas Inteligentes
+
+**Kenneth Alcalá** - Desarrollador Principal  
+GitHub: [@KenJes](https://github.com/KenJes)
+
+---
+
+© 2026 Axoloit. Todos los derechos reservados.
 
 ```
 https://axoloit.com/              → Landing corporativa Axoloit (raíz)

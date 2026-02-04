@@ -4,11 +4,11 @@
     "slug": "tracetrash",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/trace1_logo.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "tracetrash",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/trace1_logo.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -24,7 +24,7 @@
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#4CAF50",
-        "foregroundImage": "./assets/images/trace1_logo.png"
+        "foregroundImage": "./assets/images/android-icon-foreground.png"
       },
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",

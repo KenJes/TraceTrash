@@ -1,5 +1,6 @@
 // firebaseConfig.ts
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
 import { getApps, initializeApp } from "firebase/app";
 import {
     getAuth,
@@ -8,15 +9,32 @@ import {
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// IMPORTANTE: Reemplaza con tus credenciales de Firebase
-// Ve a: https://console.firebase.google.com -> Proyecto -> Configuración
+// Obtener credenciales desde app.json (para producción) o .env (para desarrollo)
 const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || "",
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || "",
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || "",
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || "",
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "",
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || "",
+  apiKey:
+    process.env.EXPO_PUBLIC_FIREBASE_API_KEY ||
+    Constants.expoConfig?.extra?.firebaseApiKey ||
+    "",
+  authDomain:
+    process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ||
+    Constants.expoConfig?.extra?.firebaseAuthDomain ||
+    "",
+  projectId:
+    process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID ||
+    Constants.expoConfig?.extra?.firebaseProjectId ||
+    "",
+  storageBucket:
+    process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ||
+    Constants.expoConfig?.extra?.firebaseStorageBucket ||
+    "",
+  messagingSenderId:
+    process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ||
+    Constants.expoConfig?.extra?.firebaseMessagingSenderId ||
+    "",
+  appId:
+    process.env.EXPO_PUBLIC_FIREBASE_APP_ID ||
+    Constants.expoConfig?.extra?.firebaseAppId ||
+    "",
 };
 
 // Inicializar Firebase solo si no existe ya

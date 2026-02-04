@@ -34,19 +34,13 @@ yarn-error.*
 .env*.local
 .env
 
-<<<<<<< HEAD
-# Firebase
-# google-services.json (temporalmente comentado para EAS build)
-GoogleService-Info.plist
-fcm-key.json
-=======
 # Firebase - NUNCA subir archivos con credenciales
 google-services.json
 GoogleService-Info.plist
 fcm-key.json
 firebase-service-account.json
 *.keystore
->>>>>>> main
+*.jks
 
 # typescript
 *.tsbuildinfo
@@ -55,21 +49,22 @@ firebase-service-account.json
 *.old.*
 README.old.md
 
-# Documentation (optional - descomentar si no quieres subirlos)
-# CAMBIOS_*.md
-# SISTEMA_*.md
-# SOLUCION_*.md
-# OPTIMIZACION_*.md
-# PRE_LAUNCH_*.md
-
-app-example
+# Documentation interna
+CAMBIOS_*.md
+SISTEMA_*.md
+SOLUCION_*.md
+OPTIMIZACION_*.md
+PRE_LAUNCH_*.md
+ANALISIS_*.md
+SEGURIDAD.md
+MODELO_DE_NEGOCIOS.md
+REFACTORIZACION_*.md
 
 # generated native folders
 /ios
 /android
-<<<<<<< HEAD
 
-firebase-service-account.json
-google-services.json
-=======
->>>>>>> main
+# Build artifacts
+dist-test/
+*.apk
+*.ipa
