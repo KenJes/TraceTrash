@@ -37,20 +37,6 @@ TraceTrash es una solución completa que digitaliza y optimiza el servicio de re
 - **Transparencia**: Trazabilidad completa del servicio de recolección
 - **Sustentabilidad**: Rutas optimizadas reducen huella de carbono
 
-## Casos de Uso
-
-### Municipios Pequeños (< 50,000 habitantes)
-
-Sistema escalable que inicia con 1-3 vehículos y crece con tu ciudad.
-
-### Ciudades Medianas (50,000 - 200,000 habitantes)
-
-Gestión completa de múltiples rutas, zonas y turnos.
-
-### Mancomunidades
-
-Solución compartida entre varios municipios para optimizar recursos.
-
 ## Disponibilidad
 
 - **Android**: Disponible en APK para instalación directa
