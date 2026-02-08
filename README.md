@@ -66,8 +66,7 @@ TraceTrash es una solución completa que digitaliza y optimiza el servicio de re
 
 **Axoloit**  
 Axoloit S. De R.L. de C.V.
-Axoloit.com
-Axoloit.com/Tracetrash
+
 ---
 
 © 2026 Axoloit. Todos los derechos reservados.
